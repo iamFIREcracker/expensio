@@ -1,0 +1,89 @@
+{% import 'expenses.html' as expenses_template %}
+<head>
+    <link rel="stylesheet" href="/static/css/main.css" type="text/css" />
+    <link rel="stylesheet" href="/static/css/palette.css" type="text/css" />
+    <link rel="stylesheet" href="/static/css/simplegrid.css" type="text/css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
+    <script>
+    $(function() {
+        //$('#datepicker').datepicker();
+        $('#category').autocomplete({
+            source: [
+            {% for cat in categories %}
+                "{{ cat['name'] }}",
+            {% endfor %}
+            ]
+        });
+        $('#add').click(function() {
+            $.ajax({
+                url: '/expenses/add',
+                type: 'POST',
+                success: function(data) {
+                    
+                },
+                error: function(data) {
+                    alert("Fuuuuuuu");
+                },
+            });
+            return false;
+        });
+        $('#more').click(function() {
+            $.ajax({
+                type: '',
+                success: function(data) {
+
+                },
+                error: function(data) {
+                    alert("Fuuuuuu");
+                },
+            });
+            return false;
+        })
+    });
+    </script>
+</head>
+
+<body>
+<h1>Expenses</h1>
+
+<div class="grid grid-pad">
+    {% if user %}
+    <p><span>Welcome back, {{  user.name }}! (<a href="/logout" alt="Logout">Logout</a>)</span></p>
+    {% else %}
+    <p><span id="login"><a href="/login" alt="Login">Facebook login</a></span></p>
+    {% endif %}
+
+    <div class="col-5-12">
+        <h2>Track new expense</h2>
+        <form>
+        {{ form.render() }}
+        </form>
+
+        <h2>Current month</h2>
+        {% set palette = dict() %}
+        {% for cat in categories %}
+        <div class="cat">
+            {% do palette.update({cat['name']: palette | length}) %}
+            <span class="cat_name">{{ cat['name'] }}</span>
+            <span class="cat_amount">{{ cat['amount'] | cash }} {{ currency }}</span>
+            <span class="cat_bar_container">
+                <span class="cat_bar palette{{ palette[cat['name']] }}" style="width: {{ cat['percentile'] }}%">&nbsp;</span>
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col-7-12">
+        <h2>By date</h2>
+        {% for exp in expenses %}
+            {{ expenses_template.expense(exp, palette) }}
+        {% endfor %}
+        <br />
+        <form>
+            {{ more.render() }}
+        </form>
+    </div>
+</div>
+
+</body>

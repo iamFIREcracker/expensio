@@ -1,0 +1,62 @@
+body {
+    font-family: arial, sans-serif;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+.cat {
+    width: 100%;
+    font-size: 110%;
+    margin-top: 3px;
+}
+
+.cat_name {
+    display: inline-block;
+    width: 23%;
+}
+
+.cat_amount {
+    display: inline-block;
+    width: 18%;
+}
+
+.cat_bar_container {
+    display: inline-block;
+    width: 50%;
+}
+
+.cat_bar {
+    display: inline-block;
+}
+
+
+.exp {
+    width: 100%;
+    font-size: 110%;
+    margin-top: 3px;
+}
+
+.exp_amount {
+    display: inline-block;
+    width: 13%;
+}
+
+.exp_category {
+    display: inline-block;
+}
+
+.exp_note {
+    margin-left: 1%;
+    color: #555;
+    font-style: italic;
+    display: inline-block;
+}
+
+.exp_date {
+    float: right;
+    text-align: right;
+    display: inline-block;
+    width: 15%;
+}

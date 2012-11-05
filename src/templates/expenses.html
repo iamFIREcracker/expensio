@@ -1,0 +1,8 @@
+{%- macro expense(exp, palette) -%}
+<div class="exp">
+    <span class="exp_amount">{{ exp['amount'] | cash }} {{ currency }}</span>
+    <span class="exp_category palette palette{{ palette[exp['category']] }}">{{ exp['category'] }}</span>
+    <span class="exp_note">{{ exp['note'] }}</span>
+    <span class="exp_date">{{ exp['date'] | datetime }}</span>
+</div>
+{%- endmacro -%}
