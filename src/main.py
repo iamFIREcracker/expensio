@@ -64,7 +64,6 @@ application.add_processor(load_sqla)
 working_dir = os.path.dirname(__file__)
 render = render_jinja(os.path.join(working_dir, 'templates'),
         encoding='utf-8', extensions=['jinja2.ext.do'])
-web.debug(render._lookup.extensions)
 render._lookup.filters.update(
         datetime=datetimeformat, cash=cashformat)
 
@@ -106,12 +105,6 @@ def getcategories(expenses):
                 sum(map(operator.attrgetter('amount'), group))}
 
 
-def addpercentile(scale):
-    def inner(category):
-        return dict(percentile=100*category['amount']/scale, **category)
-    return inner
-
-
 class MainHandler(BaseHandler):
     def GET(self):
         today = datetime.today()
@@ -125,8 +118,6 @@ class MainHandler(BaseHandler):
 
         categories = sorted(getcategories(expenses),
                 key=operator.itemgetter('amount'), reverse=True)
-        max_ = categories[0]['amount'] if categories else 0
-        categories = map(addpercentile(max_), categories)
 
         return render.index(user=self.current_user(), currency='&euro;',
                 expenses=expenses, categories=categories, form=expense(),
@@ -155,11 +146,17 @@ class ImportHandler(BaseHandler):
 
 
 class ExpensesAdd(BaseHandler):
+    @protected
     def POST(self):
         form = expense()
-        if not form.validates():
-            return 
-        pass
+        if form.validates():
+            e = Expense(user_id=self.current_user().id,
+                    amount=float(form.d.amount), category=form.d.category,
+                    note=form.d.note,
+                    date=datetime.strptime(form.d.date, "%d/%m/%Y %I:%M %p"))
+            #web.ctx.orm.add(e)
+        return render.expenses_add(form=form)
+
 
 class LoginHandler(BaseHandler):
     def GET(self):
