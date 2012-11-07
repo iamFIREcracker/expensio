@@ -30,4 +30,3 @@ import_ = form.Form(
 loadmore = form.Form(
         form.Button("Load more", type="submit", id="more")
     )
-

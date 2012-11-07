@@ -5,9 +5,12 @@
     <link rel="stylesheet" href="/static/css/palette.css" type="text/css" />
     <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
     <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
+    <script src="/static/js/logger.js"></script>
     <script src="/static/js/expenses.js"></script>
     <script>
     $(function() {
+        Logger.onReady($('#message'), 2000);
+        ExpensesManager.onReady(Logger);
         $('#datepicker').datepicker();
         $('#category').autocomplete({
             source: [

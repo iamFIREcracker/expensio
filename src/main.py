@@ -154,8 +154,16 @@ class ExpensesAdd(BaseHandler):
                     amount=float(form.d.amount), category=form.d.category,
                     note=form.d.note,
                     date=datetime.strptime(form.d.date, "%d/%m/%Y %I:%M %p"))
+            web.debug(e.user_id)
             #web.ctx.orm.add(e)
         return render.expenses_add(form=form)
+
+
+class UserEditHandler(BaseHandler):
+
+    @protected
+    def GET(self):
+        pass
 
 
 class LoginHandler(BaseHandler):

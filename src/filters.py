@@ -4,13 +4,14 @@
 from datetime import datetime
 
 
-def datetimeformat(value):
-    today = datetime.today()
+def datetimeformat(value, today=datetime.today(), format_=None):
     delta = today - value
     within24 = (delta.total_seconds() // 3600) < 24
     sameyear = today.year == value.year
 
-    if within24:
+    if format_:
+        return value.strftime(format_)
+    elif within24:
         return value.strftime('%I:%M %p')
     elif sameyear:
         return value.strftime('%b %-d')
