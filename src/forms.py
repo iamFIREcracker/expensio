@@ -19,6 +19,7 @@ expense = form.Form(
         form.Textbox('category', form.notnull, description='Category', id='category'),
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdatetime, description='Date'),
+        #form.File('attachment', description='Attachment', type='file'),
     )
 
 import_ = form.Form(

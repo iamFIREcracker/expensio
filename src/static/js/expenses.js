@@ -1,32 +1,38 @@
 var ExpensesManager = (function() {
     return {
-        _latestupate: null,
-        _refreshtimeout: null,
         _logger: null,
+        _refreshtimeout: null,
+        _ui: null,
+        _latestupate: null,
 
-        onReady: function(logger, refreshtimeout) {
-            this._latestupdate = "";
+        onReady: function(logger, refreshtimeout, ui) {
             this._logger = logger;
             this._refreshtimeout = refreshtimeout;
+            this._ui = ui;
+            this._latestupdate = "";
             this._onTimeout();
         },
 
         _onTimeout: function() {
             $.ajax({
-                url: '/expenses',
+               url: '/expenses.json',
                 type: 'GET',
-                dataType: 'html',
-                success: function(_this) {
+                dataType: 'json',
+                success: function(this_) {
                     return function(data) {
-                        onNewData(data);
-                        setTimeout(this._onTimeout, refreshtimeout);
-                    }
+                        this_._ui.onNewData(data);
+                        //setTimeout(function(this_) {
+                            //return function() {
+                                //this_._onTimeout();
+                            //};
+                        //}(this_), this_._refreshtimeout);
+                    };
                 }(this),
-                error: function(_this) {
+                error: function(this_) {
                     return function(data) {
-                        console.debug(this._logger);
-                        _this._logger.error('Ooops! :-(');
-                    }
+                        this_._logger
+                            .error('Something went wrong while contacting the server');
+                    };
                 }(this),
             })
         },
@@ -38,19 +44,19 @@ var ExpensesManager = (function() {
                 type: 'POST',
                 dataType: 'html',
                 data: $form.serialize(),
-                success: function(_this) {
+                success: function(this_) {
                     return function(data) {
                         $data = $(data);
                         $form.replaceWith($data);
                         if ($data.find('.wrong').length == 0) {
-                            _this._logger.error('Expense tracked successfully!');
+                            this_._logger.error('Expense tracked successfully!');
                         }
-                    }
+                    };
                 }(this),
-                error: function(_this) {
+                error: function(this_) {
                     return function(data) {
-                        _this._logger.error('Oppps! :-(');
-                    }
+                        this_._logger.error('Oppps! :-(');
+                    };
                 }(this),
             });
 

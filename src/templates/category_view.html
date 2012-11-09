@@ -1,0 +1,10 @@
+{% for cat in categories %}
+<div class="cat">
+    <span class="cat_name">{{ cat['name'] }}</span>
+    <span class="cat_amount">{{ cat['amount'] | cash }} {{ currency }}</span>
+    <span class="cat_bar_container">
+        <span class="cat_bar palette{{ palette[cat['name']] }}"
+            style="width: {{ 100 * cat['amount'] / categories[0]['amount'] }}%">&nbsp;</span>
+    </span>
+</div>
+{% endfor %}

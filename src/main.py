@@ -25,6 +25,7 @@ from forms import expense
 from forms import import_
 from forms import loadmore
 from models import engine
+from models import AlchemyEncoder
 from models import Expense
 from models import User
 
@@ -38,7 +39,9 @@ FACEBOOK_APP_SECRET = "bcc5a62efaff20fc9808919b3e40a944"
 urls = (
     '/', 'MainHandler',
     '/import', 'ImportHandler',
-    '/expenses/add', 'ExpensesAdd',
+    '/expenses', 'ExpensesHandler',
+    '/expenses.json', 'ExpensesJSONHandler',
+    '/expenses/add', 'ExpensesAddHandler',
     '/login', 'LoginHandler',
     '/logout', 'LogoutHandler',
     '/periods', 'PeriodsHandler',
@@ -82,6 +85,12 @@ def protected(func):
     return inner
 
 
+def jsonify(*args, **kwargs):
+    web.header('Content-Type', 'application/json')
+
+    return json.dumps(dict(*args, **kwargs), cls=AlchemyEncoder)
+
+
 class BaseHandler():
     def current_user(self):
         """Returns the logged in Facebook user or None."""
@@ -116,12 +125,8 @@ class MainHandler(BaseHandler):
                 .filter(extract('month', Expense.date) == today.month)
                 .order_by(Expense.date.desc()).all())
 
-        categories = sorted(getcategories(expenses),
-                key=operator.itemgetter('amount'), reverse=True)
-
-        return render.index(user=self.current_user(), currency='&euro;',
-                expenses=expenses, categories=categories, form=expense(),
-                more=loadmore())
+        return render.index(user=self.current_user(),
+                today=today, currency='&euro;', form=expense())
 
 
 class ImportHandler(BaseHandler):
@@ -145,7 +150,42 @@ class ImportHandler(BaseHandler):
             web.ctx.orm.add(expense)
 
 
-class ExpensesAdd(BaseHandler):
+class ExpensesHandler(BaseHandler):
+    @protected
+    def GET(self):
+        today = datetime.today()
+        user_id = self.current_user().id if self.current_user() else ''
+
+        expenses = (web.ctx.orm.query(Expense)
+                .filter_by(user_id=user_id)
+                .filter(extract('year', Expense.date) == today.year)
+                .filter(extract('month', Expense.date) == today.month)
+                .order_by(Expense.date.desc()).all())
+
+        categories = sorted(getcategories(expenses),
+                key=operator.itemgetter('amount'), reverse=True)
+
+        return render.expenses(user=self.current_user(), currency='&euro;',
+                expenses=expenses, categories=categories, form=expense(),
+                more=loadmore())
+
+
+class ExpensesJSONHandler(BaseHandler):
+    @protected
+    def GET(self):
+        today = datetime.today()
+        user_id = self.current_user().id if self.current_user() else ''
+
+        expenses = (web.ctx.orm.query(Expense)
+                .filter_by(user_id=user_id)
+                .filter(extract('year', Expense.date) == today.year)
+                .filter(extract('month', Expense.date) == today.month)
+                .order_by(Expense.date.desc()).all())
+
+        return jsonify(expenses=expenses)
+
+
+class ExpensesAddHandler(BaseHandler):
     @protected
     def POST(self):
         form = expense()
@@ -154,7 +194,6 @@ class ExpensesAdd(BaseHandler):
                     amount=float(form.d.amount), category=form.d.category,
                     note=form.d.note,
                     date=datetime.strptime(form.d.date, "%d/%m/%Y %I:%M %p"))
-            web.debug(e.user_id)
             #web.ctx.orm.add(e)
         return render.expenses_add(form=form)
 

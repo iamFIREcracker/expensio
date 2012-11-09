@@ -6,11 +6,13 @@
     <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
     <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
     <script src="/static/js/logger.js"></script>
+    <script src="/static/js/expenses.ui.js"></script>
     <script src="/static/js/expenses.js"></script>
     <script>
     $(function() {
         Logger.onReady($('#message'), 2000);
-        ExpensesManager.onReady(Logger);
+        ExpensesUI.onReady($('#current_month'), $('#categories'), $('#expenses'));
+        ExpensesManager.onReady(Logger, 60000, ExpensesUI);
         $('#datepicker').datepicker();
         $('#category').autocomplete({
             source: [
@@ -24,40 +26,25 @@
 </head>
 
 <body>
-<h1>Expenses</h1>
-<div id="message" style="display:none"></div>
-<div class="grid grid-pad">
-    {% if user %}
-    <p><span>Welcome back, {{  user.name }}! (<a href="/logout" alt="Logout">Logout</a>)</span></p>
-    {% else %}
-    <p><span id="login"><a href="/login" alt="Login">Facebook login</a></span></p>
-    {% endif %}
+    <h1><span id="current_month"></span> Expenses</h1>
+    <div id="message" style="display:none"></div>
+    <div class="grid grid-pad">
+        {% if user %}
+        <p><span>Welcome back, {{  user.name }}! (<a href="/logout" alt="Logout">Logout</a>)</span></p>
+        {% else %}
+        <p><span id="login"><a href="/login" alt="Login">Facebook login</a></span></p>
+        {% endif %}
 
-    <div class="col-5-12">
-        <h2>Track new expense</h2>
-        {% include 'expenses_add.html' %}
+        <div class="col-5-12">
+            <h2>Track new expense</h2>
+            {% include 'expenses_add.html' %}
 
-        <h2>Current month</h2>
-        {% set palette = dict() %}
-        {% for cat in categories %}
-        <div class="cat">
-            {% do palette.update({cat['name']: palette | length}) %}
-            <span class="cat_name">{{ cat['name'] }}</span>
-            <span class="cat_amount">{{ cat['amount'] | cash }} {{ currency }}</span>
-            <span class="cat_bar_container">
-                <span class="cat_bar palette{{ palette[cat['name']] }}"
-                    style="width: {{ 100 * cat['amount'] / categories[0]['amount'] }}%">&nbsp;</span>
-            </span>
+            <h2>By category</h2>
+            <div id="categories"></div>
         </div>
-        {% endfor %}
+        <div class="col-7-12">
+            <h2>By date</h2>
+            <div id="expenses"></div>
+        </div>
     </div>
-    <div class="col-7-12">
-        <h2>By date</h2>
-        {% for exp in expenses %}
-            {% include 'expenses_view.html' %}
-        {% endfor %}
-        <br />
-    </div>
-</div>
-
 </body>
