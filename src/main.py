@@ -19,11 +19,13 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import extract
 from web.contrib.template import render_jinja
 
+from config import DATE_FORMAT
+from config import EPOCH
 from filters import datetimeformat
 from filters import cashformat
-from forms import expense
+from forms import expenses_add
 from forms import import_
-from forms import loadmore
+from forms import FORM_DATE_FORMAT
 from models import engine
 from models import AlchemyEncoder
 from models import Expense
@@ -39,8 +41,7 @@ FACEBOOK_APP_SECRET = "bcc5a62efaff20fc9808919b3e40a944"
 urls = (
     '/', 'MainHandler',
     '/import', 'ImportHandler',
-    '/expenses', 'ExpensesHandler',
-    '/expenses.json', 'ExpensesJSONHandler',
+    '/expenses.json', 'ExpensesHandler',
     '/expenses/add', 'ExpensesAddHandler',
     '/login', 'LoginHandler',
     '/logout', 'LogoutHandler',
@@ -116,17 +117,8 @@ def getcategories(expenses):
 
 class MainHandler(BaseHandler):
     def GET(self):
-        today = datetime.today()
-        user_id = self.current_user().id if self.current_user() else ''
-
-        expenses = (web.ctx.orm.query(Expense)
-                .filter_by(user_id=user_id)
-                .filter(extract('year', Expense.date) == today.year)
-                .filter(extract('month', Expense.date) == today.month)
-                .order_by(Expense.date.desc()).all())
-
         return render.index(user=self.current_user(),
-                today=today, currency='&euro;', form=expense())
+                expenses_add=expenses_add())
 
 
 class ImportHandler(BaseHandler):
@@ -154,32 +146,21 @@ class ExpensesHandler(BaseHandler):
     @protected
     def GET(self):
         today = datetime.today()
+        data = web.input(year=today.year, month=today.month,
+                latest=EPOCH)
         user_id = self.current_user().id if self.current_user() else ''
+
+        year = int(data.year)
+        month = int(data.month)
+        latest = datetime.strptime(data.latest, DATE_FORMAT)
+
+        web.debug(year, month, latest)
 
         expenses = (web.ctx.orm.query(Expense)
                 .filter_by(user_id=user_id)
-                .filter(extract('year', Expense.date) == today.year)
-                .filter(extract('month', Expense.date) == today.month)
-                .order_by(Expense.date.desc()).all())
-
-        categories = sorted(getcategories(expenses),
-                key=operator.itemgetter('amount'), reverse=True)
-
-        return render.expenses(user=self.current_user(), currency='&euro;',
-                expenses=expenses, categories=categories, form=expense(),
-                more=loadmore())
-
-
-class ExpensesJSONHandler(BaseHandler):
-    @protected
-    def GET(self):
-        today = datetime.today()
-        user_id = self.current_user().id if self.current_user() else ''
-
-        expenses = (web.ctx.orm.query(Expense)
-                .filter_by(user_id=user_id)
-                .filter(extract('year', Expense.date) == today.year)
-                .filter(extract('month', Expense.date) == today.month)
+                .filter(extract('year', Expense.date) == year)
+                .filter(extract('month', Expense.date) == month)
+                .filter(Expense.updated > latest)
                 .order_by(Expense.date.desc()).all())
 
         return jsonify(expenses=expenses)
@@ -188,14 +169,14 @@ class ExpensesJSONHandler(BaseHandler):
 class ExpensesAddHandler(BaseHandler):
     @protected
     def POST(self):
-        form = expense()
+        form = expenses_add()
         if form.validates():
             e = Expense(user_id=self.current_user().id,
                     amount=float(form.d.amount), category=form.d.category,
                     note=form.d.note,
-                    date=datetime.strptime(form.d.date, "%d/%m/%Y %I:%M %p"))
-            #web.ctx.orm.add(e)
-        return render.expenses_add(form=form)
+                    date=datetime.strptime(form.d.date, FORM_DATE_FORMAT))
+            web.ctx.orm.add(e)
+        return render.expenses_add(expenses_add=form)
 
 
 class UserEditHandler(BaseHandler):

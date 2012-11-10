@@ -30,12 +30,12 @@ h1, h2 {
 
 .cat_name {
     display: inline-block;
-    width: 23%;
+    width: 21%;
 }
 
 .cat_amount {
     display: inline-block;
-    width: 18%;
+    width: 22%;
 }
 
 .cat_bar_container {
@@ -51,12 +51,12 @@ h1, h2 {
 .exp {
     width: 100%;
     font-size: 110%;
-    margin-top: 3px;
+    padding: 5px;
 }
 
 .exp_amount {
     display: inline-block;
-    width: 13%;
+    width: 16%;
 }
 
 .exp_category {
@@ -75,4 +75,12 @@ h1, h2 {
     text-align: right;
     display: inline-block;
     width: 15%;
+}
+
+#prev {
+    display: inline-block;
+}
+
+#next {
+    float: right;
 }

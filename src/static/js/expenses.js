@@ -3,29 +3,43 @@ var ExpensesManager = (function() {
         _logger: null,
         _refreshtimeout: null,
         _ui: null,
-        _latestupate: null,
+        _timeoutid: null,
 
         onReady: function(logger, refreshtimeout, ui) {
             this._logger = logger;
             this._refreshtimeout = refreshtimeout;
             this._ui = ui;
-            this._latestupdate = "";
-            this._onTimeout();
+
+            this.update(0);
         },
 
-        _onTimeout: function() {
+        update: function(timeout) {
+            if (this._timeoutid != null) {
+                clearTimeout(this._timeoutid);
+            }
+
+            this._timeoutid = setTimeout(function(this_) {
+                return function() {
+                    this_._onUpdate();
+                };
+            }(this), timeout);
+        },
+
+        _onUpdate: function() {
             $.ajax({
-               url: '/expenses.json',
+                url: '/expenses.json',
                 type: 'GET',
                 dataType: 'json',
+                data: {
+                    year: this._ui.getYear(),
+                    month: this._ui.getMonth(),
+                    latest: this._ui.getLatestUpdate(),
+                },
                 success: function(this_) {
                     return function(data) {
                         this_._ui.onNewData(data);
-                        //setTimeout(function(this_) {
-                            //return function() {
-                                //this_._onTimeout();
-                            //};
-                        //}(this_), this_._refreshtimeout);
+
+                        this_.update(this_._refreshtimeout);
                     };
                 }(this),
                 error: function(this_) {
@@ -50,17 +64,30 @@ var ExpensesManager = (function() {
                         $form.replaceWith($data);
                         if ($data.find('.wrong').length == 0) {
                             this_._logger.error('Expense tracked successfully!');
+
+                            this_.update()
                         }
                     };
                 }(this),
                 error: function(this_) {
                     return function(data) {
-                        this_._logger.error('Oppps! :-(');
+                        this_._logger
+                            .error('Something went wrong while contacting the server');
                     };
                 }(this),
             });
 
             return false;
         },
+
+        previousMonth: function() {
+            this._ui.onPreviousMonth();
+            this.update();
+        },
+
+        nextMonth: function() {
+            this._ui.onNextMonth();
+            this.update();
+        }
     }
 })();
