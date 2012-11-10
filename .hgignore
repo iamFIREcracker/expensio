@@ -1,4 +1,6 @@
 syntax: glob
 
-.*pyc
-.*db
+*pyc
+*db
+cscope*
+tags
