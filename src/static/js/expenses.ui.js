@@ -15,49 +15,53 @@ function size(obj) {
 
 
 var ExpensesUI = (function() {
-    return {
-        __months: [ "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December" ],
-        __animationtimeout: 200, // milliseconds
-        _$categories: null,
-        _$expenses: null,
-        _maxamount: null,
-        _palette: null,
-        _categories: null,
-        _expenses: null,
-        _curmonth: null,
-        _curyear: null,
-        _latestupdate: null,
+    var __months = [ "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December" ];
+    var __beforeanimatetimeout = 200;
+    var __animationtimeout = 200; // milliseconds
 
+    var _$title = null;
+    var _$categories = null;
+    var _$expenses = null;
+    var _curyear = null;
+    var _curmonth = null;
+
+    var _maxamount = null;
+    var _palette = null;
+    var _categories = null;
+    var _expenses = null;
+    var _latestupdate = null;
+
+    return {
         onReady: function($title, $categories, $expenses) {
             var date = new Date();
 
-            this._$title = $title;
-            this._$categories = $categories;
-            this._$expenses = $expenses;
-            this._curyear = date.getYear() + 1900; // Fix relative to 1900
-            this._curmonth = date.getMonth(); // 0-indexed months
+            _$title = $title;
+            _$categories = $categories;
+            _$expenses = $expenses;
+            _curyear = date.getYear() + 1900; // Fix relative to 1900
+            _curmonth = date.getMonth(); // 0-indexed months
 
             this._init();
         },
 
         _init: function() {
-            this._$categories.empty();
-            this._$expenses.empty();
-            this._maxamount = 0.0;
-            this._palette = {};
-            this._categories = {};
-            this._expenses = Array();
-            this._latestupdate = '1970-01-01 00:00:00.000000'; // epoch
+            _$categories.empty();
+            _$expenses.empty();
+            _maxamount = 0.0;
+            _palette = Object();
+            _categories = Object();
+            _expenses = Array();
+            _latestupdate = '1970-01-01 00:00:00.000000'; // epoch
 
-            this.renderCurrentMonth(this.__months[this._curmonth], this._curyear);
+            this.renderCurrentMonth(__months[_curmonth], _curyear);
         },
 
         onPreviousMonth: function() {
-            this._curmonth -= 1;
-            if (this._curmonth < 0) {
-                this._curmonth = 11;
-                this._curyear -= 1;
+            _curmonth -= 1;
+            if (_curmonth < 0) {
+                _curmonth = 11;
+                _curyear -= 1;
             }
 
             this._init();
@@ -65,51 +69,51 @@ var ExpensesUI = (function() {
 
 
         onNextMonth: function() {
-            this._curmonth += 1;
-            console.log(this._curmonth);
-            if (this._curmonth == 12) {
-                this._curmonth = 0;
-                this._curyear += 1;
+            _curmonth += 1;
+            console.log(_curmonth);
+            if (_curmonth == 12) {
+                _curmonth = 0;
+                _curyear += 1;
             }
 
             this._init();
         },
 
         getYear: function() {
-            return this._curyear;
+            return _curyear;
         },
 
         getMonth: function() {
-            return this._curmonth + 1;
+            return _curmonth + 1;
         },
 
         getLatestUpdate: function() {
-            return this._latestupdate;
+            return _latestupdate;
         },
 
         _updateCategory: function(exp) {
             var catname = exp.category;
             var currency = exp.currency;
 
-            if (!(catname in this._palette)) {
-                this._palette[catname] = size(this._palette);
-                this._categories[catname] = Category(catname, 0, currency);
-                this._$categories.append(this._categories[catname].$elem);
+            if (!(catname in _palette)) {
+                _palette[catname] = size(_palette);
+                _categories[catname] = Category(catname, 0, currency);
+                _$categories.append(_categories[catname].$elem);
             }
-            var cat = this._categories[catname];
+            var cat = _categories[catname];
 
             cat.addAmount(exp.amount);
-            if (exp.updated > this._latestupdate) {
-                this._latestupdate = exp.updated;
+            if (exp.updated > _latestupdate) {
+                _latestupdate = exp.updated;
             }
 
             // Notify all the categories that a new normalization factor has
             // been set.
-            if (cat.amount > this._maxamount) {
-                this._maxamount = cat.amount;
+            if (cat.amount > _maxamount) {
+                _maxamount = cat.amount;
             }
-            for (catname in this._categories) {
-                this._categories[catname].onNormalize(this._maxamount);
+            for (catname in _categories) {
+                _categories[catname].onNormalize(_maxamount);
             }
         },
 
@@ -118,13 +122,15 @@ var ExpensesUI = (function() {
                     exp.date);
             var put = false;
 
-            if (this._expenses.length != 0) {
-                for (var i = 0; i < this._expenses.length; i++) {
-                    var curexpense = this._expenses[i];
+            if (_expenses.length != 0) {
+                console.log('t: ' + expense.date);
+                for (var i = 0; i < _expenses.length; i++) {
+                    var curexpense = _expenses[i];
 
+                    console.log('c: ' + curexpense.date);
                     if (expense.date > curexpense.date) {
                         expense.$elem.insertBefore(curexpense.$elem);
-                        this._expenses.insert(0, expense);
+                        _expenses.insert(i, expense);
                         put = true;
                         break;
                     }
@@ -133,9 +139,8 @@ var ExpensesUI = (function() {
             }
 
             if (!put) {
-                this._$expenses.append(expense.$elem);
-                this._expenses.push(expense);
-                put = true;
+                _$expenses.append(expense.$elem);
+                _expenses.push(expense);
             }
 
             expense.onDisplay();
@@ -156,11 +161,11 @@ var ExpensesUI = (function() {
         },
 
         renderCurrentMonth: function(month, year) {
-            this._$title.html('Expenses, ' + month + ' ' + year);
+            _$title.html('Expenses, ' + month + ' ' + year);
         },
 
         getPalette: function(category) {
-            return this._palette[category];
+            return _palette[category];
         },
 
         formatAmount: function(amount, currency) {
@@ -190,14 +195,23 @@ var Expense = function(ui) {
     '<span class="exp_date">' + ui.formatDate(date) + '</span>' +
 '</div>'
                 ),
+            _timeoutid: null,
 
             onDisplay: function() {
-                var oldbackground = this.$elem.css('backgroundColor');
+                if (this._timeoutid != null) {
+                    clearInterval(this._timeoutid);
+                }
 
-                this.$elem.css('backgroundColor', '#ffff9c');
-                this.$elem.delay(1000).animate({
-                    backgroundColor: oldbackground
-                }, 'slow');
+                this._timeoutid = setTimeout(function(this_) {
+                    return function() {
+                        var oldbackground = this_.$elem.css('backgroundColor');
+
+                        this_.$elem.css('backgroundColor', '#ffff9c');
+                        this_.$elem.delay(ui.__animationtimeout).animate({
+                            backgroundColor: oldbackground
+                        }, 'slow');
+                    };
+                }(this), ui.__beforeanimatetimeout); // XXX use appropriate timeout
             },
         };
     };
@@ -256,7 +270,7 @@ var Category = function(ui) {
                             width: width + '%',
                         }, ui.__animationtimeout);
                     };
-                }(this), 200); // XXX use appropriate timeout
+                }(this), ui.__beforeanimatetimeout);
             }
         };
     };
