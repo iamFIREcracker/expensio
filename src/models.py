@@ -72,7 +72,7 @@ class Expense(Base):
             'updated': lambda o: datetime.strftime(o.updated, DATE_FORMAT),
             'category': lambda o: o.category,
             'amount': lambda o: float(o.amount),
-            'currency': lambda o: '&euro;',
+            'currency': lambda o: '&euro;', # XXX use proper value
             'note': lambda o: o.note,
             }
 

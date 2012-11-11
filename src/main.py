@@ -15,6 +15,8 @@ import web
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import extract
+from sqlalchemy import func
+from sqlalchemy import or_
 from web.contrib.template import render_jinja
 
 from config import DATE_FORMAT
@@ -110,6 +112,20 @@ def owner(model):
     return inner1
 
 
+
+class Category(object):
+    __serializable__ = {
+        'name': lambda o: o.name,
+        'amount': lambda o: o.amount,
+        'currency': lambda o: '&euro;', # XXX use proper value
+        }
+
+    def __init__(self, name, amount):
+        self.name = name
+        self.amount = amount
+
+
+
 class BaseHandler():
     def current_user(self):
         """Returns the logged in Facebook user or None."""
@@ -200,9 +216,19 @@ class ExpensesHandler(BaseHandler):
                 .filter(extract('year', Expense.date) == year)
                 .filter(extract('month', Expense.date) == month)
                 .filter(Expense.updated > latest)
-                .order_by(Expense.date.desc()).all())
+                .order_by(Expense.date.desc())
+                .all())
 
-        return jsonify(expenses=expenses)
+        categories = (web.ctx.orm.query(Expense.category, func.sum(Expense.amount))
+                .filter_by(user_id=user_id)
+                .filter(extract('year', Expense.date) == year)
+                .filter(extract('month', Expense.date) == month)
+                .filter(or_(*[Expense.category == e.category for e in expenses]))
+                .group_by(Expense.category)
+                .all())
+
+        return jsonify(expenses=expenses,
+                categories=[Category(*c) for c in categories])
 
 
 class ExpensesAddHandler(BaseHandler):
