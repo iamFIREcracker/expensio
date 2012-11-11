@@ -4,9 +4,7 @@
 from __future__ import division
 from __future__ import unicode_literals
 
-import itertools
 import json
-import operator
 import os
 import time
 import urllib
@@ -24,6 +22,7 @@ from config import EPOCH
 from filters import datetimeformat
 from filters import cashformat
 from forms import expenses_add
+from forms import expenses_edit
 from forms import import_
 from forms import FORM_DATE_FORMAT
 from models import engine
@@ -43,6 +42,8 @@ urls = (
     '/import', 'ImportHandler',
     '/expenses.json', 'ExpensesHandler',
     '/expenses/add', 'ExpensesAddHandler',
+    '/expenses/(\d+)/edit', 'ExpensesEditHandler',
+    '/expenses/(\d+)/delete', 'ExpensesDeleteHandler',
     '/login', 'LoginHandler',
     '/logout', 'LogoutHandler',
     '/periods', 'PeriodsHandler',
@@ -76,6 +77,12 @@ def path_url():
     return web.ctx.home + web.ctx.fullpath
 
 
+def jsonify(*args, **kwargs):
+    web.header('Content-Type', 'application/json')
+
+    return json.dumps(dict(*args, **kwargs), cls=AlchemyEncoder)
+
+
 def protected(func):
     def inner(self, *args, **kwargs):
         if not self.current_user():
@@ -86,10 +93,21 @@ def protected(func):
     return inner
 
 
-def jsonify(*args, **kwargs):
-    web.header('Content-Type', 'application/json')
+def owner(model):
+    def inner1(func):
+        def inner2(self, id):
+            record = (web.ctx.orm.query(model)
+                    .filter_by(id=id)
+                    .filter_by(user_id=self.current_user().id)
+                    .first())
+            if not record:
+                web.notfound()
+                return
 
-    return json.dumps(dict(*args, **kwargs), cls=AlchemyEncoder)
+            setattr(self, '_current_item', record)
+            return func(self, id)
+        return inner2
+    return inner1
 
 
 class BaseHandler():
@@ -106,13 +124,9 @@ class BaseHandler():
         return self._current_user
 
 
-def getcategories(expenses):
-    """Given a list of expenses, return the amount spent per category."""
-    bycategory = sorted(expenses, key=operator.attrgetter('category'))
-    for (category, group) in itertools.groupby(bycategory,
-            key=operator.attrgetter('category')):
-        yield {'name': category, 'amount':
-                sum(map(operator.attrgetter('amount'), group))}
+class ItemHandler():
+    def current_item(self):
+        return self._current_item
 
 
 class MainHandler(BaseHandler):
@@ -154,8 +168,6 @@ class ExpensesHandler(BaseHandler):
         month = int(data.month)
         latest = datetime.strptime(data.latest, DATE_FORMAT)
 
-        web.debug(year, month, latest)
-
         expenses = (web.ctx.orm.query(Expense)
                 .filter_by(user_id=user_id)
                 .filter(extract('year', Expense.date) == year)
@@ -179,11 +191,37 @@ class ExpensesAddHandler(BaseHandler):
         return render.expenses_add(expenses_add=form)
 
 
-class UserEditHandler(BaseHandler):
+class ExpensesEditHandler(BaseHandler, ItemHandler):
+    @protected
+    @owner(Expense)
+    def GET(self, id):
+        form = expenses_edit()
+        item = self.current_item()
+        form.fill(id=item.id, amount=item.amount, category=item.category,
+                note=item.note, date=datetime.strftime(item.date, FORM_DATE_FORMAT))
+        return render.expenses_edit_complete(expenses_edit=form)
 
     @protected
-    def GET(self):
-        pass
+    @owner(Expense)
+    def POST(self, id):
+        form = expenses_edit()
+        if form.validates():
+            e = Expense(id=int(form.d.id), user_id=self.current_user().id,
+                    amount=float(form.d.amount), category=form.d.category,
+                    note=form.d.note,
+                    date=datetime.strptime(form.d.date, FORM_DATE_FORMAT))
+            e = web.ctx.orm.merge(e) # Merge flying and persistence object
+            web.ctx.orm.add(e)
+        return render.expenses_edit(expenses_edit=form)
+
+
+class ExpensesDeleteHandler(BaseHandler, ItemHandler):
+    @protected
+    @owner(Expense)
+    def POST(self, id):
+        form = expenses_edit()
+        web.ctx.orm.delete(self.current_item())
+        return render.expenses_edit(expenses_edit=form)
 
 
 class LoginHandler(BaseHandler):

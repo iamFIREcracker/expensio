@@ -13,8 +13,6 @@
         Logger.onReady($('#message'), 2000);
         ExpensesUI.onReady($('#current_month'), $('#categories'), $('#expenses'));
         ExpensesManager.onReady(Logger, 60000, ExpensesUI);
-
-        ExpensesManager.update(0);
     });
     </script>
 </head>
@@ -23,28 +21,9 @@
     <div id="message" style="display:none"></div>
     <h1>Expenses</h1>
     <div class="grid grid-pad">
-        {% include 'greetings.html' %}
-
         <div class="col-5-12">
-            <h2>Track new expense</h2>
-            {% include 'expenses_add.html' %}
-        </div>
-        <div class="col-7-12">
-            <h2>Last 30 days</h2>
-        </div>
-    </div>
-    <div class="grid grid-pad">
-        <h2><span id="current_month"></span></h2>
-        <div class="col-5-12">
-            <h3>By category</h3>
-            <div id="categories"></div>
-        </div>
-        <div class="col-7-12">
-            <h3>By date</h3>
-            <div id="expenses"></div>
-
-            <br />
-            {% include 'expenses_more.html' %}
+            <h2>Edit expense</h2>
+            {% include 'expenses_edit.html' %}
         </div>
     </div>
 </body>

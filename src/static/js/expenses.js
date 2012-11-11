@@ -9,8 +9,6 @@ var ExpensesManager = (function() {
             this._logger = logger;
             this._refreshtimeout = refreshtimeout;
             this._ui = ui;
-
-            this.update(0);
         },
 
         update: function(timeout) {
@@ -63,9 +61,72 @@ var ExpensesManager = (function() {
                         $data = $(data);
                         $form.replaceWith($data);
                         if ($data.find('.wrong').length == 0) {
-                            this_._logger.error('Expense tracked successfully!');
+                            this_._logger.success('Expense tracked successfully!');
 
                             this_.update()
+                        }
+                    };
+                }(this),
+                error: function(this_) {
+                    return function(data) {
+                        this_._logger
+                            .error('Something went wrong while contacting the server');
+                    };
+                }(this),
+            });
+
+            return false;
+        },
+
+        onEditSubmit: function(form) {
+            $form = $(form);
+            $.ajax({
+                url: '/expenses/' + $form.find('#id').val() + '/edit',
+                type: 'POST',
+                dataType: 'html',
+                data: $form.serialize(),
+                success: function(this_) {
+                    return function(data) {
+                        $data = $(data);
+                        $form.replaceWith($data);
+                        if ($data.find('.wrong').length == 0) {
+                            this_._logger.success(
+                                'Expense edited successfully!', function() {
+                                    setTimeout(function() {
+                                        parent.history.back();
+                                    }, 2000);
+                                });
+                        }
+                    };
+                }(this),
+                error: function(this_) {
+                    return function(data) {
+                        this_._logger
+                            .error('Something went wrong while contacting the server');
+                    };
+                }(this),
+            });
+
+            return false;
+        },
+
+        onDeleteSubmit: function(form) {
+            $form = $(form);
+            $.ajax({
+                url: '/expenses/' + $form.find('#id').val() + '/delete',
+                type: 'POST',
+                dataType: 'html',
+                success: function(this_) {
+                    return function(data) {
+                        $data = $(data);
+                        $form.replaceWith($data);
+                        if ($data.find('.wrong').length == 0) {
+                            this_._logger.success(
+                                'Expense deleted successfully!', function() {
+                                    setTimeout(function() {
+                                        parent.history.back();
+                                    }, 2000);
+                                });
                         }
                     };
                 }(this),

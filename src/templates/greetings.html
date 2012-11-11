@@ -1,0 +1,5 @@
+{% if user %}
+<p><span>Welcome back, {{  user.name }}! (<a href="/logout" alt="Logout">Logout</a>)</span></p>
+{% else %}
+<p><span id="login"><a href="/login" alt="Login">Facebook login</a></span></p>
+{% endif %}

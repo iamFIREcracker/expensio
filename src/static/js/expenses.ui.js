@@ -70,7 +70,6 @@ var ExpensesUI = (function() {
 
         onNextMonth: function() {
             _curmonth += 1;
-            console.log(_curmonth);
             if (_curmonth == 12) {
                 _curmonth = 0;
                 _curyear += 1;
@@ -89,6 +88,10 @@ var ExpensesUI = (function() {
 
         getLatestUpdate: function() {
             return _latestupdate;
+        },
+
+        getMaxAmount: function() {
+            return _maxamount;
         },
 
         _updateCategory: function(exp) {
@@ -113,21 +116,19 @@ var ExpensesUI = (function() {
                 _maxamount = cat.amount;
             }
             for (catname in _categories) {
-                _categories[catname].onNormalize(_maxamount);
+                _categories[catname].onDisplay();
             }
         },
 
         _updateExpense: function(exp) {
-            var expense = Expense(exp.amount, '&euro;', exp.category, exp.note,
+            var expense = Expense(exp.id, exp.amount, '&euro;', exp.category, exp.note,
                     exp.date);
             var put = false;
 
             if (_expenses.length != 0) {
-                console.log('t: ' + expense.date);
                 for (var i = 0; i < _expenses.length; i++) {
                     var curexpense = _expenses[i];
 
-                    console.log('c: ' + curexpense.date);
                     if (expense.date > curexpense.date) {
                         expense.$elem.insertBefore(curexpense.$elem);
                         _expenses.insert(i, expense);
@@ -147,7 +148,6 @@ var ExpensesUI = (function() {
         },
 
         _onNewData: function(exp) {
-            // XXX ignore expenses not in the current *view*
             this._updateCategory(exp);
             this._updateExpense(exp);
         },
@@ -161,7 +161,7 @@ var ExpensesUI = (function() {
         },
 
         renderCurrentMonth: function(month, year) {
-            _$title.html('Expenses, ' + month + ' ' + year);
+            _$title.html(month + ' ' + year);
         },
 
         getPalette: function(category) {
@@ -180,7 +180,7 @@ var ExpensesUI = (function() {
 
 
 var Expense = function(ui) {
-    return function(amount, currency, catname, note, date) {
+    return function(id, amount, currency, catname, note, date) {
         return {
             amount: amount,
             currency: currency,
@@ -192,7 +192,7 @@ var Expense = function(ui) {
     '<span class="exp_amount">' + ui.formatAmount(amount, currency) + '</span>' +
     '<span class="exp_category palette palette' + ui.getPalette(catname) + '">' + catname + '</span>' +
     '<span class="exp_note">' + note + '</span>' +
-    '<span class="exp_date">' + ui.formatDate(date) + '</span>' +
+    '<span class="exp_date"><a href="/expenses/' + id + '/edit">' + ui.formatDate(date) + '</a></span>' +
 '</div>'
                 ),
             _timeoutid: null,
@@ -211,7 +211,7 @@ var Expense = function(ui) {
                             backgroundColor: oldbackground
                         }, 'slow');
                     };
-                }(this), ui.__beforeanimatetimeout); // XXX use appropriate timeout
+                }(this), ui.__beforeanimatetimeout);
             },
         };
     };
@@ -253,7 +253,7 @@ var Category = function(ui) {
                 this._$elem_amount.html(ui.formatAmount(this.amount, this.currency));
             },
 
-            onNormalize: function(norm) {
+            onDisplay: function() {
                 if (this._timeoutid != null) {
                     clearInterval(this._timeoutid);
                 }
@@ -265,7 +265,7 @@ var Category = function(ui) {
                             this_._$elem_bar = this_.$elem.find('.cat_bar');
                         }
 
-                        var width = 100 * this_.amount / norm;
+                        var width = 100 * this_.amount / ui.getMaxAmount();
                         this_._$elem_bar.animate({
                             width: width + '%',
                         }, ui.__animationtimeout);

@@ -8,8 +8,12 @@ var Logger = (function() {
             this._fadeouttimeout = fadeouttimeout;
         },
 
-        success: function(msg) {
+        success: function(msg, next) {
             this.error(msg);
+
+            if ((typeof next != undefined) && (next != null)) {
+                next();
+            }
         },
 
         error: function(msg) {
