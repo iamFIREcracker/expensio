@@ -29,8 +29,7 @@ Base = declarative_base()
 
 class AlchemyEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj.__class__, DeclarativeMeta):
-            # an SQLAlchemy class
+        if hasattr(obj, '__serializable__'):
             fields = {}
             for (field, f) in obj.__serializable__.iteritems():
                 data = f(obj);
@@ -76,6 +75,7 @@ class Expense(Base):
             'currency': lambda o: '&euro;',
             'note': lambda o: o.note,
             }
+
 
 
 metadata = Base.metadata
