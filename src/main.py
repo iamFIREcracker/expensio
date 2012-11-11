@@ -40,14 +40,13 @@ FACEBOOK_APP_SECRET = "bcc5a62efaff20fc9808919b3e40a944"
 
 urls = (
     '/', 'MainHandler',
+    '/login/facebook', 'LoginFacebookHandler',
+    '/logout', 'LogoutHandler',
     '/expenses.json', 'ExpensesHandler',
     '/expenses/add', 'ExpensesAddHandler',
     '/expenses/(\d+)/edit', 'ExpensesEditHandler',
     '/expenses/(\d+)/delete', 'ExpensesDeleteHandler',
     '/expenses/import', 'ExpensesImportHandler',
-    '/login', 'LoginHandler',
-    '/logout', 'LogoutHandler',
-    '/periods', 'PeriodsHandler',
 )
 
 
@@ -132,8 +131,11 @@ class ItemHandler():
 
 class MainHandler(BaseHandler):
     def GET(self):
-        return render.index(user=self.current_user(),
-                expenses_add=expenses_add())
+        if not self.current_user():
+            return render.info()
+        else:
+            return render.index(user=self.current_user(),
+                    expenses_add=expenses_add())
 
 
 class ExpensesImportHandler(BaseHandler):
@@ -228,7 +230,7 @@ class ExpensesDeleteHandler(BaseHandler, ItemHandler):
         return render.expenses_edit(expenses_edit=form)
 
 
-class LoginHandler(BaseHandler):
+class LoginFacebookHandler(BaseHandler):
     def GET(self):
         if self.current_user():
             web.seeother('/')

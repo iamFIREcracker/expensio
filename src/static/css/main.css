@@ -4,9 +4,13 @@ body {
 
 h1 {
     margin-top: 20px;
+    font-size: 500%;
+    font-style: italic;
 }
+
 h1, h2, h3 {
     text-align: center;
+    text-shadow: 2px 2px #ccc;
 }
 
 #message {

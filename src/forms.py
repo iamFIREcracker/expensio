@@ -25,7 +25,7 @@ expenses_add = form.Form(
             id='category'),
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdatetime, description='Date'),
-        form.Button('Add', type='submit', class_='right'),
+        form.Button('Add', type='submit'),
     )
 
 expenses_edit = form.Form(
@@ -35,9 +35,9 @@ expenses_edit = form.Form(
             id='category'),
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdatetime, description='Date'),
-        form.Button('Edit', type='submit', class_='right',
+        form.Button('Edit', type='submit',
             onclick='ExpensesManager.onEditSubmit(this.form);'),
-        form.Button('Delete', type='submit', class_='right',
+        form.Button('Delete', type='submit',
             onclick='ExpensesManager.onDeleteSubmit(this.form);'),
     )
 
