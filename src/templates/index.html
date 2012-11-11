@@ -1,50 +1,31 @@
-<head>
-    <link rel="stylesheet" href="/static/css/simplegrid.css" type="text/css" />
-    <link rel="stylesheet" href="/static/css/main.css" type="text/css" />
-    <link rel="stylesheet" href="/static/css/palette.css" type="text/css" />
-    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
-    <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
-    <script src="/static/js/sprintf.js"></script>
-    <script src="/static/js/logger.js"></script>
-    <script src="/static/js/expenses.ui.js"></script>
-    <script src="/static/js/expenses.js"></script>
-    <script>
-    $(function() {
-        Logger.onReady($('#message'), 2000);
-        ExpensesUI.onReady($('#current_month'), $('#categories'), $('#expenses'));
-        ExpensesManager.onReady(Logger, 60000, ExpensesUI);
+{% extends 'base.html' %}
 
-        ExpensesManager.update(0);
-    });
-    </script>
-</head>
+{% block jsready %}
+    ExpensesManager.update(0);
+{% endblock %}
 
-<body>
-    <div id="message" style="display:none"></div>
-    <h1>Expenses</h1>
-    <div class="grid grid-pad">
-        {% include 'greetings.html' %}
+{% block pre_row1 %}
+    {% include 'greetings.html' %}
+{% endblock %}
 
-        <div class="col-5-12">
-            <h2>Track new expense</h2>
-            {% include 'expenses_add.html' %}
-        </div>
-        <div class="col-7-12">
-            <h2>Last 30 days</h2>
-        </div>
-    </div>
-    <div class="grid grid-pad">
-        <h2><span id="current_month"></span></h2>
-        <div class="col-5-12">
-            <h3>By category</h3>
-            <div id="categories"></div>
-        </div>
-        <div class="col-7-12">
-            <h3>By date</h3>
-            <div id="expenses"></div>
+{% block row1_col1 %}
+    <h2>Track new expense</h2>
+    {% include 'expenses_add.html' %}
+{% endblock %}
 
-            <br />
-            {% include 'expenses_more.html' %}
-        </div>
-    </div>
-</body>
+{% block row1_col2 %}
+    <h2>Last 30 days</h2>
+{% endblock %}
+
+{% block row2_col1 %}
+    <h3>By category</h3>
+    <div id="categories"></div>
+{% endblock %}
+
+{% block row2_col2 %}
+    <h3>By date</h3>
+    <div id="expenses"></div>
+
+    <br />
+    {% include 'expenses_more.html' %}
+{% endblock %}

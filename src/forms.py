@@ -7,6 +7,7 @@ from web import form
 
 
 FORM_DATE_FORMAT = '%Y-%m-%d %H:%M'
+FORM_PERIOD_FORMAT = '%Y-%m'
 
 
 validamount = form.Validator(
@@ -40,8 +41,15 @@ expenses_edit = form.Form(
             onclick='ExpensesManager.onDeleteSubmit(this.form);'),
     )
 
-import_ = form.Form(
-        form.Textbox('period', description='Period'),
-        form.Textarea('expenses', description='', cols=80, rows=24),
+
+validperiod = form.Validator(
+        '2012-11',
+        lambda v: datetime.strptime(v, FORM_PERIOD_FORMAT))
+
+
+expenses_import = form.Form(
+        form.Textbox('period', validperiod, description='Period'),
+        form.Textarea('expenses', form.notnull, description='', cols=80,
+            rows=24),
         form.Button('Import', type='sumbit'),
     )

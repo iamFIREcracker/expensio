@@ -1,8 +1,7 @@
-<head>
+{% extends 'base.html' %}
 
-</head>
-<body>
-    <h1>Import expenses</h1>
+{% block pre_row1 %}
+    <h2>Import expenses</h2>
 
     <p><span>Hi {{ user.name }}, I see you wanna import some expenses!</span></p>
 
@@ -11,4 +10,4 @@
     <form method="POST" accept-charset='utf-8'>
         {{ form.render() }}
     </form>
-</body>
+{% endblock %}

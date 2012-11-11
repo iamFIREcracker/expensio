@@ -23,8 +23,9 @@ from filters import datetimeformat
 from filters import cashformat
 from forms import expenses_add
 from forms import expenses_edit
-from forms import import_
+from forms import expenses_import
 from forms import FORM_DATE_FORMAT
+from forms import FORM_PERIOD_FORMAT
 from models import engine
 from models import AlchemyEncoder
 from models import Expense
@@ -39,11 +40,11 @@ FACEBOOK_APP_SECRET = "bcc5a62efaff20fc9808919b3e40a944"
 
 urls = (
     '/', 'MainHandler',
-    '/import', 'ImportHandler',
     '/expenses.json', 'ExpensesHandler',
     '/expenses/add', 'ExpensesAddHandler',
     '/expenses/(\d+)/edit', 'ExpensesEditHandler',
     '/expenses/(\d+)/delete', 'ExpensesDeleteHandler',
+    '/expenses/import', 'ExpensesImportHandler',
     '/login', 'LoginHandler',
     '/logout', 'LogoutHandler',
     '/periods', 'PeriodsHandler',
@@ -135,25 +136,28 @@ class MainHandler(BaseHandler):
                 expenses_add=expenses_add())
 
 
-class ImportHandler(BaseHandler):
+class ExpensesImportHandler(BaseHandler):
     @protected
     def GET(self):
-        return render.importexpenses(user=self.current_user(), form=import_())
+        return render.expenses_import(user=self.current_user(),
+                form=expenses_import())
 
     @protected
     def POST(self):
-        form = import_()
+        form = expenses_import()
         if not form.validates():
-            return render.importexpenses(user=self.current_user(), form=form)
+            return render.expenses_import(user=self.current_user(), form=form)
 
         for line in form.d.expenses.split('\r\n'):
             tokens = line.split('\t')
-            date = datetime.strptime(form.d.period + tokens[0], '%Y%m%d')
+            date = datetime.strptime(form.d.period + tokens[0],
+                    FORM_PERIOD_FORMAT + '%d')
             amount = tokens[2].split()[1]
             note = tokens[3] if len(tokens) >= 4 else ''
             expense = Expense(user_id=self.current_user().id, date=date,
                     category=tokens[1], amount=amount, note=note)
             web.ctx.orm.add(expense)
+        web.seeother('/')
 
 
 class ExpensesHandler(BaseHandler):
