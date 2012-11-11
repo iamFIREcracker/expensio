@@ -224,6 +224,7 @@ class ExpensesHandler(BaseHandler):
                 .filter(extract('year', Expense.date) == year)
                 .filter(extract('month', Expense.date) == month)
                 .filter(or_(*[Expense.category == e.category for e in expenses]))
+                .order_by(Expense.category)
                 .group_by(Expense.category)
                 .all())
 

@@ -94,21 +94,15 @@ var ExpensesUI = (function() {
             return _maxamount;
         },
 
-        _updateCategory: function(exp) {
-            var catname = exp.category;
-            var currency = exp.currency;
+        _updateCategory: function(cat) {
+            var currency = cat.currency;
 
-            if (!(catname in _palette)) {
-                _palette[catname] = size(_palette);
-                _categories[catname] = Category(catname, 0, currency);
-                _$categories.append(_categories[catname].$elem);
+            if (!(cat.name in _palette)) {
+                _palette[cat.name] = size(_palette);
+                _categories[cat.name] = Category(cat.name, 0, currency);
+                _$categories.append(_categories[cat.name].$elem);
             }
-            var cat = _categories[catname];
-
-            cat.addAmount(exp.amount);
-            if (exp.updated > _latestupdate) {
-                _latestupdate = exp.updated;
-            }
+            _categories[cat.name].setAmount(cat.amount);
 
             // Notify all the categories that a new normalization factor has
             // been set.
@@ -121,41 +115,45 @@ var ExpensesUI = (function() {
         },
 
         _updateExpense: function(exp) {
-            var expense = Expense(exp.id, exp.amount, '&euro;', exp.category, exp.note,
-                    exp.date);
+            var e = Expense(exp.id, exp.amount, exp.currency,
+                    exp.category, exp.note, exp.date);
             var put = false;
 
             if (_expenses.length != 0) {
                 for (var i = 0; i < _expenses.length; i++) {
                     var curexpense = _expenses[i];
 
-                    if (expense.date > curexpense.date) {
-                        expense.$elem.insertBefore(curexpense.$elem);
-                        _expenses.insert(i, expense);
+                    if (e.date > curexpense.date) {
+                        e.$elem.insertBefore(curexpense.$elem);
+                        _expenses.insert(i, e);
                         put = true;
                         break;
                     }
-
                 }
             }
 
             if (!put) {
-                _$expenses.append(expense.$elem);
-                _expenses.push(expense);
+                _$expenses.append(e.$elem);
+                _expenses.push(e);
             }
 
-            expense.onDisplay();
-        },
+            if (exp.updated > _latestupdate) {
+                _latestupdate = exp.updated;
+            }
 
-        _onNewData: function(exp) {
-            this._updateCategory(exp);
-            this._updateExpense(exp);
+            e.onDisplay();
         },
 
         onNewData: function(data) {
+            $.each(data.categories, function(this_) {
+                return function() {
+                    this_._updateCategory(this);
+                }
+            }(this));
+
             $.each(data.expenses, function(this_) {
                 return function() {
-                    this_._onNewData(this);
+                    this_._updateExpense(this);
                 };
             }(this));
         },
@@ -238,13 +236,13 @@ var Category = function(ui) {
             _$elem_bar: null,
             _timeoutid: null,
 
-            addAmount: function(amount_) {
-                this.amount += amount_;
+            setAmount: function(amount_) {
+                this.amount = amount_;
 
-                this._onAddAmount();
+                this._onSetAmount();
             },
 
-            _onAddAmount: function() {
+            _onSetAmount: function() {
                 // Cache the value
                 if (this._$elem_amount == null) {
                     this._$elem_amount = this.$elem.find('.cat_amount');
