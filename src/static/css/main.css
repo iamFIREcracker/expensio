@@ -45,17 +45,17 @@ h1, h2, h3 {
 
 .cat_name {
     display: inline-block;
-    width: 21%;
+    width: 16%;
 }
 
 .cat_amount {
     display: inline-block;
-    width: 22%;
+    width: 19%;
 }
 
 .cat_bar_container {
     display: inline-block;
-    width: 50%;
+    width: 65%;
 }
 
 .cat_bar {
@@ -71,7 +71,7 @@ h1, h2, h3 {
 
 .exp_amount {
     display: inline-block;
-    width: 16%;
+    width: 19%;
 }
 
 .exp_category {
@@ -89,6 +89,5 @@ h1, h2, h3 {
     float: right;
     text-align: right;
     display: inline-block;
-    width: 15%;
+    width: 19%;
 }
-
