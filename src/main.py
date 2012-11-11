@@ -129,6 +129,7 @@ class ItemHandler():
         return self._current_item
 
 
+
 class MainHandler(BaseHandler):
     def GET(self):
         if not self.current_user():
@@ -138,28 +139,48 @@ class MainHandler(BaseHandler):
                     expenses_add=expenses_add())
 
 
-class ExpensesImportHandler(BaseHandler):
-    @protected
+
+class LoginFacebookHandler(BaseHandler):
     def GET(self):
-        return render.expenses_import(user=self.current_user(),
-                form=expenses_import())
+        if self.current_user():
+            web.seeother('/')
+            return
 
-    @protected
-    def POST(self):
-        form = expenses_import()
-        if not form.validates():
-            return render.expenses_import(user=self.current_user(), form=form)
+        data = web.input(code=None)
+        args = dict(client_id=FACEBOOK_APP_ID, redirect_uri=path_url())
+        if data.code is None:
+            web.seeother(
+                    'http://www.facebook.com/dialog/oauth?' +
+                    urllib.urlencode(args))
+            return
 
-        for line in form.d.expenses.split('\r\n'):
-            tokens = line.split('\t')
-            date = datetime.strptime(form.d.period + tokens[0],
-                    FORM_PERIOD_FORMAT + '%d')
-            amount = tokens[2].split()[1]
-            note = tokens[3] if len(tokens) >= 4 else ''
-            expense = Expense(user_id=self.current_user().id, date=date,
-                    category=tokens[1], amount=amount, note=note)
-            web.ctx.orm.add(expense)
+        args['code'] = data.code
+        args['client_secret'] = FACEBOOK_APP_SECRET
+        response = urlparse.parse_qs(
+                urllib.urlopen(
+                    "https://graph.facebook.com/oauth/access_token?" +
+                        urllib.urlencode(args)).read())
+        access_token = response["access_token"][-1]
+        profile = json.load(
+                urllib.urlopen(
+                    "https://graph.facebook.com/me?" +
+                    urllib.urlencode(dict(access_token=access_token))))
+
+        user = User(id=str(profile["id"]), name=profile["name"],
+                access_token=access_token)
+        user = web.ctx.orm.merge(user) # Merge flying and persistence object
+        web.ctx.orm.add(user)
+
+        web.setcookie(
+                'fb_user', str(profile['id']), expires=time.time() + 7 * 86400)
+        return web.seeother('/')
+
+
+class LogoutHandler():
+    def GET(self):
+        web.setcookie('fb_user', '', expires=time.time() - 86400)
         web.seeother('/')
+
 
 
 class ExpensesHandler(BaseHandler):
@@ -230,46 +251,29 @@ class ExpensesDeleteHandler(BaseHandler, ItemHandler):
         return render.expenses_edit(expenses_edit=form)
 
 
-class LoginFacebookHandler(BaseHandler):
+class ExpensesImportHandler(BaseHandler):
+    @protected
     def GET(self):
-        if self.current_user():
-            web.seeother('/')
-            return
+        return render.expenses_import(user=self.current_user(),
+                form=expenses_import())
 
-        data = web.input(code=None)
-        args = dict(client_id=FACEBOOK_APP_ID, redirect_uri=path_url())
-        if data.code is None:
-            web.seeother(
-                    'http://www.facebook.com/dialog/oauth?' +
-                    urllib.urlencode(args))
-            return
+    @protected
+    def POST(self):
+        form = expenses_import()
+        if not form.validates():
+            return render.expenses_import(user=self.current_user(), form=form)
 
-        args['code'] = data.code
-        args['client_secret'] = FACEBOOK_APP_SECRET
-        response = urlparse.parse_qs(
-                urllib.urlopen(
-                    "https://graph.facebook.com/oauth/access_token?" +
-                        urllib.urlencode(args)).read())
-        access_token = response["access_token"][-1]
-        profile = json.load(
-                urllib.urlopen(
-                    "https://graph.facebook.com/me?" +
-                    urllib.urlencode(dict(access_token=access_token))))
-
-        user = User(id=str(profile["id"]), name=profile["name"],
-                access_token=access_token)
-        user = web.ctx.orm.merge(user) # Merge flying and persistence object
-        web.ctx.orm.add(user)
-
-        web.setcookie(
-                'fb_user', str(profile['id']), expires=time.time() + 7 * 86400)
-        return web.seeother('/')
-
-
-class LogoutHandler():
-    def GET(self):
-        web.setcookie('fb_user', '', expires=time.time() - 86400)
+        for line in form.d.expenses.split('\r\n'):
+            tokens = line.split('\t')
+            date = datetime.strptime(form.d.period + tokens[0],
+                    FORM_PERIOD_FORMAT + '%d')
+            amount = tokens[2].split()[1]
+            note = tokens[3] if len(tokens) >= 4 else ''
+            expense = Expense(user_id=self.current_user().id, date=date,
+                    category=tokens[1], amount=amount, note=note)
+            web.ctx.orm.add(expense)
         web.seeother('/')
+
 
 
 if __name__ == '__main__':
