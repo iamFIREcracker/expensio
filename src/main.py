@@ -41,11 +41,13 @@ FACEBOOK_APP_ID = "431016523607887"
 
 FACEBOOK_APP_SECRET = "bcc5a62efaff20fc9808919b3e40a944"
 
+SECONDS_TO_DAYS = 60 * 60 * 24
 
 urls = (
     '/', 'MainHandler',
     '/login/facebook', 'LoginFacebookHandler',
     '/logout', 'LogoutHandler',
+    '/amounts.json', 'AmountsHandler',
     '/expenses.json', 'ExpensesHandler',
     '/expenses/add', 'ExpensesAddHandler',
     '/expenses/(\d+)/edit', 'ExpensesEditHandler',
@@ -130,12 +132,16 @@ class Category(object):
 class Day(object):
     __serializable__ = {
             'date': lambda o: o.date,
+            'updated': lambda o: datetime.strftime(o.updated, DATE_FORMAT),
+            'delta': lambda o: int(o.delta),
             'amount': lambda o: o.amount,
             'currency': lambda o: '&euro;',
             }
 
-    def __init__(self, date, amount):
+    def __init__(self, date, updated, delta, amount):
         self.date = date
+        self.updated = updated
+        self.delta = delta
         self.amount = amount
 
 
@@ -213,6 +219,40 @@ class LogoutHandler():
 
 
 
+class AmountsHandler(BaseHandler):
+    @protected
+    def GET(self):
+        today = datetime.today()
+        data = web.input(days=30, latest=EPOCH)
+        user_id = self.current_user().id if self.current_user() else ''
+
+        days = int(data.days)
+        latest = datetime.strptime(data.latest, DATE_FORMAT)
+
+        past = today - timedelta(days - 1)
+
+        expenses = (web.ctx.orm.query(Expense)
+                .filter_by(user_id=user_id)
+                .filter(Expense.date >= past)
+                .filter(Expense.date <= today)
+                .filter(Expense.updated > latest)
+                .order_by(Expense.date.desc())
+                .all())
+
+        days = (web.ctx.orm.query(
+                    func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date),
+                    func.max(Expense.updated),
+                    (func.strftime("%s", Expense.date) - func.strftime("%s", today)) / SECONDS_TO_DAYS,
+                    func.sum(Expense.amount))
+                .filter_by(user_id=user_id)
+                .filter(or_(*[Expense.date == e.date for e in expenses]))
+                .group_by(func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date))
+                .all())
+
+        return jsonify(days=[Day(*d) for d in days])
+
+
+
 class ExpensesHandler(BaseHandler):
     @protected
     def GET(self):
@@ -242,18 +282,8 @@ class ExpensesHandler(BaseHandler):
                 .group_by(Expense.category)
                 .all())
 
-        todaymin30 = today - timedelta(30)
-        days = (web.ctx.orm.query(func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date), func.sum(Expense.amount))
-                .filter_by(user_id=user_id)
-                .filter(extract('year', Expense.date) >= todaymin30.year)
-                .filter(extract('month', Expense.date) >= todaymin30.month)
-                .filter(extract('day', Expense.date) > todaymin30.day)
-                .group_by(func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date))
-                .all())
-
         return jsonify(expenses=expenses,
-                categories=[Category(*c) for c in categories],
-                days=[Day(*d) for d in days])
+                categories=[Category(*c) for c in categories])
 
 
 class ExpensesAddHandler(BaseHandler):
