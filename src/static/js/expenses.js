@@ -16,6 +16,7 @@ var ExpensesManager = (function() {
                 clearTimeout(this._timeoutid);
             }
 
+            console.log('Schedule new expenses-manager update');
             this._timeoutid = setTimeout(function(this_) {
                 return function() {
                     this_._onUpdate();
@@ -24,6 +25,7 @@ var ExpensesManager = (function() {
         },
 
         _onUpdate: function() {
+            console.log('Expenses manager on update');
             $.ajax({
                 url: '/expenses.json',
                 type: 'GET',
