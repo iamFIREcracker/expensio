@@ -10,6 +10,7 @@ import time
 import urllib
 import urlparse
 from datetime import datetime
+from datetime import timedelta
 
 import web
 from sqlalchemy.orm import scoped_session
@@ -19,6 +20,7 @@ from sqlalchemy import func
 from sqlalchemy import or_
 from web.contrib.template import render_jinja
 
+from config import LATEST_DAYS_DATE_FORMAT
 from config import DATE_FORMAT
 from config import EPOCH
 from filters import datetimeformat
@@ -125,6 +127,18 @@ class Category(object):
         self.amount = amount
 
 
+class Day(object):
+    __serializable__ = {
+            'date': lambda o: o.date,
+            'amount': lambda o: o.amount,
+            'currency': lambda o: '&euro;',
+            }
+
+    def __init__(self, date, amount):
+        self.date = date
+        self.amount = amount
+
+
 
 class BaseHandler():
     def current_user(self):
@@ -228,8 +242,18 @@ class ExpensesHandler(BaseHandler):
                 .group_by(Expense.category)
                 .all())
 
+        todaymin30 = today - timedelta(30)
+        days = (web.ctx.orm.query(func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date), func.sum(Expense.amount))
+                .filter_by(user_id=user_id)
+                .filter(extract('year', Expense.date) >= todaymin30.year)
+                .filter(extract('month', Expense.date) >= todaymin30.month)
+                .filter(extract('day', Expense.date) > todaymin30.day)
+                .group_by(func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date))
+                .all())
+
         return jsonify(expenses=expenses,
-                categories=[Category(*c) for c in categories])
+                categories=[Category(*c) for c in categories],
+                days=[Day(*d) for d in days])
 
 
 class ExpensesAddHandler(BaseHandler):
