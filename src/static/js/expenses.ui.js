@@ -46,17 +46,18 @@ var ExpensesUI = (function() {
             _curyear = date.getYear() + 1900; // Fix relative to 1900
             _curmonth = date.getMonth(); // 0-indexed months
 
+            _$days.empty();
+            _days = Object();
+
             this._init();
         },
 
         _init: function() {
-            _$days.empty();
             _$categories.empty();
             _$expenses.empty();
             _maxamount = 0.0;
             _maxdayamount = 0.0;
             _palette = Object();
-            _days = Object();
             _categories = Object();
             _expenses = Array();
             _latestupdate = '1970-01-01 00:00:00.000000'; // epoch
