@@ -13,7 +13,7 @@
     <script>
     $(function() {
         Logger.onReady($('#message'), 2000);
-        ExpensesUI.onReady($('#current_month'), $('#categories'), $('#expenses'));
+        ExpensesUI.onReady($('#current_month'), $('#days'), $('#categories'), $('#expenses'));
         ExpensesManager.onReady(Logger, 60000, ExpensesUI);
 
         {% block jsready %}{% endblock %}

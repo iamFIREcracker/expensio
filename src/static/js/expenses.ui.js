@@ -21,22 +21,26 @@ var ExpensesUI = (function() {
     var __animationtimeout = 200; // milliseconds
 
     var _$title = null;
+    var _$days = null;
     var _$categories = null;
     var _$expenses = null;
     var _curyear = null;
     var _curmonth = null;
 
     var _maxamount = null;
+    var _maxdayamount = null;
     var _palette = null;
+    var _days = null;
     var _categories = null;
     var _expenses = null;
     var _latestupdate = null;
 
     return {
-        onReady: function($title, $categories, $expenses) {
+        onReady: function($title, $days, $categories, $expenses) {
             var date = new Date();
 
             _$title = $title;
+            _$days = $days;
             _$categories = $categories;
             _$expenses = $expenses;
             _curyear = date.getYear() + 1900; // Fix relative to 1900
@@ -46,10 +50,13 @@ var ExpensesUI = (function() {
         },
 
         _init: function() {
+            _$days.empty();
             _$categories.empty();
             _$expenses.empty();
             _maxamount = 0.0;
+            _maxdayamount = 0.0;
             _palette = Object();
+            _days = Object();
             _categories = Object();
             _expenses = Array();
             _latestupdate = '1970-01-01 00:00:00.000000'; // epoch
@@ -94,6 +101,31 @@ var ExpensesUI = (function() {
             return _maxamount;
         },
 
+        getMaxDayAmount: function() {
+            return _maxdayamount;
+        },
+
+        _updateDay: function(day) {
+            var currency = day.currency;
+
+            if (!(day.date in _days)) {
+                _days[day.date] = Day(day.date, day.amount);
+                console.log(_days[day.date]);
+                _$days.append(_days[day.date].$elem);
+            }
+            _days[day.date].setAmount(day.amount);
+
+            if (day.amount > _maxdayamount) {
+                _maxdayamount = day.amount;
+            }
+
+            // Notify all the days that a new normalization factor has
+            // been set.
+            for (date in _days) {
+                _days[date].onDisplay();
+            }
+        },
+
         _updateCategory: function(cat) {
             var currency = cat.currency;
 
@@ -104,11 +136,12 @@ var ExpensesUI = (function() {
             }
             _categories[cat.name].setAmount(cat.amount);
 
-            // Notify all the categories that a new normalization factor has
-            // been set.
             if (cat.amount > _maxamount) {
                 _maxamount = cat.amount;
             }
+
+            // Notify all the categories that a new normalization factor has
+            // been set.
             for (catname in _categories) {
                 _categories[catname].onDisplay();
             }
@@ -131,7 +164,6 @@ var ExpensesUI = (function() {
                     }
                 }
             }
-
             if (!put) {
                 _$expenses.append(e.$elem);
                 _expenses.push(e);
@@ -145,6 +177,12 @@ var ExpensesUI = (function() {
         },
 
         onNewData: function(data) {
+            $.each(data.days, function(this_) {
+                return function() {
+                    this_._updateDay(this);
+                }
+            }(this));
+
             $.each(data.categories, function(this_) {
                 return function() {
                     this_._updateCategory(this);
@@ -176,6 +214,61 @@ var ExpensesUI = (function() {
     };
 })();
 
+
+var Day = function(ui) {
+    return function(date, amount, currency) {
+        return {
+            date: date,
+            amount: amount,
+            currency: currency,
+            $elem: $('' +
+'<div class="day_container">' +
+    '<div class="day" style="height: 0%">&nbsp;</div>' +
+'</div>'
+                ),
+            _$elem_bar: null,
+            _timeoutid: null,
+
+            setAmount: function(amount_) {
+                this.amount = amount_;
+
+                //this._onSetAmount();
+            },
+
+            //_onSetAmount: function() {
+                //// Cache the value
+                //if (this._$elem_amount == null) {
+                    //this._$elem_amount = this.$elem.find('.cat_amount');
+                //}
+
+                //this._$elem_amount.html(ui.formatAmount(this.amount, this.currency));
+            //},
+
+            onDisplay: function() {
+                if (this._timeoutid != null) {
+                    clearInterval(this._timeoutid);
+                }
+
+                this._timeoutid = setTimeout(function(this_) {
+                    return function() {
+                        // Cache the value
+                        if (this_._$elem_bar == null) {
+                            this_._$elem_bar = this_.$elem.find('.day');
+                        }
+
+                        var height = 100 * this_.amount / ui.getMaxDayAmount();
+                        this_._$elem_bar.animate({
+                            height: height + '%',
+                        }, ui.__animationtimeout);
+                    };
+                }(this), ui.__beforeanimatetimeout);
+            }
+
+            
+        };
+    };
+    
+}(ExpensesUI);
 
 var Expense = function(ui) {
     return function(id, amount, currency, catname, note, date) {

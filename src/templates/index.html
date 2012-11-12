@@ -9,24 +9,24 @@
 {% endblock %}
 
 {% block row1_col1 %}
-    <h2>Track new expense</h2>
+    <h3>Track new</h3>
     {% include 'expenses_add.html' %}
 {% endblock %}
 
 {% block pre_row2 %}
 <h2><span id="current_month"></span></h2>
+{% include 'expenses_more.html' %}
+<br style="clear: both" />
 {% endblock %}
 
 {% block row1_col2 %}
     <h3>Last 30 days</h3>
+    <div id="days"></div>
 {% endblock %}
 
 {% block row2_col1 %}
     <h3>By date</h3>
     <div id="expenses"></div>
-
-    <br />
-    {% include 'expenses_more.html' %}
 {% endblock %}
 
 {% block row2_col2 %}
