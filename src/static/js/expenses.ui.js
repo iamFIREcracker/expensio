@@ -202,12 +202,9 @@ var Expense = function(ui) {
 
                 this._timeoutid = setTimeout(function(this_) {
                     return function() {
-                        var oldbackground = this_.$elem.css('backgroundColor');
-
-                        this_.$elem.css('backgroundColor', '#ffff9c');
-                        this_.$elem.delay(ui.__animationtimeout).animate({
-                            backgroundColor: oldbackground
-                        }, 'slow');
+                        this_.$elem.addClass('flash')
+                            .delay(ui.__animationtimeout)
+                            .removeClass('flash', 'slow');
                     };
                 }(this), ui.__beforeanimatetimeout);
             },
