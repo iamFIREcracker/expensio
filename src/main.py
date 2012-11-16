@@ -17,7 +17,6 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import extract
 from sqlalchemy import func
-from sqlalchemy import or_
 from web.contrib.template import render_jinja
 
 from config import LATEST_DAYS_DATE_FORMAT
@@ -239,15 +238,16 @@ class AmountsHandler(BaseHandler):
                 .order_by(Expense.date.desc())
                 .all())
 
-        days = (web.ctx.orm.query(
-                    func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date),
-                    func.max(Expense.updated),
-                    (func.strftime("%s", Expense.date) - func.strftime("%s", today)) / SECONDS_TO_DAYS,
-                    func.sum(Expense.amount))
-                .filter_by(user_id=user_id)
-                .filter(or_(*[Expense.date == e.date for e in expenses]))
-                .group_by(func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date))
-                .all())
+        days = [] if not expenses else (
+                web.ctx.orm.query(
+                        func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date),
+                        func.max(Expense.updated),
+                        (func.strftime("%s", Expense.date) - func.strftime("%s", today)) / SECONDS_TO_DAYS,
+                        func.sum(Expense.amount))
+                    .filter_by(user_id=user_id)
+                    .filter(Expense.date.in_((e.date for e in expenses)))
+                    .group_by(func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date))
+                    .all())
 
         return jsonify(days=[Day(*d) for d in days])
 
@@ -273,14 +273,15 @@ class ExpensesHandler(BaseHandler):
                 .order_by(Expense.date.desc())
                 .all())
 
-        categories = (web.ctx.orm.query(Expense.category, func.sum(Expense.amount))
-                .filter_by(user_id=user_id)
-                .filter(extract('year', Expense.date) == year)
-                .filter(extract('month', Expense.date) == month)
-                .filter(or_(*[Expense.category == e.category for e in expenses]))
-                .order_by(Expense.category)
-                .group_by(Expense.category)
-                .all())
+        categories = [] if not expenses else (
+                web.ctx.orm.query(Expense.category, func.sum(Expense.amount))
+                    .filter_by(user_id=user_id)
+                    .filter(extract('year', Expense.date) == year)
+                    .filter(extract('month', Expense.date) == month)
+                    .filter(Expense.category.in_((e.category for e in expenses)))
+                    .order_by(Expense.category)
+                    .group_by(Expense.category)
+                    .all())
 
         return jsonify(expenses=expenses,
                 categories=[Category(*c) for c in categories])
