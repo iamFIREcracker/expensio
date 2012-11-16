@@ -170,8 +170,11 @@ class MainHandler(BaseHandler):
         if not self.current_user():
             return render.info()
         else:
+            form = expenses_add()
+            form.get('date').value = datetime.strftime(datetime.today(),
+                    FORM_DATE_FORMAT)
             return render.index(user=self.current_user(),
-                    expenses_add=expenses_add())
+                    expenses_add=form)
 
 
 
