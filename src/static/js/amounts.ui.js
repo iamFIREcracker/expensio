@@ -1,14 +1,3 @@
-function size(obj) {
-    var size = 0, key;
-
-    for (key in obj) {
-        if (obj.hasOwnProperty(key)) size++;
-    }
-
-    return size;
-}
-
-
 var AmountsUI = (function() {
     var __beforeanimatetimeout = 200;
     var __animationtimeout = 200; // milliseconds
@@ -20,12 +9,6 @@ var AmountsUI = (function() {
     var _latestupdate = null;
 
     return {
-        onReady: function($days) {
-            _$days = $days;
-
-            this._init();
-        },
-
         _init: function() {
             _$days.empty();
             _days = Array();
@@ -54,6 +37,12 @@ var AmountsUI = (function() {
             }
         },
 
+        onReady: function($days) {
+            _$days = $days;
+
+            this._init();
+        },
+
         getLatestUpdate: function() {
             return _latestupdate;
         },
@@ -62,7 +51,7 @@ var AmountsUI = (function() {
             return _maxdayamount;
         },
 
-        _updateDay: function(day) {
+        _onNewData: function(day) {
             var currency = day.currency;
             var d = _days[day.delta + 29];
 
@@ -74,6 +63,10 @@ var AmountsUI = (function() {
                 _maxdayamount = day.amount;
             }
 
+            if (day.updated > _latestupdate) {
+                _latestupdate = day.updated;
+            }
+
             // Notify all the days that a new normalization factor has
             // been set.
             for (var i = 0; i < 30; i++) {
@@ -82,11 +75,9 @@ var AmountsUI = (function() {
         },
 
         onNewData: function(data) {
-            $.each(data.days, function(this_) {
-                return function() {
-                    this_._updateDay(this);
-                }
-            }(this));
+            $.each(data.days, EachCallbackWrapper(function(i, value, _this) {
+                _this._onNewData(value);
+            }, this));
         },
     };
 })();
@@ -182,5 +173,4 @@ var Day = function(ui) {
             }
         };
     };
-    
 }(AmountsUI);

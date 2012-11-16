@@ -50,6 +50,7 @@ h1, h2, h3 {
     height: 150px;
     text-align: center;
     border-bottom: 1px solid #222;
+    margin-bottom: 50px;
 }
 
 .day {
@@ -87,7 +88,6 @@ h1, h2, h3 {
     bottom: -38px;
     right: -10px;
     width: 300px;
-
 }
 
 /* triangle */

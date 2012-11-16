@@ -1,53 +1,54 @@
 var AmountsManager = (function() {
-    return {
-        _logger: null,
-        _refreshtimeout: null,
-        _ui: null,
-        _timeoutid: null,
+    var logger = null;
+    var refreshtimeout = null;
+    var ui = null;
+    var timeoutid = null;
 
-        onReady: function(logger, refreshtimeout, ui) {
-            this._logger = logger;
-            this._refreshtimeout = refreshtimeout;
-            this._ui = ui;
+    return {
+        onReady: function(logger_, refreshtimeout_, ui_) {
+            logger = logger_;
+            refreshtimeout = refreshtimeout_;
+            ui = ui_;
         },
 
-        update: function(timeout) {
-            if (this._timeoutid != null) {
-                clearTimeout(this._timeoutid);
-            }
+        _onUpdateSuccess: function(data) {
+            ui.onNewData(data);
 
-            console.log('Schedule new amounts-manager update');
-            this._timeoutid = setTimeout(function(this_) {
-                return function() {
-                    this_._onUpdate();
-                };
-            }(this), timeout);
+            this.update(refreshtimeout);
+        },
+
+        _onUpdateError: function(data) {
+            logger.error('Something went wrong while contacting the server');
         },
 
         _onUpdate: function() {
-            console.log('Amounts manager on update');
             $.ajax({
                 url: '/amounts.json',
                 type: 'GET',
                 dataType: 'json',
                 data: {
                     days: 30,
-                    latest: this._ui.getLatestUpdate(),
+                    latest: ui.getLatestUpdate(),
                 },
-                success: function(this_) {
-                    return function(data) {
-                        this_._ui.onNewData(data);
 
-                        this_.update(this_._refreshtimeout);
-                    };
-                }(this),
-                error: function(this_) {
-                    return function(data) {
-                        this_._logger
-                            .error('Something went wrong while contacting the server');
-                    };
-                }(this),
+                success: AjaxCallbackWrapper(function(data, _this) {
+                    _this._onUpdateSuccess(data);
+                }, this),
+
+                error: AjaxCallbackWrapper(function(data, _this) {
+                    _this._onUpdateError(data);
+                }, this),
             })
+        },
+
+        update: function(timeout) {
+            if (timeoutid != null) {
+                clearTimeout(timeoutid);
+            }
+
+            timeoutid = setTimeout(function(_this) {
+                _this._onUpdate();
+            }, timeout, this);
         },
     }
 })();
