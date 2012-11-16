@@ -6,7 +6,7 @@ from datetime import datetime
 from web import form
 
 
-FORM_DATE_FORMAT = '%Y-%m-%d %H:%M'
+FORM_DATE_FORMAT = '%Y-%m-%d'
 FORM_PERIOD_FORMAT = '%Y-%m'
 
 
@@ -15,7 +15,7 @@ validamount = form.Validator(
         float)
 
 validdatetime = form.Validator(
-        'yyyy-mm-dd hh:mm',
+        'yyyy-mm-dd',
         lambda v: datetime.strptime(v, FORM_DATE_FORMAT))
 
 
