@@ -3,17 +3,6 @@ Array.prototype.insert = function (index, item) {
 };
 
 
-function size(obj) {
-    var size = 0, key;
-
-    for (key in obj) {
-        if (obj.hasOwnProperty(key)) size++;
-    }
-
-    return size;
-}
-
-
 var ExpensesUI = (function() {
     var __months = [ "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December" ];
@@ -33,6 +22,22 @@ var ExpensesUI = (function() {
     var _latestupdate = null;
 
     return {
+        _initCurrentMonth: function(month, year) {
+            _$title.html(month + ' ' + year);
+        },
+
+        _init: function() {
+            _$categories.empty();
+            _$expenses.empty();
+            _maxamount = 0.0;
+            _palette = Object();
+            _categories = Object();
+            _expenses = Array();
+            _latestupdate = '1970-01-01 00:00:00.000000'; // epoch
+
+            this._initCurrentMonth(__months[_curmonth], _curyear);
+        },
+
         onReady: function($title, $categories, $expenses) {
             var date = new Date();
 
@@ -45,38 +50,6 @@ var ExpensesUI = (function() {
             this._init();
         },
 
-        _init: function() {
-            _$categories.empty();
-            _$expenses.empty();
-            _maxamount = 0.0;
-            _palette = Object();
-            _categories = Object();
-            _expenses = Array();
-            _latestupdate = '1970-01-01 00:00:00.000000'; // epoch
-
-            this.renderCurrentMonth(__months[_curmonth], _curyear);
-        },
-
-        onPreviousMonth: function() {
-            _curmonth -= 1;
-            if (_curmonth < 0) {
-                _curmonth = 11;
-                _curyear -= 1;
-            }
-
-            this._init();
-        },
-
-
-        onNextMonth: function() {
-            _curmonth += 1;
-            if (_curmonth == 12) {
-                _curmonth = 0;
-                _curyear += 1;
-            }
-
-            this._init();
-        },
 
         getYear: function() {
             return _curyear;
@@ -94,6 +67,28 @@ var ExpensesUI = (function() {
             return _maxamount;
         },
 
+
+        onPreviousMonth: function() {
+            _curmonth -= 1;
+            if (_curmonth < 0) {
+                _curmonth = 11;
+                _curyear -= 1;
+            }
+
+            this._init();
+        },
+
+        onNextMonth: function() {
+            _curmonth += 1;
+            if (_curmonth == 12) {
+                _curmonth = 0;
+                _curyear += 1;
+            }
+
+            this._init();
+        },
+
+
         _updateCategory: function(cat) {
             var currency = cat.currency;
 
@@ -102,7 +97,7 @@ var ExpensesUI = (function() {
                 _categories[cat.name] = Category(cat.name, 0, currency);
                 _$categories.append(_categories[cat.name].$elem);
             }
-            _categories[cat.name].setAmount(cat.amount);
+            _categories[cat.name].amount(cat.amount);
 
             if (cat.amount > _maxamount) {
                 _maxamount = cat.amount;
@@ -111,7 +106,7 @@ var ExpensesUI = (function() {
             // Notify all the categories that a new normalization factor has
             // been set.
             for (catname in _categories) {
-                _categories[catname].onDisplay();
+                _categories[catname].onChanged();
             }
         },
 
@@ -141,7 +136,7 @@ var ExpensesUI = (function() {
                 _latestupdate = exp.updated;
             }
 
-            e.onDisplay();
+            e.onChanged();
         },
 
         onNewData: function(data) {
@@ -158,9 +153,6 @@ var ExpensesUI = (function() {
             }(this));
         },
 
-        renderCurrentMonth: function(month, year) {
-            _$title.html(month + ' ' + year);
-        },
 
         getPalette: function(category) {
             return _palette[category];
@@ -195,18 +187,20 @@ var Expense = function(ui) {
                 ),
             _timeoutid: null,
 
-            onDisplay: function() {
+
+            onChanged: function() {
+                this.$elem.addClass('flash')
+                    .delay(ui.__animationtimeout).removeClass('flash', 'slow');
+            },
+
+            onChanged: function() {
                 if (this._timeoutid != null) {
                     clearInterval(this._timeoutid);
                 }
 
-                this._timeoutid = setTimeout(function(this_) {
-                    return function() {
-                        this_.$elem.addClass('flash')
-                            .delay(ui.__animationtimeout)
-                            .removeClass('flash', 'slow');
-                    };
-                }(this), ui.__beforeanimatetimeout);
+                this._timeoutid = setTimeout(function(_this) {
+                    _this.onChanged();
+                }, ui.__beforeanimatetimeout, this);
             },
         };
     };
@@ -216,8 +210,12 @@ var Expense = function(ui) {
 var Category = function(ui) {
     return function(name, amount, currency) {
         return {
+            _timeoutid: null,
+
             name: name,
-            amount: amount,
+
+            _amount: amount,
+
             currency: currency,
             $elem: $('' +
 '<div class="cat">' +
@@ -229,44 +227,38 @@ var Category = function(ui) {
     '</span>' +
 '</div>'
             ),
-            _$elem_amount: null,
-            _$elem_bar: null,
-            _timeoutid: null,
 
-            setAmount: function(amount_) {
-                this.amount = amount_;
 
-                this._onSetAmount();
-            },
-
-            _onSetAmount: function() {
-                // Cache the value
-                if (this._$elem_amount == null) {
-                    this._$elem_amount = this.$elem.find('.cat_amount');
+            amount: function(_amount) {
+                if (_amount === undefined) {
+                    return _amount;
                 }
 
-                this._$elem_amount.html(ui.formatAmount(this.amount, this.currency));
+                this._amount = _amount;
+                this.onChanged();
             },
 
-            onDisplay: function() {
+
+            _onChanged: function() {
+                this.$elem.find('.cat_amount').html(
+                        ui.formatAmount(this._amount, this.currency));
+
+                var width = 100 * this._amount / ui.getMaxAmount();
+
+                this.$elem.find('.cat_bar').animate({
+                    width: width + '%',
+                }, ui.__animationtimeout);
+            },
+
+            onChanged: function() {
                 if (this._timeoutid != null) {
                     clearInterval(this._timeoutid);
                 }
 
-                this._timeoutid = setTimeout(function(this_) {
-                    return function() {
-                        // Cache the value
-                        if (this_._$elem_bar == null) {
-                            this_._$elem_bar = this_.$elem.find('.cat_bar');
-                        }
-
-                        var width = 100 * this_.amount / ui.getMaxAmount();
-                        this_._$elem_bar.animate({
-                            width: width + '%',
-                        }, ui.__animationtimeout);
-                    };
-                }(this), ui.__beforeanimatetimeout);
-            }
+                this._timeoutid = setTimeout(function(_this) {
+                    _this._onChanged();
+                }, ui.__beforeanimatetimeout, this);
+            },
         };
     };
 }(ExpensesUI);

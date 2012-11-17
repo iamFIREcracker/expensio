@@ -11,6 +11,7 @@ var AmountsManager = (function() {
             ui = ui_;
         },
 
+
         _onUpdateSuccess: function(data) {
             ui.onNewData(data);
 

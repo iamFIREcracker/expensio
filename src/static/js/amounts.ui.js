@@ -43,6 +43,7 @@ var AmountsUI = (function() {
             this._init();
         },
 
+
         getLatestUpdate: function() {
             return _latestupdate;
         },
@@ -50,6 +51,7 @@ var AmountsUI = (function() {
         getMaxDayAmount: function() {
             return _maxdayamount;
         },
+
 
         _onNewData: function(day) {
             var currency = day.currency;
