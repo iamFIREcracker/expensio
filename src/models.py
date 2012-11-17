@@ -52,6 +52,7 @@ class User(Base):
     name = Column(String, nullable=False)
     google_id = Column(String)
     facebook_id = Column(String)
+    twitter_id = Column(String)
 
 
 class Expense(Base):

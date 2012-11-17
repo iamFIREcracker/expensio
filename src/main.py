@@ -19,6 +19,7 @@ from sqlalchemy import extract
 from sqlalchemy import func
 from web.contrib.template import render_jinja
 
+from auth import LoginTwitterHandler
 from config import LATEST_DAYS_DATE_FORMAT
 from config import DATE_FORMAT
 from config import EPOCH
@@ -48,6 +49,8 @@ urls = (
     '/', 'MainHandler',
     '/login/google', 'LoginGoogleHandler',
     '/login/facebook', 'LoginFacebookHandler',
+    '/login/twitter', 'LoginTwitterHandler',
+    '/login/twitter/authorized', 'LoginTwitterAuthorizedHandler',
     '/logout', 'LogoutHandler',
     '/amounts.json', 'AmountsHandler',
     '/expenses.json', 'ExpensesHandler',
@@ -57,6 +60,20 @@ urls = (
     '/expenses/import', 'ExpensesImportHandler',
 )
 
+
+
+
+application = web.application(urls, globals())
+
+session = web.session.Session(application, web.session.DiskStore('sessions'))
+
+def load_session():
+    web.ctx.session = session
+application.add_processor(web.loadhook(load_session))
+
+def load_path_url():
+    web.ctx.path_url = web.ctx.home + web.ctx.path
+application.add_processor(web.loadhook(load_path_url))
 
 def load_sqla(handler):
     web.ctx.orm = scoped_session(sessionmaker(bind=engine))
@@ -70,19 +87,13 @@ def load_sqla(handler):
         raise
     finally:
         web.ctx.orm.commit()
-
-
-application = web.application(urls, globals())
 application.add_processor(load_sqla)
+
 working_dir = os.path.dirname(__file__)
 render = render_jinja(os.path.join(working_dir, 'templates'),
         encoding='utf-8', extensions=['jinja2.ext.do'])
 render._lookup.filters.update(
         datetime=datetimeformat, cash=cashformat)
-
-
-def path_url():
-    return web.ctx.home + web.ctx.path
 
 
 def jsonify(*args, **kwargs):
@@ -188,7 +199,7 @@ class LoginGoogleHandler(BaseHandler):
             return
 
         data = web.input(code=None)
-        args = dict(client_id=GOOGLE_APP_ID, redirect_uri=path_url(),
+        args = dict(client_id=GOOGLE_APP_ID, redirect_uri=web.ctx.path_url,
                 response_type='code',
                 scope='https://www.googleapis.com/auth/userinfo.profile')
         if data.code is None:
@@ -198,7 +209,7 @@ class LoginGoogleHandler(BaseHandler):
             return
 
         args2 = dict(code=data.code, client_id=GOOGLE_APP_ID,
-                client_secret=GOOGLE_APP_SECRET, redirect_uri=path_url(),
+                client_secret=GOOGLE_APP_SECRET, redirect_uri=web.ctx.path_url,
                 grant_type='authorization_code')
         response = json.load(urllib.urlopen(
                     'https://accounts.google.com/o/oauth2/token',
@@ -235,7 +246,9 @@ class LoginFacebookHandler(BaseHandler):
             return
 
         data = web.input(code=None)
-        args = dict(client_id=FACEBOOK_APP_ID, redirect_uri=path_url())
+        args = dict(client_id=FACEBOOK_APP_ID, redirect_uri=web.ctx.path_url,
+                scope='')
+        # Authorize
         if data.code is None:
             web.seeother(
                     'https://www.facebook.com/dialog/oauth?' +
@@ -269,6 +282,28 @@ class LoginFacebookHandler(BaseHandler):
         web.setcookie(
                 'user', user.id, expires=time.time() + 7 * 86400)
         return web.seeother('/')
+
+
+class LoginTwitterAuthorizedHandler(BaseHandler):
+    def GET(self):
+        access_token = web.ctx.session.pop('twitter_access_token')
+        web.debug(access_token)
+        user = self.current_user()
+        if not user:
+            user = web.ctx.orm.query(User).filter_by(
+                    twitter_id=access_token['user_id'][-1]).first()
+
+            if not user:
+                user = User(name=access_token['screen_name'][-1])
+        user.twitter_id = access_token['user_id'][-1]
+
+        web.ctx.orm.add(user)
+        # Merge fying and persistent object: this enables us to read the
+        # automatically generated user id
+        user = web.ctx.orm.merge(user)
+
+        web.setcookie(
+                'user', user.id, expires=time.time() + 7 * 86400)
 
 
 class LogoutHandler():
