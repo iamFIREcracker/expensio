@@ -8,7 +8,6 @@ import json
 import os
 import time
 import urllib
-import urlparse
 from datetime import datetime
 from datetime import timedelta
 
@@ -19,6 +18,8 @@ from sqlalchemy import extract
 from sqlalchemy import func
 from web.contrib.template import render_jinja
 
+from auth import LoginGoogleHandler
+from auth import LoginFacebookHandler
 from auth import LoginTwitterHandler
 from config import LATEST_DAYS_DATE_FORMAT
 from config import DATE_FORMAT
@@ -37,22 +38,21 @@ from models import User
 
 
 
-GOOGLE_APP_ID = "694024250403.apps.googleusercontent.com"
-GOOGLE_APP_SECRET = "vSuJRIdO2ujTmwORfdMT3AST"
-
-FACEBOOK_APP_ID = "431016523607887"
-FACEBOOK_APP_SECRET = "bcc5a62efaff20fc9808919b3e40a944"
-
 SECONDS_TO_DAYS = 60 * 60 * 24
 
 urls = (
     '/', 'MainHandler',
+
     '/login/google', 'LoginGoogleHandler',
+    '/login/google/authorized', 'LoginGoogleAuthorizedHandler',
     '/login/facebook', 'LoginFacebookHandler',
+    '/login/facebook/authorized', 'LoginFacebookAuthorizedHandler',
     '/login/twitter', 'LoginTwitterHandler',
     '/login/twitter/authorized', 'LoginTwitterAuthorizedHandler',
     '/logout', 'LogoutHandler',
+
     '/amounts.json', 'AmountsHandler',
+
     '/expenses.json', 'ExpensesHandler',
     '/expenses/add', 'ExpensesAddHandler',
     '/expenses/(\d+)/edit', 'ExpensesEditHandler',
@@ -192,34 +192,14 @@ class MainHandler(BaseHandler):
 
 
 
-class LoginGoogleHandler(BaseHandler):
+class LoginGoogleAuthorizedHandler(BaseHandler):
     def GET(self):
-        if self.current_user() and self.current_user().google_id:
-            web.seeother('/')
-            return
-
-        data = web.input(code=None)
-        args = dict(client_id=GOOGLE_APP_ID, redirect_uri=web.ctx.path_url,
-                response_type='code',
-                scope='https://www.googleapis.com/auth/userinfo.profile')
-        if data.code is None:
-            web.seeother(
-                    'https://accounts.google.com/o/oauth2/auth?' +
-                    urllib.urlencode(args))
-            return
-
-        args2 = dict(code=data.code, client_id=GOOGLE_APP_ID,
-                client_secret=GOOGLE_APP_SECRET, redirect_uri=web.ctx.path_url,
-                grant_type='authorization_code')
-        response = json.load(urllib.urlopen(
-                    'https://accounts.google.com/o/oauth2/token',
-                    urllib.urlencode(args2)))
-        access_token = response["access_token"]
+        access_token = web.ctx.session.pop('google_access_token')
         profile = json.load(
                 urllib.urlopen(
                     "https://www.googleapis.com/oauth2/v1/userinfo?" +
                     urllib.urlencode(dict(
-                        access_token=access_token))))
+                        access_token=access_token['access_token']))))
 
         user = self.current_user()
         if not user:
@@ -235,37 +215,17 @@ class LoginGoogleHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, expires=time.time() + 7 * 86400)
-        return web.seeother('/')
+        web.seeother('/')
 
 
-
-class LoginFacebookHandler(BaseHandler):
+class LoginFacebookAuthorizedHandler(BaseHandler):
     def GET(self):
-        if self.current_user() and self.current_user().facebook_id:
-            web.seeother('/')
-            return
-
-        data = web.input(code=None)
-        args = dict(client_id=FACEBOOK_APP_ID, redirect_uri=web.ctx.path_url,
-                scope='')
-        # Authorize
-        if data.code is None:
-            web.seeother(
-                    'https://www.facebook.com/dialog/oauth?' +
-                    urllib.urlencode(args))
-            return
-
-        args['code'] = data.code
-        args['client_secret'] = FACEBOOK_APP_SECRET
-        response = urlparse.parse_qs(
-                urllib.urlopen(
-                    "https://graph.facebook.com/oauth/access_token?" +
-                        urllib.urlencode(args)).read())
-        access_token = response["access_token"][-1]
+        access_token = web.ctx.session.pop('facebook_access_token')
         profile = json.load(
                 urllib.urlopen(
                     "https://graph.facebook.com/me?" +
-                    urllib.urlencode(dict(access_token=access_token))))
+                    urllib.urlencode(dict(
+                        access_token=access_token['access_token'][-1]))))
 
         user = self.current_user()
         if not user:
@@ -281,13 +241,16 @@ class LoginFacebookHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, expires=time.time() + 7 * 86400)
-        return web.seeother('/')
+        web.seeother('/')
 
 
 class LoginTwitterAuthorizedHandler(BaseHandler):
     def GET(self):
+        if 'twitter_access_token' not in web.ctx.session:
+            web.seeother('/')
+            return
+
         access_token = web.ctx.session.pop('twitter_access_token')
-        web.debug(access_token)
         user = self.current_user()
         if not user:
             user = web.ctx.orm.query(User).filter_by(
@@ -304,6 +267,7 @@ class LoginTwitterAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, expires=time.time() + 7 * 86400)
+        web.seeother('/')
 
 
 class LogoutHandler():
