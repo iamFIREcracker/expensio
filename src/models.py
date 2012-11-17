@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import uuid
 import json
 from datetime import datetime
 
@@ -12,7 +13,6 @@ from sqlalchemy import Integer
 from sqlalchemy import Float
 from sqlalchemy import String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.declarative import DeclarativeMeta
 
 from config import DATE_FORMAT
 
@@ -46,11 +46,12 @@ class AlchemyEncoder(json.JSONEncoder):
 class User(Base):
     __tablename__ = 'user'
 
-    id = Column(Integer, primary_key=True)
-    created = Column(DateTime)
-    updated = Column(DateTime)
+    id = Column(String, default=lambda: unicode(uuid.uuid4()), primary_key=True)
+    created = Column(DateTime, default=datetime.now)
+    updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     name = Column(String, nullable=False)
-    access_token = Column(String, nullable=False)
+    google_id = Column(String)
+    facebook_id = Column(String)
 
 
 class Expense(Base):
@@ -60,9 +61,9 @@ class Expense(Base):
     user_id = Column(Integer, ForeignKey('user.id'))
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
-    date = Column(DateTime)
+    date = Column(DateTime, nullable=False)
     category = Column(String, nullable=False)
-    amount = Column(Float)
+    amount = Column(Float, nullable=False)
     note = Column(String)
 
     __serializable__ = {

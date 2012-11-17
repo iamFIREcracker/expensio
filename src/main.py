@@ -36,14 +36,17 @@ from models import User
 
 
 
-FACEBOOK_APP_ID = "431016523607887"
+GOOGLE_APP_ID = "694024250403.apps.googleusercontent.com"
+GOOGLE_APP_SECRET = "vSuJRIdO2ujTmwORfdMT3AST"
 
+FACEBOOK_APP_ID = "431016523607887"
 FACEBOOK_APP_SECRET = "bcc5a62efaff20fc9808919b3e40a944"
 
 SECONDS_TO_DAYS = 60 * 60 * 24
 
 urls = (
     '/', 'MainHandler',
+    '/login/google', 'LoginGoogleHandler',
     '/login/facebook', 'LoginFacebookHandler',
     '/logout', 'LogoutHandler',
     '/amounts.json', 'AmountsHandler',
@@ -79,7 +82,7 @@ render._lookup.filters.update(
 
 
 def path_url():
-    return web.ctx.home + web.ctx.fullpath
+    return web.ctx.home + web.ctx.path
 
 
 def jsonify(*args, **kwargs):
@@ -151,7 +154,7 @@ class BaseHandler():
 
         if not hasattr(self, "_current_user"):
             self._current_user = None
-            user_id = web.cookies().get('fb_user')
+            user_id = web.cookies().get('user')
             if user_id:
                 self._current_user = (web.ctx.orm.query(User)
                         .filter_by(id=user_id).first())
@@ -178,9 +181,56 @@ class MainHandler(BaseHandler):
 
 
 
+class LoginGoogleHandler(BaseHandler):
+    def GET(self):
+        if self.current_user() and self.current_user().google_id:
+            web.seeother('/')
+            return
+
+        data = web.input(code=None)
+        args = dict(client_id=GOOGLE_APP_ID, redirect_uri=path_url(),
+                response_type='code',
+                scope='https://www.googleapis.com/auth/userinfo.profile')
+        if data.code is None:
+            web.seeother(
+                    'https://accounts.google.com/o/oauth2/auth?' +
+                    urllib.urlencode(args))
+            return
+
+        args2 = dict(code=data.code, client_id=GOOGLE_APP_ID,
+                client_secret=GOOGLE_APP_SECRET, redirect_uri=path_url(),
+                grant_type='authorization_code')
+        response = json.load(urllib.urlopen(
+                    'https://accounts.google.com/o/oauth2/token',
+                    urllib.urlencode(args2)))
+        access_token = response["access_token"]
+        profile = json.load(
+                urllib.urlopen(
+                    "https://www.googleapis.com/oauth2/v1/userinfo?" +
+                    urllib.urlencode(dict(
+                        access_token=access_token))))
+
+        user = self.current_user()
+        if not user:
+            user = web.ctx.orm.query(User).filter_by(google_id=profile['id']).first()
+            if not user:
+                user = User(name=profile["name"])
+        user.google_id = profile['id']
+
+        web.ctx.orm.add(user)
+        # Merge fying and persistent object: this enables us to read the
+        # automatically generated user id
+        user = web.ctx.orm.merge(user)
+
+        web.setcookie(
+                'user', user.id, expires=time.time() + 7 * 86400)
+        return web.seeother('/')
+
+
+
 class LoginFacebookHandler(BaseHandler):
     def GET(self):
-        if self.current_user():
+        if self.current_user() and self.current_user().facebook_id:
             web.seeother('/')
             return
 
@@ -204,19 +254,26 @@ class LoginFacebookHandler(BaseHandler):
                     "https://graph.facebook.com/me?" +
                     urllib.urlencode(dict(access_token=access_token))))
 
-        user = User(id=str(profile["id"]), name=profile["name"],
-                access_token=access_token)
-        user = web.ctx.orm.merge(user) # Merge flying and persistence object
+        user = self.current_user()
+        if not user:
+            user = web.ctx.orm.query(User).filter_by(facebook_id=profile['id']).first()
+            if not user:
+                user = User(name=profile["name"])
+        user.facebook_id = profile['id']
+
         web.ctx.orm.add(user)
+        # Merge fying and persistent object: this enables us to read the
+        # automatically generated user id
+        user = web.ctx.orm.merge(user)
 
         web.setcookie(
-                'fb_user', str(profile['id']), expires=time.time() + 7 * 86400)
+                'user', user.id, expires=time.time() + 7 * 86400)
         return web.seeother('/')
 
 
 class LogoutHandler():
     def GET(self):
-        web.setcookie('fb_user', '', expires=time.time() - 86400)
+        web.setcookie('user', '', expires=time.time() - 86400)
         web.seeother('/')
 
 
