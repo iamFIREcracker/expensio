@@ -41,6 +41,12 @@ h1, h2, h3 {
     background: #ffff9c;
 }
 
+.connect {
+    display: block;
+    font-size: 200%;
+    text-align: center;
+}
+
 .day_bar_hover {
     background: #222 !important;
 }
