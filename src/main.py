@@ -188,7 +188,7 @@ class LoginFacebookHandler(BaseHandler):
         args = dict(client_id=FACEBOOK_APP_ID, redirect_uri=path_url())
         if data.code is None:
             web.seeother(
-                    'http://www.facebook.com/dialog/oauth?' +
+                    'https://www.facebook.com/dialog/oauth?' +
                     urllib.urlencode(args))
             return
 
