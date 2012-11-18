@@ -373,7 +373,7 @@ class ExpensesEditHandler(BaseHandler, ItemHandler):
     def POST(self, id):
         form = expenses_edit()
         if form.validates():
-            e = Expense(id=int(form.d.id), user_id=self.current_user().id,
+            e = Expense(id=form.d.id, user_id=self.current_user().id,
                     amount=float(form.d.amount), category=form.d.category,
                     note=form.d.note,
                     date=datetime.strptime(form.d.date, FORM_DATE_FORMAT))
