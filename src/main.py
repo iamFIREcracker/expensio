@@ -284,7 +284,7 @@ class AmountsHandler(BaseHandler):
         user_id = self.current_user().id
 
         days = int(data.days)
-        latest = datetime.strptime(data.latest, DATE_FORMAT)
+        latest = datetime.strptime(data.latest if data.latest else EPOCH, DATE_FORMAT)
 
         past = today - timedelta(days - 1)
 
@@ -310,18 +310,17 @@ class AmountsHandler(BaseHandler):
         return jsonify(days=[Day(*d) for d in days])
 
 
-
 class ExpensesHandler(BaseHandler):
     @protected
     def GET(self):
         today = datetime.today()
         data = web.input(year=today.year, month=today.month,
                 latest=EPOCH)
-        user_id = self.current_user().id if self.current_user() else ''
+        user_id = self.current_user().id
 
         year = int(data.year)
         month = int(data.month)
-        latest = datetime.strptime(data.latest, DATE_FORMAT)
+        latest = datetime.strptime(data.latest if data.latest else EPOCH, DATE_FORMAT)
 
         expenses = (web.ctx.orm.query(Expense)
                 .filter_by(user_id=user_id)

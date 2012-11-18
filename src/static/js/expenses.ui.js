@@ -33,7 +33,7 @@ var ExpensesUI = (function() {
             _palette = Object();
             _categories = Object();
             _expenses = Object();
-            _latestupdate = '1970-01-01 00:00:00.000000'; // epoch
+            _latestupdate = '';
 
             this._initCurrentMonth(__months[_curmonth], _curyear);
         },

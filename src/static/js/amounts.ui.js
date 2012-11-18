@@ -14,7 +14,7 @@ var AmountsUI = (function() {
             _$days.empty();
             _days = Object();
             _maxdayamount = 0.0;
-            _latestupdate = '1970-01-01 00:00:00.000000'; // epoch
+            _latestupdate = '';
 
             for (var i = 0; i < __daysnumber; i++) {
                 var d = Day('', 0, '');
