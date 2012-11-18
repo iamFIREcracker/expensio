@@ -75,6 +75,7 @@ h1, h2, h3 {
 .day_bar {
     position: absolute;
     bottom: 0;
+    left: 0;
     width: 100%;
     background-color: #ccc;
 }
