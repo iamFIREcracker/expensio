@@ -1,39 +1,24 @@
 var AmountsUI = (function() {
     var __beforeanimatetimeout = 200;
     var __animationtimeout = 200; // milliseconds
+    var __daysnumber = 30;
 
     var _$days = null;
 
     var _maxdayamount = null;
     var _days = null;
-    var _latestupdate = null;
 
     return {
         _init: function() {
             _$days.empty();
-            _days = Array();
+            _days = Object();
             _maxdayamount = 0.0;
-            _latestupdate = '1970-01-01 00:00:00.000000'; // epoch
 
-            for (var i = 0; i < 30; i++) {
+            for (var i = 0; i < __daysnumber; i++) {
                 var d = Day('', 0, '');
 
-                d.$elem.hover(function(this_) {
-                    return function(eventObject) {
-                        if (this_.date !== '') {
-                            this_.onHoverIn();
-                        }
-                    };
-                }(d), function(this_) {
-                    return function(eventObject) {
-                        if (this_.date !== '') {
-                            this_.onHoverOut();
-                        }
-                    };
-                }(d));
-
-                _days.push(d);
                 _$days.append(d.$elem);
+                _days[i] = d;
             }
         },
 
@@ -44,91 +29,106 @@ var AmountsUI = (function() {
         },
 
 
-        getLatestUpdate: function() {
-            return _latestupdate;
-        },
-
         getMaxDayAmount: function() {
             return _maxdayamount;
         },
 
 
-        _onNewData: function(day) {
-            var currency = day.currency;
-            var d = _days[day.delta + 29];
+        _updateMaxAmount: function() {
+            _maxdayamount = 0;
+            for (var i in _days) {
+                var curday = _days[i];
 
-            d.setDate(day.date);
-            d.setAmount(day.amount);
-            d.setCurrency(day.currency);
+                if (curday.amount > _maxdayamount) {
+                    _maxdayamount = curday.amount;
+                }
+            }
+        },
 
-            if (day.amount > _maxdayamount) {
-                _maxdayamount = day.amount;
+        _updateDay: function(obj) {
+            var i = obj.delta + __daysnumber - 1;
+            var prev = _days[i];
+
+            if (prev.date == obj.date && prev.amount == obj.amount &&
+                    prev.currency == obj.currency) {
+                return;
             }
 
-            if (day.updated > _latestupdate) {
-                _latestupdate = day.updated;
-            }
+            prev.remove();
+            delete _days[i];
 
-            // Notify all the days that a new normalization factor has
-            // been set.
-            for (var i = 0; i < 30; i++) {
-                _days[i].onDisplay();
+            var newday = Day(obj.date, obj.amount, obj.currency);
+            if (i == __daysnumber - 1) {
+                _$days.append(newday.$elem);
+            } else {
+                newday.$elem.insertBefore(_days[i + 1].$elem);
+            }
+            _days[i] = newday;
+
+            this._updateMaxAmount();
+
+            for (var j in _days) {
+                _days[j].onDisplay();
             }
         },
 
         onNewData: function(data) {
             $.each(data.days, EachCallbackWrapper(function(i, value, _this) {
-                _this._onNewData(value);
+                _this._updateDay(value);
             }, this));
         },
+
+
+        formatTooltip: function(date, amount, currency) {
+            return sprintf("Date: %s Amount: %f %s", date, amount, currency);
+        }
     };
 })();
 
 
 var Day = function(ui) {
     return function(date, amount, currency) {
-        return {
+        var obj = {
             date: date,
             amount: amount,
             currency: currency,
             $elem: $('' +
 '<div class="day">' +
-    '<a class="day_tooltip" href="#" tooltip-data="">' +
+    '<a class="day_tooltip" href="#" tooltip-data="' + ui.formatTooltip(date, amount, currency) + '">' +
         '<span class="day_bar_container">' +
             '<span class="day_bar" style="height: 0%">&nbsp;</span>' +
         '</span>' +
     '</a>' +
 '</div>'
                 ),
+
             _$elem_tooltip: null,
             _$elem_bar: null,
             _timeoutid: null,
 
-            setDate: function(date_) {
-                this.date = date_;
 
-                this._onValueChange();
+            remove: function() {
+                this.$elem.remove();
             },
 
-            setAmount: function(amount_) {
-                this.amount = amount_;
-
-                this._onValueChange();
+            _onGracefulRemove: function() {
+                this.$elem.find('.day_bar').animate({
+                    height: 0 + '%',
+                }, ui.__animationtimeout).remove();
             },
 
-            setCurrency: function(currency_) {
-                this.currency = currency_;
+            gracefulRemove: function() {
+                if (this._timeoutid != null) {
+                    clearInterval(this._timeoutid);
+                }
 
-                this._onValueChange();
+                this._timeoutid = setTimeout(function(_this) {
+                    _this._onGracefulRemove();
+                }, ui.__beforeanimatetimeout, this);
             },
 
-            _onValueChange: function() {
-                this.$elem.find('.day_tooltip').attr(
-                        {'tooltip-data': "Date: " + this.date + " " +
-                                         "Amount: " + this.amount + " " + this.currency});
-            },
 
-            onHoverIn: function() {
+            _onHoverIn: function() {
                 // Cache the value
                 if (this._$elem_bar == null) {
                     this._$elem_bar = this.$elem.find('.day_bar');
@@ -141,7 +141,7 @@ var Day = function(ui) {
                 this._$elem_tooltip.addClass('day_tooltip_hover');
             },
 
-            onHoverOut: function() {
+            _onHoverOut: function() {
                 // Cache the value
                 if (this._$elem_bar == null) {
                     this._$elem_bar = this.$elem.find('.day_bar');
@@ -174,5 +174,21 @@ var Day = function(ui) {
                 }(this), ui.__beforeanimatetimeout);
             }
         };
+
+        obj.$elem.hover(function(_this) {
+            return function(eventObject) {
+                if (_this.amount != 0.0) {
+                    _this._onHoverIn();
+                }
+            };
+        }(obj), function(_this) {
+            return function(eventObject) {
+                if (_this.amount != 0.0) {
+                    _this._onHoverOut();
+                }
+            };
+        }(obj))
+
+        return obj;
     };
 }(AmountsUI);

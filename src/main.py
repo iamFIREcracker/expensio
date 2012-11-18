@@ -55,8 +55,8 @@ urls = (
 
     '/expenses.json', 'ExpensesHandler',
     '/expenses/add', 'ExpensesAddHandler',
-    '/expenses/(\d+)/edit', 'ExpensesEditHandler',
-    '/expenses/(\d+)/delete', 'ExpensesDeleteHandler',
+    '/expenses/(.+)/edit', 'ExpensesEditHandler',
+    '/expenses/(.+)/delete', 'ExpensesDeleteHandler',
     '/expenses/import', 'ExpensesImportHandler',
 )
 
@@ -281,10 +281,9 @@ class AmountsHandler(BaseHandler):
     def GET(self):
         today = datetime.today()
         data = web.input(days=30, latest=EPOCH)
-        user_id = self.current_user().id if self.current_user() else ''
+        user_id = self.current_user().id
 
         days = int(data.days)
-        latest = datetime.strptime(data.latest, DATE_FORMAT)
 
         past = today - timedelta(days - 1)
 
@@ -292,7 +291,6 @@ class AmountsHandler(BaseHandler):
                 .filter_by(user_id=user_id)
                 .filter(Expense.date >= past)
                 .filter(Expense.date <= today)
-                .filter(Expense.updated > latest)
                 .order_by(Expense.date.desc())
                 .all())
 
@@ -386,8 +384,12 @@ class ExpensesDeleteHandler(BaseHandler, ItemHandler):
     @protected
     @owner(Expense)
     def POST(self, id):
+        e = self.current_item()
+        e.amount = 0
+        e.deleted = True
+        web.ctx.orm.add(e)
+
         form = expenses_edit()
-        web.ctx.orm.delete(self.current_item())
         return render.expenses_edit(expenses_edit=form)
 
 

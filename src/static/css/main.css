@@ -41,6 +41,11 @@ h1, h2, h3 {
     background: #ffff9c;
 }
 
+.removed {
+    background: #f58686;
+}
+
+
 .connect {
     display: block;
     font-size: 200%;

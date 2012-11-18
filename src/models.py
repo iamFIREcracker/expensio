@@ -6,11 +6,12 @@ from datetime import datetime
 
 import web
 from sqlalchemy import create_engine
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
 from sqlalchemy import Float
+from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -43,10 +44,14 @@ class AlchemyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
+def _uuid():
+    return unicode(uuid.uuid4())
+
+
 class User(Base):
     __tablename__ = 'user'
 
-    id = Column(String, default=lambda: unicode(uuid.uuid4()), primary_key=True)
+    id = Column(String, default=_uuid, primary_key=True)
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     name = Column(String, nullable=False)
@@ -58,17 +63,18 @@ class User(Base):
 class Expense(Base):
     __tablename__ = 'expense'
 
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'))
+    id = Column(String, default=_uuid, primary_key=True)
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+    user_id = Column(Integer, ForeignKey('user.id'))
     date = Column(DateTime, nullable=False)
     category = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
     note = Column(String)
+    deleted = Column(Boolean, default=False, nullable=False)
 
     __serializable__ = {
-            'id': lambda o: int(o.id),
+            'id': lambda o: o.id,
             'date': lambda o: datetime.strftime(o.date, DATE_FORMAT),
             'created': lambda o: datetime.strftime(o.created, DATE_FORMAT),
             'updated': lambda o: datetime.strftime(o.updated, DATE_FORMAT),
@@ -76,6 +82,7 @@ class Expense(Base):
             'amount': lambda o: float(o.amount),
             'currency': lambda o: '&euro;', # XXX use proper value
             'note': lambda o: o.note,
+            'deleted': lambda o: bool(o.deleted),
             }
 
 

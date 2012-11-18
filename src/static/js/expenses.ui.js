@@ -19,6 +19,7 @@ var ExpensesUI = (function() {
     var _palette = null;
     var _categories = null;
     var _expenses = null;
+    var _expensesids = null;
     var _latestupdate = null;
 
     return {
@@ -32,7 +33,7 @@ var ExpensesUI = (function() {
             _maxamount = 0.0;
             _palette = Object();
             _categories = Object();
-            _expenses = Array();
+            _expenses = Object();
             _latestupdate = '1970-01-01 00:00:00.000000'; // epoch
 
             this._initCurrentMonth(__months[_curmonth], _curyear);
@@ -89,68 +90,161 @@ var ExpensesUI = (function() {
         },
 
 
-        _updateCategory: function(cat) {
-            var currency = cat.currency;
-
-            if (!(cat.name in _palette)) {
-                _palette[cat.name] = size(_palette);
-                _categories[cat.name] = Category(cat.name, 0, currency);
-                _$categories.append(_categories[cat.name].$elem);
-            }
-            _categories[cat.name].amount(cat.amount);
-
-            if (cat.amount > _maxamount) {
-                _maxamount = cat.amount;
-            }
-
-            // Notify all the categories that a new normalization factor has
-            // been set.
-            for (catname in _categories) {
-                _categories[catname].onChanged();
+        _updatePalette: function(obj) {
+            /*
+             * Add categories to the palette iff the are active (amount != 0.0)
+             */
+            if (!(obj.name in _palette) && obj.amount != 0.0) {
+                _palette[obj.name] = size(_palette);
             }
         },
 
-        _updateExpense: function(exp) {
-            var e = Expense(exp.id, exp.amount, exp.currency,
-                    exp.category, exp.note, exp.date);
-            var put = false;
+        _updateMaxAmount: function() {
+            _maxamount = 0;
+            for (var name in _categories) {
+                var curcat = _categories[name];
 
-            if (_expenses.length != 0) {
-                for (var i = 0; i < _expenses.length; i++) {
-                    var curexpense = _expenses[i];
-
-                    if (e.date > curexpense.date) {
-                        e.$elem.insertBefore(curexpense.$elem);
-                        _expenses.insert(i, e);
-                        put = true;
-                        break;
-                    }
+                if (curcat.amount > _maxamount) {
+                    _maxamount = curcat.amount;
                 }
             }
-            if (!put) {
-                _$expenses.append(e.$elem);
-                _expenses.push(e);
+        },
+
+        _updateCategory1: function(obj) {
+            var prev = _categories[obj.name];
+
+            /*
+             * The current category is no more valid (amount equal 0.0).  Check
+             * for a previously received update: if present, issue a graceful
+             * remove, otherwise return.
+             */
+            if (obj.amount == 0.0) {
+                if (prev === undefined) {
+                    return;
+                } else {
+                    prev.gracefulRemove();
+                    delete _categories[prev.name];
+
+                    /*
+                     * Find the most expensive category.
+                     */
+                    this._updateMaxAmount();
+                    return;
+                }
             }
 
-            if (exp.updated > _latestupdate) {
-                _latestupdate = exp.updated;
+            /*
+             * If we are here, we have received an update for the current
+             * category.  First, remove the previous element.
+             */
+            if (prev !== undefined) {
+                prev.remove();
+                delete _categories[prev.name];
             }
 
-            e.onChanged();
+
+            /*
+             * Then add the new category.
+             */
+            var newcat = Category(obj.name, obj.amount, obj.currency);
+            for (var name in _categories) {
+                var curcat = _categories[name];
+
+                if (newcat.name < curcat.name) {
+                    newcat.$elem.insertBefore(curcat.$elem);
+                    _categories[newcat.name] = newcat;
+                    break;
+                }
+            }
+            if (!(newcat.name in _categories)) {
+                _$categories.append(newcat.$elem);
+                _categories[newcat.name] = newcat;
+            }
+
+            /*
+             * Update the information about the most expensive category.
+             */
+            this._updateMaxAmount();
+
+            /*
+             * Trigger animations.
+             */
+            for (var name in _categories) {
+                _categories[name].onChanged();
+            }
+        },
+
+        _updateExpense: function(obj) {
+            var prev = _expenses[obj.id];
+
+            /*
+             * Update the variable containing the date of the latest update.
+             * This operation should be done on all received updates, even those
+             * representing deleted items.
+             */
+            if (obj.updated > _latestupdate) {
+                _latestupdate = obj.updated;
+            }
+
+            /*
+             * The current expense has been deleted.  Check for a previously
+             * received update: if preset, issue a graceful remove, otherwise
+             * skip the element and return.
+             */
+
+            if (obj.deleted === true) {
+                if (prev === undefined) {
+                    return;
+                } else {
+                    prev.gracefulRemove();
+                    delete _expenses[obj.id];
+                    return;
+                }
+            }
+
+            /*
+             * If we are here, we received an update for the current expense.
+             * Remove the previous element.
+             */
+            if (prev !== undefined) {
+                prev.remove();
+                delete _expenses[prev.id];
+            }
+
+            /*
+             * Add the expense to internal data structures 
+             */
+            var newexp = Expense(obj.id, obj.amount, obj.currency,
+                    obj.category, obj.note, obj.date);
+            for (var id in _expenses) {
+                var curexp = _expenses[id];
+
+                if (newexp.date > curexp.date) {
+                    newexp.$elem.insertBefore(curexp.$elem);
+                    _expenses[newexp.id] = newexp;
+                    break;
+                }
+            }
+            if (!(newexp.id in _expenses)) {
+                _$expenses.append(newexp.$elem);
+                _expenses[newexp.id] = newexp;
+            }
+
+            /*
+             * Trigger animations.
+             */
+            newexp.flash();
         },
 
         onNewData: function(data) {
-            $.each(data.categories, function(this_) {
-                return function() {
-                    this_._updateCategory(this);
-                }
-            }(this));
+            $.each(data.categories, EachCallbackWrapper(function(i, value, _this) {
+                _this._updatePalette(value);
+                _this._updateCategory1(value);
+            }, this));
 
-            $.each(data.expenses, function(this_) {
-                return function() {
-                    this_._updateExpense(this);
-                };
-            }(this));
+            $.each(data.expenses, EachCallbackWrapper(function(i, value, _this) {
+                _this._updateExpense(value);
+            }, this));
         },
 
 
@@ -170,17 +264,18 @@ var ExpensesUI = (function() {
 
 
 var Expense = function(ui) {
-    return function(id, amount, currency, catname, note, date) {
+    return function(id, amount, currency, category, note, date) {
         return {
+            id: id,
             amount: amount,
             currency: currency,
-            catname: catname,
+            category: category,
             note: note,
             date: date,
             $elem: $('' +
 '<div class="exp">' +
     '<span class="exp_amount">' + ui.formatAmount(amount, currency) + '</span>' +
-    '<span class="exp_category palette palette' + ui.getPalette(catname) + '">' + catname + '</span>' +
+    '<span class="exp_category palette palette' + ui.getPalette(category) + '">' + category + '</span>' +
     '<span class="exp_note">' + note + '</span>' +
     '<span class="exp_date"><a href="/expenses/' + id + '/edit">' + ui.formatDate(date) + '</a></span>' +
 '</div>'
@@ -188,18 +283,42 @@ var Expense = function(ui) {
             _timeoutid: null,
 
 
-            onChanged: function() {
-                this.$elem.addClass('flash')
-                    .delay(ui.__animationtimeout).removeClass('flash', 'slow');
+            remove: function() {
+                this.$elem.remove();
             },
 
-            onChanged: function() {
+            _onGracefulRemove: function() {
+                this.$elem.addClass('removed')
+                    .fadeOut('slow', function(_this) {
+                        return function() {
+                            _this.remove();
+                        }
+                    }(this));
+            },
+
+            gracefulRemove: function() {
                 if (this._timeoutid != null) {
                     clearInterval(this._timeoutid);
                 }
 
                 this._timeoutid = setTimeout(function(_this) {
-                    _this.onChanged();
+                    _this._onGracefulRemove();
+                }, ui.__beforeanimatetimeout, this);
+            },
+
+
+            _onFlash: function() {
+                this.$elem.addClass('flash')
+                    .delay(ui.__animationtimeout).removeClass('flash', 'slow');
+            },
+
+            flash: function() {
+                if (this._timeoutid != null) {
+                    clearInterval(this._timeoutid);
+                }
+
+                this._timeoutid = setTimeout(function(_this) {
+                    _this._onFlash();
                 }, ui.__beforeanimatetimeout, this);
             },
         };
@@ -210,12 +329,8 @@ var Expense = function(ui) {
 var Category = function(ui) {
     return function(name, amount, currency) {
         return {
-            _timeoutid: null,
-
             name: name,
-
-            _amount: amount,
-
+            amount: amount,
             currency: currency,
             $elem: $('' +
 '<div class="cat">' +
@@ -227,28 +342,43 @@ var Category = function(ui) {
     '</span>' +
 '</div>'
             ),
+            _timeoutid: null,
 
 
-            amount: function(_amount) {
-                if (_amount === undefined) {
-                    return _amount;
+            remove: function() {
+                this.$elem.remove();
+            },
+
+            _onGracefulRemove: function() {
+                this.$elem.fadeOut('slow', function(_this) {
+                    return function() {
+                        _this.remove();
+                    };
+                }(this));
+            },
+
+            gracefulRemove: function() {
+                if (this._timeoutid != null) {
+                    clearInterval(this._timeoutid);
                 }
 
-                this._amount = _amount;
-                this.onChanged();
+                this._timeoutid = setTimeout(function(_this) {
+                    _this._onGracefulRemove();
+                }, ui.__beforeanimatetimeout, this);
             },
 
 
             _onChanged: function() {
                 this.$elem.find('.cat_amount').html(
-                        ui.formatAmount(this._amount, this.currency));
+                        ui.formatAmount(this.amount, this.currency));
 
-                var width = 100 * this._amount / ui.getMaxAmount();
+                var width = 100 * this.amount / ui.getMaxAmount();
 
                 this.$elem.find('.cat_bar').animate({
                     width: width + '%',
                 }, ui.__animationtimeout);
             },
+
 
             onChanged: function() {
                 if (this._timeoutid != null) {
