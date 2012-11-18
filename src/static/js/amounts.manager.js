@@ -29,6 +29,7 @@ var AmountsManager = (function() {
                 dataType: 'json',
                 data: {
                     days: 30,
+                    latest: ui.getLatestUpdate(),
                 },
 
                 success: AjaxCallbackWrapper(function(data, _this) {

@@ -19,7 +19,6 @@ var ExpensesUI = (function() {
     var _palette = null;
     var _categories = null;
     var _expenses = null;
-    var _expensesids = null;
     var _latestupdate = null;
 
     return {

@@ -284,6 +284,7 @@ class AmountsHandler(BaseHandler):
         user_id = self.current_user().id
 
         days = int(data.days)
+        latest = datetime.strptime(data.latest, DATE_FORMAT)
 
         past = today - timedelta(days - 1)
 
@@ -291,6 +292,7 @@ class AmountsHandler(BaseHandler):
                 .filter_by(user_id=user_id)
                 .filter(Expense.date >= past)
                 .filter(Expense.date <= today)
+                .filter(Expense.updated > latest)
                 .order_by(Expense.date.desc())
                 .all())
 

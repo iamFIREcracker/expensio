@@ -7,12 +7,14 @@ var AmountsUI = (function() {
 
     var _maxdayamount = null;
     var _days = null;
+    var _latestupdate = null;
 
     return {
         _init: function() {
             _$days.empty();
             _days = Object();
             _maxdayamount = 0.0;
+            _latestupdate = '1970-01-01 00:00:00.000000'; // epoch
 
             for (var i = 0; i < __daysnumber; i++) {
                 var d = Day('', 0, '');
@@ -28,6 +30,10 @@ var AmountsUI = (function() {
             this._init();
         },
 
+
+        getLatestUpdate: function() {
+            return _latestupdate;
+        },
 
         getMaxDayAmount: function() {
             return _maxdayamount;
@@ -49,9 +55,8 @@ var AmountsUI = (function() {
             var i = obj.delta + __daysnumber - 1;
             var prev = _days[i];
 
-            if (prev.date == obj.date && prev.amount == obj.amount &&
-                    prev.currency == obj.currency) {
-                return;
+            if (obj.updated > _latestupdate) {
+                _latestupdate = obj.updated;
             }
 
             prev.remove();
