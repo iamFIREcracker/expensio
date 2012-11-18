@@ -120,8 +120,7 @@ def owner(model):
                     .filter_by(user_id=self.current_user().id)
                     .first())
             if not record:
-                web.notfound()
-                return
+                raise web.notfound()
 
             setattr(self, '_current_item', record)
             return func(self, id)
