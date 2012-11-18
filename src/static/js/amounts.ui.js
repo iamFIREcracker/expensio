@@ -55,13 +55,23 @@ var AmountsUI = (function() {
             var i = obj.delta + __daysnumber - 1;
             var prev = _days[i];
 
+            /*
+             * Update the latest received update marker, to send to the server
+             * to synchronize exchanged messages.
+             */
             if (obj.updated > _latestupdate) {
                 _latestupdate = obj.updated;
             }
 
+            /*
+             * Remove the previous day element: it will be replaced later on.
+             */
             prev.remove();
             delete _days[i];
 
+            /*
+             * Create a new Day object, and place it in the right position.
+             */
             var newday = Day(obj.date, obj.amount, obj.currency);
             if (i == __daysnumber - 1) {
                 _$days.append(newday.$elem);
@@ -70,8 +80,14 @@ var AmountsUI = (function() {
             }
             _days[i] = newday;
 
+            /*
+             * Update the changed value of max amount.
+             */
             this._updateMaxAmount();
 
+            /*
+             * Trigger animations.
+             */
             for (var j in _days) {
                 _days[j].onDisplay();
             }
