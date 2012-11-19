@@ -140,32 +140,48 @@ def me(func):
     return inner1
 
 
+class ExpenseWrapper(object):
+    __serializable__ = {
+            'id': lambda o: o.e.id,
+            'date': lambda o: datetime.strftime(o.e.date, DATE_FORMAT),
+            'created': lambda o: datetime.strftime(o.e.created, DATE_FORMAT),
+            'updated': lambda o: datetime.strftime(o.e.updated, DATE_FORMAT),
+            'category': lambda o: o.e.category,
+            'amount': lambda o: float(o.e.amount),
+            'currency': lambda o: o.currency,
+            'note': lambda o: o.e.note,
+            'deleted': lambda o: bool(o.e.deleted),
+            }
+
+    def __init__(self, expense, currency):
+        self.e = expense
+        self.currency = currency
+
+
 class Category(object):
     __serializable__ = {
-        'name': lambda o: o.name,
-        'amount': lambda o: o.amount,
-        'currency': lambda o: '&euro;', # XXX use proper value
+        'name': lambda o: o.c[0],
+        'amount': lambda o: o.c[1],
+        'currency': lambda o: o.currency,
         }
 
-    def __init__(self, name, amount):
-        self.name = name
-        self.amount = amount
+    def __init__(self, category, currency):
+        self.c = category
+        self.currency = currency
 
 
 class Day(object):
     __serializable__ = {
-            'date': lambda o: o.date,
-            'updated': lambda o: datetime.strftime(o.updated, DATE_FORMAT),
-            'delta': lambda o: int(o.delta),
-            'amount': lambda o: o.amount,
-            'currency': lambda o: '&euro;',
+            'date': lambda o: o.d[0],
+            'updated': lambda o: datetime.strftime(o.d[1], DATE_FORMAT),
+            'delta': lambda o: int(o.d[2]),
+            'amount': lambda o: o.d[3],
+            'currency': lambda o: o.currency,
             }
 
-    def __init__(self, date, updated, delta, amount):
-        self.date = date
-        self.updated = updated
-        self.delta = delta
-        self.amount = amount
+    def __init__(self, day, currency):
+        self.d = day
+        self.currency = currency
 
 
 
@@ -293,7 +309,7 @@ class UsersEditHandler(BaseHandler):
     def GET(self, id):
         form = users_edit()
         user = self.current_user()
-        form.fill(id=user.id, name=user.name, currency='&euro;')
+        form.fill(id=user.id, name=user.name, currency=user.currency)
         return render.users_edit_complete(users_edit=form)
 
     @protected
@@ -340,7 +356,7 @@ class AmountsHandler(BaseHandler):
                     .group_by(func.strftime(LATEST_DAYS_DATE_FORMAT, Expense.date))
                     .all())
 
-        return jsonify(days=[Day(*d) for d in days])
+        return jsonify(days=[Day(d, self.current_user().currency) for d in days])
 
 
 class ExpensesHandler(BaseHandler):
@@ -373,8 +389,8 @@ class ExpensesHandler(BaseHandler):
                     .group_by(Expense.category)
                     .all())
 
-        return jsonify(expenses=expenses,
-                categories=[Category(*c) for c in categories])
+        return jsonify(expenses=[ExpenseWrapper(e, self.current_user().currency) for e in expenses],
+                categories=[Category(c, self.current_user().currency) for c in categories])
 
 
 class ExpensesAddHandler(BaseHandler):

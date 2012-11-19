@@ -48,6 +48,10 @@ def _uuid():
     return unicode(uuid.uuid4())
 
 
+def eurocurrency():
+    return u'&euro;'
+
+
 class User(Base):
     __tablename__ = 'user'
 
@@ -55,6 +59,7 @@ class User(Base):
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     name = Column(String, nullable=False)
+    currency = Column(String, default=eurocurrency)
     google_id = Column(String)
     facebook_id = Column(String)
     twitter_id = Column(String)
@@ -72,18 +77,6 @@ class Expense(Base):
     amount = Column(Float, nullable=False)
     note = Column(String)
     deleted = Column(Boolean, default=False, nullable=False)
-
-    __serializable__ = {
-            'id': lambda o: o.id,
-            'date': lambda o: datetime.strftime(o.date, DATE_FORMAT),
-            'created': lambda o: datetime.strftime(o.created, DATE_FORMAT),
-            'updated': lambda o: datetime.strftime(o.updated, DATE_FORMAT),
-            'category': lambda o: o.category,
-            'amount': lambda o: float(o.amount),
-            'currency': lambda o: '&euro;', # XXX use proper value
-            'note': lambda o: o.note,
-            'deleted': lambda o: bool(o.deleted),
-            }
 
 
 

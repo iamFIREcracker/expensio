@@ -11,8 +11,8 @@ FORM_PERIOD_FORMAT = '%Y-%m'
 
 
 validcurrency = form.Validator(
-        '&euro;',
-        lambda v: v == '&euro;')
+        '&euro; or &pound;',
+        lambda v: v in ['&euro;', '&pound;'])
 
 validamount = form.Validator(
         '1000.00',
