@@ -29,11 +29,11 @@ from filters import cashformat
 from forms import expenses_add
 from forms import users_edit
 from forms import FORM_DATE_FORMAT
-from handlers import me
-from handlers import protected
-from handlers import BaseHandler
 from models import engine
 from models import User
+from utils import me
+from utils import protected
+from utils import BaseHandler
 
 
 
@@ -95,6 +95,7 @@ def load_render():
             datetime=datetimeformat, cash=cashformat)
     web.ctx.render = render;
 application.add_processor(web.loadhook(load_render))
+
 
 
 class MainHandler(BaseHandler):

@@ -15,11 +15,11 @@ from forms import expenses_edit
 from forms import expenses_import
 from forms import FORM_DATE_FORMAT
 from forms import FORM_PERIOD_FORMAT
-from handlers import owner
-from handlers import protected
-from handlers import BaseHandler
 from models import Expense
+from utils import owner
+from utils import protected
 from utils import jsonify
+from utils import BaseHandler
 
 
 class ExpenseWrapper(object):
