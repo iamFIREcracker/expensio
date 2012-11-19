@@ -4,10 +4,8 @@
 from __future__ import division
 from __future__ import unicode_literals
 
-import json
 import os
 import time
-import urllib
 from datetime import datetime
 
 import web
@@ -17,8 +15,11 @@ from web.contrib.template import render_jinja
 
 from amounts import AmountsHandler
 from auth import LoginGoogleHandler
+from auth import LoginGoogleAuthorizedHandler
 from auth import LoginFacebookHandler
+from auth import LoginFacebookAuthorizedHandler
 from auth import LoginTwitterHandler
+from auth import LoginTwitterAuthorizedHandler
 from expenses import ExpensesHandler
 from expenses import ExpensesAddHandler
 from expenses import ExpensesEditHandler
@@ -30,7 +31,6 @@ from forms import expenses_add
 from forms import users_edit
 from forms import FORM_DATE_FORMAT
 from models import engine
-from models import User
 from utils import me
 from utils import protected
 from utils import BaseHandler
@@ -62,10 +62,10 @@ urls = (
 
 
 application = web.application(urls, globals())
+session = web.session.Session(application, web.session.DiskStore('sessions'))
 
 def load_session():
-    web.ctx.session = web.session.Session(
-            application, web.session.DiskStore('sessions'))
+    web.ctx.session = session
 application.add_processor(web.loadhook(load_session))
 
 def load_path_url():
@@ -110,83 +110,6 @@ class MainHandler(BaseHandler):
                     expenses_add=form)
 
 
-
-class LoginGoogleAuthorizedHandler(BaseHandler):
-    def GET(self):
-        access_token = web.ctx.session.pop('google_access_token')
-        profile = json.load(
-                urllib.urlopen(
-                    "https://www.googleapis.com/oauth2/v1/userinfo?" +
-                    urllib.urlencode(dict(
-                        access_token=access_token['access_token']))))
-
-        user = self.current_user()
-        if not user:
-            user = web.ctx.orm.query(User).filter_by(google_id=profile['id']).first()
-            if not user:
-                user = User(name=profile["name"])
-        user.google_id = profile['id']
-
-        web.ctx.orm.add(user)
-        # Merge fying and persistent object: this enables us to read the
-        # automatically generated user id
-        user = web.ctx.orm.merge(user)
-
-        web.setcookie(
-                'user', user.id, expires=time.time() + 7 * 86400)
-        web.seeother('/')
-
-
-class LoginFacebookAuthorizedHandler(BaseHandler):
-    def GET(self):
-        access_token = web.ctx.session.pop('facebook_access_token')
-        profile = json.load(
-                urllib.urlopen(
-                    "https://graph.facebook.com/me?" +
-                    urllib.urlencode(dict(
-                        access_token=access_token['access_token'][-1]))))
-
-        user = self.current_user()
-        if not user:
-            user = web.ctx.orm.query(User).filter_by(facebook_id=profile['id']).first()
-            if not user:
-                user = User(name=profile["name"])
-        user.facebook_id = profile['id']
-
-        web.ctx.orm.add(user)
-        # Merge fying and persistent object: this enables us to read the
-        # automatically generated user id
-        user = web.ctx.orm.merge(user)
-
-        web.setcookie(
-                'user', user.id, expires=time.time() + 7 * 86400)
-        web.seeother('/')
-
-
-class LoginTwitterAuthorizedHandler(BaseHandler):
-    def GET(self):
-        if 'twitter_access_token' not in web.ctx.session:
-            web.seeother('/')
-            return
-
-        access_token = web.ctx.session.pop('twitter_access_token')
-        user = self.current_user()
-        if not user:
-            user = web.ctx.orm.query(User).filter_by(
-                    twitter_id=access_token['user_id'][-1]).first()
-
-            if not user:
-                user = User(name=access_token['screen_name'][-1])
-        user.twitter_id = access_token['user_id'][-1]
-
-        web.ctx.orm.add(user)
-        # Merge fying and persistent object: this enables us to read the
-        # automatically generated user id
-        user = web.ctx.orm.merge(user)
-
-        web.setcookie(
-                'user', user.id, expires=time.time() + 7 * 86400)
-        web.seeother('/')
 
 
 class LogoutHandler():

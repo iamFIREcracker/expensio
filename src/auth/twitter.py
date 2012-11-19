@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
 import urllib
 import urlparse
 
 import oauth2
 import web
+
+from models import User
+from utils import BaseHandler
 
 
 TWITTER_APP_ID = "QSg3YnYAa6ha6msWlRzBFA"
@@ -15,6 +19,31 @@ REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
 AUTHORIZE_URL = 'https://api.twitter.com/oauth/authorize'
 ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
 
+
+class LoginTwitterAuthorizedHandler(BaseHandler):
+    def GET(self):
+        if 'twitter_access_token' not in web.ctx.session:
+            web.seeother('/')
+            return
+
+        access_token = web.ctx.session.pop('twitter_access_token')
+        user = self.current_user()
+        if not user:
+            user = web.ctx.orm.query(User).filter_by(
+                    twitter_id=access_token['user_id'][-1]).first()
+
+            if not user:
+                user = User(name=access_token['screen_name'][-1])
+        user.twitter_id = access_token['user_id'][-1]
+
+        web.ctx.orm.add(user)
+        # Merge fying and persistent object: this enables us to read the
+        # automatically generated user id
+        user = web.ctx.orm.merge(user)
+
+        web.setcookie(
+                'user', user.id, expires=time.time() + 7 * 86400)
+        web.seeother('/')
 
 
 class LoginTwitterHandler():

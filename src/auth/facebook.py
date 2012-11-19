@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
+import time
 import urllib
 import urlparse
 
 import oauth2
 import web
+
+from models import User
+from utils import BaseHandler
 
 
 FACEBOOK_APP_ID = "431016523607887"
@@ -13,6 +18,32 @@ FACEBOOK_APP_SECRET = "bcc5a62efaff20fc9808919b3e40a944"
 
 AUTHORIZE_URL = 'https://www.facebook.com/dialog/oauth'
 ACCESS_TOKEN_URL = 'https://graph.facebook.com/oauth/access_token'
+
+
+class LoginFacebookAuthorizedHandler(BaseHandler):
+    def GET(self):
+        access_token = web.ctx.session.pop('facebook_access_token')
+        profile = json.load(
+                urllib.urlopen(
+                    "https://graph.facebook.com/me?" +
+                    urllib.urlencode(dict(
+                        access_token=access_token['access_token'][-1]))))
+
+        user = self.current_user()
+        if not user:
+            user = web.ctx.orm.query(User).filter_by(facebook_id=profile['id']).first()
+            if not user:
+                user = User(name=profile["name"])
+        user.facebook_id = profile['id']
+
+        web.ctx.orm.add(user)
+        # Merge fying and persistent object: this enables us to read the
+        # automatically generated user id
+        user = web.ctx.orm.merge(user)
+
+        web.setcookie(
+                'user', user.id, expires=time.time() + 7 * 86400)
+        web.seeother('/')
 
 
 class LoginFacebookHandler():
