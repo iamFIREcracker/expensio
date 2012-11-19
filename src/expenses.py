@@ -9,6 +9,7 @@ from sqlalchemy import func
 
 from config import DATE_FORMAT
 from config import EPOCH
+from formatters import dateformatter
 from forms import expenses_add
 from forms import expenses_edit
 from forms import expenses_import
@@ -24,11 +25,11 @@ from utils import jsonify
 class ExpenseWrapper(object):
     __serializable__ = {
             'id': lambda o: o.e.id,
-            'date': lambda o: datetime.strftime(o.e.date, DATE_FORMAT),
-            'created': lambda o: datetime.strftime(o.e.created, DATE_FORMAT),
-            'updated': lambda o: datetime.strftime(o.e.updated, DATE_FORMAT),
+            'date': lambda o: dateformatter(o.e.date),
+            'created': lambda o: dateformatter(o.e.created),
+            'updated': lambda o: dateformatter(o.e.updated),
             'category': lambda o: o.e.category,
-            'amount': lambda o: float(o.e.amount),
+            'amount': lambda o: o.e.amount,
             'currency': lambda o: o.currency,
             'note': lambda o: o.e.note,
             'deleted': lambda o: bool(o.e.deleted),
