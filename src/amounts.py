@@ -40,11 +40,12 @@ class AmountsHandler(BaseHandler):
     @protected
     def GET(self):
         today = datetime.today()
-        data = web.input(days=30, latest=EPOCH)
+        data = web.input(days=30, latest=None)
         user_id = self.current_user().id
 
         days = int(data.days)
-        latest = datetime.strptime(data.latest if data.latest else EPOCH, DATE_FORMAT)
+        latest = datetime.strptime(
+                data.latest if data.latest else EPOCH, DATE_FORMAT)
 
         past = today - timedelta(days - 1)
 

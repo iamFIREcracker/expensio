@@ -56,8 +56,7 @@ class ExpensesHandler(BaseHandler):
     @protected
     def GET(self):
         today = datetime.today()
-        data = web.input(year=today.year, month=today.month,
-                latest=EPOCH)
+        data = web.input(year=today.year, month=today.month, latest=None)
         user_id = self.current_user().id
 
         year = int(data.year)
