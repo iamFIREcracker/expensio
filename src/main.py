@@ -29,6 +29,7 @@ from filters import cashformat
 from forms import expenses_add
 from forms import expenses_edit
 from forms import expenses_import
+from forms import users_edit
 from forms import FORM_DATE_FORMAT
 from forms import FORM_PERIOD_FORMAT
 from models import engine
@@ -50,6 +51,8 @@ urls = (
     '/login/twitter', 'LoginTwitterHandler',
     '/login/twitter/authorized', 'LoginTwitterAuthorizedHandler',
     '/logout', 'LogoutHandler',
+
+    '/users/(.+)/edit', 'UsersEditHandler',
 
     '/amounts.json', 'AmountsHandler',
 
@@ -127,6 +130,14 @@ def owner(model):
         return inner2
     return inner1
 
+
+def me(func):
+    def inner1(self, id):
+        if id != self.current_user().id:
+            raise web.unauthorized()
+
+        return func(self, id)
+    return inner1
 
 
 class Category(object):
@@ -273,6 +284,28 @@ class LogoutHandler():
     def GET(self):
         web.setcookie('user', '', expires=time.time() - 86400)
         web.seeother('/')
+
+
+
+class UsersEditHandler(BaseHandler):
+    @protected
+    @me
+    def GET(self, id):
+        form = users_edit()
+        user = self.current_user()
+        form.fill(id=user.id, name=user.name, currency='&euro;')
+        return render.users_edit_complete(users_edit=form)
+
+    @protected
+    @me
+    def POST(self, id):
+        form = users_edit()
+        if form.validates():
+            u = self.current_user()
+            u.name = form.d.name
+            u.currency = form.d.currency
+            web.ctx.orm.add(u)
+        return render.users_edit(users_edit=form)
 
 
 

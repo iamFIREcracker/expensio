@@ -10,6 +10,10 @@ FORM_DATE_FORMAT = '%Y-%m-%d'
 FORM_PERIOD_FORMAT = '%Y-%m'
 
 
+validcurrency = form.Validator(
+        '&euro;',
+        lambda v: v == '&euro;')
+
 validamount = form.Validator(
         '1000.00',
         float)
@@ -17,6 +21,15 @@ validamount = form.Validator(
 validdatetime = form.Validator(
         'yyyy-mm-dd',
         lambda v: datetime.strptime(v, FORM_DATE_FORMAT))
+
+
+users_edit = form.Form(
+        form.Hidden('id'),
+        form.Textbox('name', form.notnull, description='Name'),
+        form.Textbox('currency', validcurrency, description='Currency'),
+        form.Button('Edit', type='submit',
+            onclick='UsersManager.onEditSubmit(this.form);'),
+    )
 
 
 expenses_add = form.Form(

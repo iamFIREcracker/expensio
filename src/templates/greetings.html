@@ -1,5 +1,7 @@
-{% if user %}
-<p><span>Welcome back, {{  user.name }}! (<a href="/logout" alt="Logout">Logout</a>)</span></p>
-{% else %}
-<p><span id="login"><a href="/login" alt="Login">Facebook login</a></span></p>
-{% endif %}
+<p>
+<span>Welcome back, {{  user.name }}!</span>
+<p>
+<span><a href="/users/{{ user.id }}/edit" alt="Setting">Setting</a></span>
+<span><a href="/logout" alt="Logout">Logout</a></span>
+</p>
+</p>
