@@ -372,11 +372,17 @@ class ExpensesEditHandler(BaseHandler, ItemHandler):
     def POST(self, id):
         form = expenses_edit()
         if form.validates():
-            e = Expense(id=form.d.id, user_id=self.current_user().id,
+            # Delete old item
+            old = self.current_item()
+            old.amount = 0
+            old.deleted = True
+            web.ctx.orm.add(old)
+
+            # Add new one
+            e = Expense(user_id=self.current_user().id,
                     amount=float(form.d.amount), category=form.d.category,
                     note=form.d.note,
                     date=datetime.strptime(form.d.date, FORM_DATE_FORMAT))
-            e = web.ctx.orm.merge(e) # Merge flying and persistence object
             web.ctx.orm.add(e)
         return render.expenses_edit(expenses_edit=form)
 
