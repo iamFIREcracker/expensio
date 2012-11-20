@@ -59,6 +59,8 @@ var Manager = (function() {
             $.each(updatelisteners, function(index, value) {
                 value.onMonthChange(curyear, curmonth);
             });
+
+            this.update(refreshtimeout);
         },
 
         update: function(timeout) {
