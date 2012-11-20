@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import time
 
 import web
 
@@ -68,3 +69,24 @@ class BaseHandler(object):
             self._current_item = None
 
         return self._current_item
+
+
+class UserUpdaterHandler(BaseHandler):
+    def update(self, **kwargs):
+        #user = self.current_user()
+        #if not user:
+            #user = web.ctx.orm.query(User).filter_by(
+                    #google_id=profile['id']).first()
+            #if not user:
+                #user = User(name=profile["name"])
+        #user.google_id = profile['id']
+
+        #web.ctx.orm.add(user)
+        ## Merge fying and persistent object: this enables us to read the
+        ## automatically generated user id
+        #user = web.ctx.orm.merge(user)
+
+        #web.setcookie(
+                #'user', user.id, expires=time.time() + 7 * 86400)
+        #web.seeother('/')
+        pass
