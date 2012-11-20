@@ -8,6 +8,10 @@ h1 {
     font-style: italic;
 }
 
+/*.grid {*/
+    /*border: 1px solid grey;*/
+/*}*/
+
 h1, h2, h3 {
     text-align: center;
     text-shadow: 2px 2px #ccc;
