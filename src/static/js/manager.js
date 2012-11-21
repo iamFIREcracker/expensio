@@ -42,28 +42,29 @@ var Manager = (function() {
         },
 
 
-        addUpdateListener: function(listener) {
-            updatelisteners.push(listener);
+        update: function(func) {
+            updatelisteners.push(func);
         },
 
-        addDayChangeListener: function(listener) {
-            daychangelisteners.push(listener);
+        dayChange: function(func) {
+            daychangelisteners.push(func);
         },
 
-        addMonthChangeListener: function(listener) {
-            monthchangelisteners.push(listener);
+        monthChange: function(func) {
+            monthchangelisteners.push(func);
         },
 
 
         _onUpdate: function() {
-            $.each(updatelisteners, function(index, value) {
-                value.onMonthChange(curyear, curmonth);
+            $.each(updatelisteners, function(index, func) {
+                console.log(index, func);
+                func();
             });
 
-            this.update(refreshtimeout);
+            this.onUpdate(refreshtimeout);
         },
 
-        update: function(timeout) {
+        onUpdate: function(timeout) {
             if (timeoutid != null) {
                 clearTimeout(timeoutid);
             }
@@ -75,12 +76,12 @@ var Manager = (function() {
 
 
         _onMonthChange: function() {
-            $.each(monthchangelisteners, function(index, value) {
-                value.onMonthChange(curyear, curmonth);
+            $.each(monthchangelisteners, function(index, func) {
+                func(curyear, curmonth);
             });
         },
 
-        prevMonth: function() {
+        onPrevMonth: function() {
             curmonth -= 1;
             if (curmonth < 0) {
                 curmonth = 11;
@@ -90,7 +91,7 @@ var Manager = (function() {
             this._onMonthChange();
         },
 
-        nextMonth: function() {
+        onNextMonth: function() {
             curmonth += 1;
             if (curmonth == 12) {
                 curmonth = 0;
