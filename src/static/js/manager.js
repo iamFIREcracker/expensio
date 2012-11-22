@@ -21,13 +21,13 @@ var Manager = (function() {
 
             $('#prev_month').click(function(_this) {
                 return function() {
-                    _this.prevMonth();
+                    _this.onPrevMonth();
                 }
             }(this));
 
             $('#next_month').click(function(_this) {
                 return function() {
-                    _this.nextMonth();
+                    _this.onNextMonth();
                 }
             }(this));
         },

@@ -3,22 +3,17 @@ Array.prototype.insert = function (index, item) {
 };
 
 
-var ExpensesUI = (function() {
-    var __months = [ "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December" ];
+var CategoriesUI = (function() {
     var __beforeanimatetimeout = 200;
     var __animationtimeout = 200; // milliseconds
 
-    var _$title = null;
     var _$categories = null;
-    var _$expenses = null;
     var _curyear = null;
     var _curmonth = null;
 
     var _maxamount = null;
     var _palette = null;
     var _categories = null;
-    var _expenses = null;
     var _latestupdate = null;
 
     return {
@@ -68,9 +63,22 @@ var ExpensesUI = (function() {
         },
 
 
-        onMonthChange: function(year, month) {
-            _curyear = year;
-            _curmonth = month;
+        onPreviousMonth: function() {
+            _curmonth -= 1;
+            if (_curmonth < 0) {
+                _curmonth = 11;
+                _curyear -= 1;
+            }
+
+            this._init();
+        },
+
+        onNextMonth: function() {
+            _curmonth += 1;
+            if (_curmonth == 12) {
+                _curmonth = 0;
+                _curyear += 1;
+            }
 
             this._init();
         },
@@ -249,69 +257,6 @@ var ExpensesUI = (function() {
 })();
 
 
-var Expense = function(ui) {
-    return function(id, amount, currency, category, note, date) {
-        return {
-            id: id,
-            amount: amount,
-            currency: currency,
-            category: category,
-            note: note,
-            date: date,
-            $elem: $('' +
-'<div class="exp">' +
-    '<span class="exp_amount">' + ui.formatAmount(amount, currency) + '</span>' +
-    '<span class="exp_category palette palette' + ui.getPalette(category) + '">' + category + '</span>' +
-    '<span class="exp_note">' + note + '</span>' +
-    '<span class="exp_date"><a href="/expenses/' + id + '/edit">' + ui.formatDate(date) + '</a></span>' +
-'</div>'
-                ),
-            _timeoutid: null,
-
-
-            remove: function() {
-                this.$elem.remove();
-            },
-
-            _onGracefulRemove: function() {
-                this.$elem.addClass('removed')
-                    .fadeOut('slow', function(_this) {
-                        return function() {
-                            _this.remove();
-                        }
-                    }(this));
-            },
-
-            gracefulRemove: function() {
-                if (this._timeoutid != null) {
-                    clearInterval(this._timeoutid);
-                }
-
-                this._timeoutid = setTimeout(function(_this) {
-                    _this._onGracefulRemove();
-                }, ui.__beforeanimatetimeout, this);
-            },
-
-
-            _onFlash: function() {
-                this.$elem.addClass('flash')
-                    .delay(ui.__animationtimeout).removeClass('flash', 'slow');
-            },
-
-            flash: function() {
-                if (this._timeoutid != null) {
-                    clearInterval(this._timeoutid);
-                }
-
-                this._timeoutid = setTimeout(function(_this) {
-                    _this._onFlash();
-                }, ui.__beforeanimatetimeout, this);
-            },
-        };
-    };
-}(ExpensesUI);
-
-
 var Category = function(ui) {
     return function(name, amount, currency) {
         return {
@@ -377,4 +322,4 @@ var Category = function(ui) {
             },
         };
     };
-}(ExpensesUI);
+}(CategoriesUI);

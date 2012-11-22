@@ -11,8 +11,8 @@ FORM_PERIOD_FORMAT = '%Y-%m'
 
 
 validcurrency = form.Validator(
-        '&euro; or &pound;',
-        lambda v: v in ['&euro;', '&pound;'])
+        '&euro;, &pound;, &yen;',
+        lambda v: v in ['&euro;', '&pound;', '&yen;'])
 
 validamount = form.Validator(
         '1000.00',
@@ -27,6 +27,9 @@ users_edit = form.Form(
         form.Hidden('id'),
         form.Textbox('name', form.notnull, description='Name'),
         form.Textbox('currency', validcurrency, description='Currency'),
+        form.Button('google_connect', html='Google Connect'),
+        form.Button('facebook_connect', html='Facebook Connect'),
+        form.Button('twitter_connect', html='Twitter Connect'),
         form.Button('Edit', type='submit',
             onclick='UsersManager.onEditSubmit(this.form);'),
     )

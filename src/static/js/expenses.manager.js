@@ -4,29 +4,36 @@ var ExpensesManager = (function() {
     var ui = null;
     var timeoutid = null;
 
+    var $exp_add = null;
+
     return {
+        setupOnAddSubmit: function($form) {
+            $form.submit(function(_this) {
+                return function() {
+                    _this.onAddSubmit(this);
+                }
+            }(this));
+        },
+
         onReady: function(logger_, refreshtimeout_, ui_) {
             logger = logger_;
             refreshtimeout = refreshtimeout_;
             ui = ui_;
+
+            $exp_add = $('#exp_add');
+
+            this.setupOnAddSubmit($exp_add);
         },
 
 
-        previousMonth: function() {
-            ui.onPreviousMonth();
-            this.update();
-        },
-
-        nextMonth: function() {
-            ui.onNextMonth();
+        onMonthChange: function(year, month) {
+            ui.onMonthChange(year, month);
             this.update();
         },
 
 
         _onUpdateSuccess: function(data) {
             ui.onNewData(data);
-
-            this.update(refreshtimeout);
         },
 
         _onUpdateError: function(data) {
@@ -69,12 +76,14 @@ var ExpensesManager = (function() {
 
         _onAddSubmitSuccess: function(data) {
             $data = $(data);
-            $form.replaceWith($data);
+            this.$exp_add.replaceWith($data);
             if ($data.find('.wrong').length == 0) {
                 logger.success('Expense tracked successfully!');
 
                 this.update()
             }
+
+            this.setupOnAddSubmit($form);
         },
 
         _onAddSubmitError: function(data) {

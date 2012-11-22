@@ -11,6 +11,7 @@
     <script src="/static/js/sprintf.js"></script>
     <script src="/static/js/common.js"></script>
     <script src="/static/js/logger.js"></script>
+    <script src="/static/js/manager.js"></script>
     <script src="/static/js/users.manager.js"></script>
     <script src="/static/js/amounts.ui.js"></script>
     <script src="/static/js/amounts.manager.js"></script>
@@ -24,6 +25,10 @@
         AmountsManager.onReady(Logger, 60000, AmountsUI);
         ExpensesUI.onReady($('#current_month'), $('#categories'), $('#expenses'));
         ExpensesManager.onReady(Logger, 60000, ExpensesUI);
+        Manager.onReady(Logger, 60000);
+        Manager.monthChange(function(year, month) {
+            ExpensesManager.onMonthChange(year, month);
+        });
 
         {% block jsready %}{% endblock %}
     });
