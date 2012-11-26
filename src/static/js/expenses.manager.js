@@ -9,8 +9,9 @@ var ExpensesManager = (function() {
     return {
         setupOnAddSubmit: function($form) {
             $form.submit(function(_this) {
+                console.log($form);
                 return function() {
-                    _this.onAddSubmit(this);
+                    return _this.onAddSubmit();
                 }
             }(this));
         },
@@ -19,7 +20,6 @@ var ExpensesManager = (function() {
             logger = logger_;
             refreshtimeout = refreshtimeout_;
             ui = ui_;
-
             $exp_add = $('#exp_add');
 
             this.setupOnAddSubmit($exp_add);
@@ -76,27 +76,28 @@ var ExpensesManager = (function() {
 
         _onAddSubmitSuccess: function(data) {
             $data = $(data);
-            this.$exp_add.replaceWith($data);
+
+            $exp_add.replaceWith($data);
+            $exp_add = $('#exp_add');
+            this.setupOnAddSubmit($exp_add);
+
             if ($data.find('.wrong').length == 0) {
                 logger.success('Expense tracked successfully!');
 
                 this.update()
             }
-
-            this.setupOnAddSubmit($form);
         },
 
         _onAddSubmitError: function(data) {
             logger.error('Something went wrong while contacting the server');
         },
 
-        onAddSubmit: function(form) {
-            $form = $(form);
+        onAddSubmit: function() {
             $.ajax({
                 url: '/expenses/add',
                 type: 'POST',
                 dataType: 'html',
-                data: $form.serialize(),
+                data: $exp_add.serialize(),
 
                 success: AjaxCallbackWrapper(function(data, _this) {
                     _this._onAddSubmitSuccess(data);
