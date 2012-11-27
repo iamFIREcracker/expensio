@@ -26,6 +26,10 @@
         ExpensesUI.onReady($('#current_month'), $('#categories'), $('#expenses'));
         ExpensesManager.onReady(Logger, 60000, ExpensesUI);
         Manager.onReady(Logger, 60000);
+        Manager.update(function() {
+            ExpensesManager.onUpdate();
+            AmountsManager.onUpdate();
+        })
         Manager.monthChange(function(year, month) {
             ExpensesManager.onMonthChange(year, month);
         });

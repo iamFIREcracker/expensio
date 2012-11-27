@@ -57,7 +57,6 @@ var Manager = (function() {
 
         _onUpdate: function() {
             $.each(updatelisteners, function(index, func) {
-                console.log(index, func);
                 func();
             });
 

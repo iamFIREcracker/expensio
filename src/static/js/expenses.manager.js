@@ -2,14 +2,12 @@ var ExpensesManager = (function() {
     var logger = null;
     var refreshtimeout = null;
     var ui = null;
-    var timeoutid = null;
 
     var $exp_add = null;
 
     return {
         setupOnAddSubmit: function($form) {
             $form.submit(function(_this) {
-                console.log($form);
                 return function() {
                     return _this.onAddSubmit();
                 }
@@ -28,7 +26,7 @@ var ExpensesManager = (function() {
 
         onMonthChange: function(year, month) {
             ui.onMonthChange(year, month);
-            this.update();
+            this.onUpdate();
         },
 
 
@@ -40,7 +38,7 @@ var ExpensesManager = (function() {
             logger.error('Something went wrong while contacting the server');
         },
 
-        _onUpdate: function() {
+        onUpdate: function() {
             $.ajax({
                 url: '/expenses.json',
                 type: 'GET',
@@ -63,16 +61,6 @@ var ExpensesManager = (function() {
             return false;
         },
 
-        update: function(timeout) {
-            if (timeoutid != null) {
-                clearTimeout(timeoutid);
-            }
-
-            timeoutid = setTimeout(function(this_) {
-                this_._onUpdate();
-            }, timeout, this);
-        },
-
 
         _onAddSubmitSuccess: function(data) {
             $data = $(data);
@@ -84,7 +72,7 @@ var ExpensesManager = (function() {
             if ($data.find('.wrong').length == 0) {
                 logger.success('Expense tracked successfully!');
 
-                this.update()
+                this.onUpdate()
             }
         },
 
