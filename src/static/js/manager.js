@@ -33,15 +33,6 @@ var Manager = (function() {
         },
 
 
-        curyear: function(value) {
-            return curyear;
-        },
-
-        curmonth: function(value) {
-            return curmonth;
-        },
-
-
         update: function(func) {
             updatelisteners.push(func);
         },
