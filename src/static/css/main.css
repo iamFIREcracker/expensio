@@ -12,9 +12,21 @@ h1 {
     /*border: 1px solid grey;*/
 /*}*/
 
-h1, h2, h3 {
+.title {
     text-align: center;
     text-shadow: 2px 2px #ccc;
+}
+
+.large {
+    font-size: 500%;
+}
+
+.mid-large {
+    font-size: 250%;
+}
+
+.mid {
+    
 }
 
 #message {

@@ -5,32 +5,32 @@ Manager.onUpdate(0);
 {% endblock %}
 
 {% block pre_row1 %}
-    {% include 'elements/logo.html' %}
+    {% include 'elements/logo_small.html' %}
     {% include 'greetings.html' %}
 {% endblock %}
 
 {% block row1_col1 %}
-    <h3>Track new</h3>
+    <h3 class="title mid">Track new</h3>
     {% include 'expenses_add.html' %}
 {% endblock %}
 
 {% block pre_row2 %}
 {% include 'expenses_more.html' %}
-<h2><span id="current_month"></span></h2>
+<h2 class="title mid"><span id="current_month"></span></h2>
 <br style="clear: both" />
 {% endblock %}
 
 {% block row1_col2 %}
-    <h3>Last 30 days</h3>
+    <h3 class="title mid">Last 30 days</h3>
     <div id="days"></div>
 {% endblock %}
 
 {% block row2_col1 %}
-    <h3>By date</h3>
+    <h3 class="title mid">By date</h3>
     <div id="expenses"></div>
 {% endblock %}
 
 {% block row2_col2 %}
-    <h3>By category</h3>
+    <h3 class="title mid">By category</h3>
     <div id="categories"></div>
 {% endblock %}
