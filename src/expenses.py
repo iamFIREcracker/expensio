@@ -4,11 +4,7 @@
 from datetime import datetime
 
 import web
-from sqlalchemy import extract
-from sqlalchemy import func
 
-from config import DATE_FORMAT
-from config import EPOCH
 from formatters import dateformatter
 from forms import expenses_add
 from forms import expenses_edit
@@ -16,10 +12,26 @@ from forms import expenses_import
 from forms import FORM_DATE_FORMAT
 from forms import FORM_PERIOD_FORMAT
 from models import Expense
+from utils import applicationinitializer
 from utils import owner
 from utils import protected
 from utils import jsonify
+from utils import parsedateparams
 from utils import BaseHandler
+
+
+
+urls = (
+    '/expenses.json', 'ExpensesHandler',
+    '/expenses/add', 'ExpensesAddHandler',
+    '/expenses/(.+)/edit', 'ExpensesEditHandler',
+    '/expenses/(.+)/delete', 'ExpensesDeleteHandler',
+    '/expenses/import', 'ExpensesImportHandler',
+)
+
+
+application = web.application(urls, globals())
+applicationinitializer(application)
 
 
 class ExpenseWrapper(object):
@@ -40,51 +52,31 @@ class ExpenseWrapper(object):
         self.currency = currency
 
 
-class CategoryWrapper(object):
-    __serializable__ = {
-        'name': lambda o: o.c[0],
-        'amount': lambda o: o.c[1],
-        'currency': lambda o: o.currency,
-        }
-
-    def __init__(self, category, currency):
-        self.c = category
-        self.currency = currency
+def ExpensesInBetween(user_id, since, to, latest):
+    """
+    Get all the expenses associated to the given user, which have been created
+    between `since` and `to` and that have been modified after `latest`
+    """
+    return (web.ctx.orm.query(Expense)
+                .filter_by(user_id=user_id)
+                .filter(Expense.date >= since)
+                .filter(Expense.date < to)
+                .filter(Expense.updated > latest))
 
 
 class ExpensesHandler(BaseHandler):
     @protected
     def GET(self):
-        today = datetime.today()
-        data = web.input(year=today.year, month=today.month, latest=None)
-        user_id = self.current_user().id
+        since, to, latest = parsedateparams()
 
-        year = int(data.year)
-        month = int(data.month)
-        latest = datetime.strptime(
-                data.latest if data.latest else EPOCH, DATE_FORMAT)
-
-        expenses = (web.ctx.orm.query(Expense)
-                .filter_by(user_id=user_id)
-                .filter(extract('year', Expense.date) == year)
-                .filter(extract('month', Expense.date) == month)
-                .filter(Expense.updated > latest)
-                .order_by(Expense.date.desc())
+        expenses = (
+                ExpensesInBetween(self.current_user().id, since, to, latest)
+                .order_by(Expense.date.asc())
                 .all())
 
-        categories = [] if not expenses else (
-                web.ctx.orm.query(Expense.category, func.sum(Expense.amount))
-                    .filter_by(user_id=user_id)
-                    .filter(extract('year', Expense.date) == year)
-                    .filter(extract('month', Expense.date) == month)
-                    .filter(Expense.category.in_((e.category for e in expenses)))
-                    .order_by(Expense.category)
-                    .group_by(Expense.category)
-                    .all())
-
         return jsonify(
-                expenses=[ExpenseWrapper(e, self.current_user().currency) for e in expenses],
-                categories=[CategoryWrapper(c, self.current_user().currency) for c in categories])
+                expenses=[ExpenseWrapper(e, self.current_user().currency)
+                        for e in expenses])
 
 
 class ExpensesAddHandler(BaseHandler):
@@ -107,7 +99,8 @@ class ExpensesEditHandler(BaseHandler):
         form = expenses_edit()
         item = self.current_item()
         form.fill(id=item.id, amount=item.amount, category=item.category,
-                note=item.note, date=datetime.strftime(item.date, FORM_DATE_FORMAT))
+                note=item.note,
+                date=datetime.strftime(item.date, FORM_DATE_FORMAT))
         return web.ctx.render.expenses_edit_complete(expenses_edit=form)
 
     @protected
@@ -115,17 +108,20 @@ class ExpensesEditHandler(BaseHandler):
     def POST(self, id):
         form = expenses_edit()
         if form.validates():
-            # Delete old item
-            old = self.current_item()
-            old.amount = 0
-            old.deleted = True
-            web.ctx.orm.add(old)
+            e = self.current_item()
 
-            # Add new one
-            e = Expense(user_id=self.current_user().id,
-                    amount=float(form.d.amount), category=form.d.category,
-                    note=form.d.note,
-                    date=datetime.strptime(form.d.date, FORM_DATE_FORMAT))
+            # Add a new expense being the copy of the current expense before
+            # the edit operations have been applied
+            deleted = Expense(original_id=e.id, user_id=self.current_user().id,
+                    amount=e.amount, category=e.category, note=e.note,
+                    date=e.date, deleted=True)
+            web.ctx.orm.add(deleted)
+
+            # Now apply edit operations on the current expense
+            e.amount = float(form.d.amount)
+            e.category = form.d.category
+            e.note = form.d.note
+            e.date = datetime.strptime(form.d.date, FORM_DATE_FORMAT)
             web.ctx.orm.add(e)
         return web.ctx.render.expenses_edit(expenses_edit=form)
 
@@ -135,7 +131,6 @@ class ExpensesDeleteHandler(BaseHandler):
     @owner(Expense)
     def POST(self, id):
         e = self.current_item()
-        e.amount = 0
         e.deleted = True
         web.ctx.orm.add(e)
 
@@ -166,3 +161,7 @@ class ExpensesImportHandler(BaseHandler):
                     category=tokens[1], amount=amount, note=note)
             web.ctx.orm.add(expense)
         web.seeother('/')
+
+
+if __name__ == '__main__':
+    application.run()
