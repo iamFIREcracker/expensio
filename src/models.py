@@ -65,13 +65,18 @@ class User(Base):
     twitter_id = Column(String)
 
 
+def expenseid(context):
+    return context.current_parameters['id']
+
+
 class Expense(Base):
     __tablename__ = 'expense'
 
     id = Column(String, default=_uuid, primary_key=True)
+    original_id = Column(String, ForeignKey('expense.id'), default=expenseid)
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
-    user_id = Column(Integer, ForeignKey('user.id'))
+    user_id = Column(String, ForeignKey('user.id'))
     date = Column(DateTime, nullable=False)
     category = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
