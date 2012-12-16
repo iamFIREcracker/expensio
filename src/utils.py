@@ -83,7 +83,7 @@ def parsedateparams():
 
 def protected(func):
     def inner(self, *args, **kwargs):
-        if not self.current_user:
+        if not self.current_user():
             raise web.unauthorized()
 
         return func(self, *args, **kwargs)
