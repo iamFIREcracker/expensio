@@ -1,13 +1,61 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import calendar
+import os
 import json
 import time
+from datetime import date
+from datetime import datetime
 
 import web
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
+from web.contrib.template import render_jinja
 
+from config import LATEST_DAYS_DATE_FORMAT
+from config import DATE_FORMAT
+from config import EPOCH
+from filters import datetimeformat
+from filters import cashformat
+from formatters import dateformatter
+from models import engine
 from models import AlchemyEncoder # XXX WTF?
 from models import User
+
+
+def applicationinitializer(application):
+    def load_session():
+        web.ctx.session = web.session.Session(application, web.session.DiskStore('sessions'))
+    application.add_processor(web.loadhook(load_session))
+
+    def load_path_url():
+        web.ctx.path_url = web.ctx.home + web.ctx.path
+    application.add_processor(web.loadhook(load_path_url))
+
+    def load_sqla(handler):
+        web.ctx.orm = scoped_session(sessionmaker(bind=engine))
+        try:
+            return handler()
+        except web.HTTPError:
+            web.ctx.orm.commit()
+            raise
+        except:
+            web.ctx.orm.rollback()
+            raise
+        finally:
+            web.ctx.orm.commit()
+    application.add_processor(load_sqla)
+
+    def load_render():
+        working_dir = os.path.dirname(__file__)
+        render = render_jinja(os.path.join(working_dir, 'templates'),
+                encoding='utf-8', extensions=['jinja2.ext.do'])
+
+        render._lookup.filters.update(
+                datetime=datetimeformat, cash=cashformat)
+        web.ctx.render = render;
+    application.add_processor(web.loadhook(load_render))
 
 
 def jsonify(*args, **kwargs):
@@ -15,6 +63,22 @@ def jsonify(*args, **kwargs):
 
     return json.dumps(dict(*args, **kwargs), cls=AlchemyEncoder)
 
+
+def parsedateparams():
+    today = datetime.today()
+    (_, days) = calendar.monthrange(today.year, today.month)
+    startofmonth = date(today.year, today.month, 1)
+    endsofmonth = date(today.year, today.month, days - 1)
+
+    data = web.input(
+            since=dateformatter(startofmonth, LATEST_DAYS_DATE_FORMAT),
+            to=dateformatter(endsofmonth, LATEST_DAYS_DATE_FORMAT),
+            latest=EPOCH)
+    since = datetime.strptime(data.since, LATEST_DAYS_DATE_FORMAT)
+    to = datetime.strptime(data.to, LATEST_DAYS_DATE_FORMAT)
+    latest = datetime.strptime(data.latest, DATE_FORMAT)
+
+    return (since, to, latest)
 
 
 def protected(func):
