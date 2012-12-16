@@ -20,6 +20,7 @@ from auth import LoginFacebookHandler
 from auth import LoginFacebookAuthorizedHandler
 from auth import LoginTwitterHandler
 from auth import LoginTwitterAuthorizedHandler
+from categories import CategoriesHandler
 from expenses import ExpensesHandler
 from expenses import ExpensesAddHandler
 from expenses import ExpensesEditHandler
@@ -51,6 +52,8 @@ urls = (
     '/users/(.+)/edit', 'UsersEditHandler',
 
     '/amounts.json', 'AmountsHandler',
+
+    '/categories.json', 'CategoriesHandler',
 
     '/expenses.json', 'ExpensesHandler',
     '/expenses/add', 'ExpensesAddHandler',
@@ -108,7 +111,6 @@ class MainHandler(BaseHandler):
                     FORM_DATE_FORMAT)
             return web.ctx.render.index(user=self.current_user(),
                     expenses_add=form)
-
 
 
 
