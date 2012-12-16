@@ -37,7 +37,7 @@ class CategoryWrapper(object):
         self.currency = currency
 
 
-def AccumulateAmountsAndLatestModified((name, amount, updated), expense):
+def AccumulateCategoryAggregate((name, amount, updated), expense):
     """
     Function to be used in conjunction with `reduce` in order to extract the
     name, the amount and when a certain category was last touched, given
@@ -60,7 +60,7 @@ def ComputeCategoryAggregate(expenses):
     last time a new expense for a certain category has been done.
     """
     (name, amount, updated) = reduce(
-            AccumulateAmountsAndLatestModified, expenses, (None, 0, None))
+            AccumulateCategoryAggregate, expenses, (None, 0, None))
     return name, updated, amount
 
 
