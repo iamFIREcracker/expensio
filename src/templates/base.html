@@ -12,6 +12,9 @@
     <script src="/static/js/common.js"></script>
     <script src="/static/js/logger.js"></script>
     <script src="/static/js/manager.js"></script>
+    <script src="/static/js/formatter.js"></script>
+    <script src="/static/js/date.manager.js"></script>
+    <script src="/static/js/palette.manager.js"></script>
     <script src="/static/js/users.manager.js"></script>
     <script src="/static/js/amounts.ui.js"></script>
     <script src="/static/js/amounts.manager.js"></script>
@@ -20,17 +23,20 @@
     <script>
     $(function() {
         Logger.onReady($('#message'), 2000);
+        DateManager.onReady($('#current_month'));
+        PaletteManager.onReady();
         UsersManager.onReady(Logger);
-        AmountsUI.onReady($('#days'));
-        AmountsManager.onReady(Logger, 60000, AmountsUI);
-        ExpensesUI.onReady($('#current_month'), $('#categories'), $('#expenses'));
-        ExpensesManager.onReady(Logger, 60000, ExpensesUI);
-        Manager.onReady(Logger, 60000);
+        //AmountsUI.onReady($('#days'));
+        //AmountsManager.onReady(Logger, 60000, AmountsUI);
+        ExpensesUI.onReady(PaletteManager, $('#expenses'));
+        ExpensesManager.onReady(Logger, DateManager, ExpensesUI);
+        Manager.onReady(Logger, 10000);
         Manager.update(function() {
             ExpensesManager.onUpdate();
-            AmountsManager.onUpdate();
+            //AmountsManager.onUpdate();
         })
         Manager.monthChange(function(year, month) {
+            DateManager.onMonthChange(year, month);
             ExpensesManager.onMonthChange(year, month);
         });
 
