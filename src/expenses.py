@@ -71,7 +71,7 @@ class ExpensesHandler(BaseHandler):
 
         expenses = (
                 ExpensesInBetween(self.current_user().id, since, to, latest)
-                .order_by(Expense.date.asc())
+                .order_by(Expense.date.desc())
                 .all())
 
         return jsonify(
