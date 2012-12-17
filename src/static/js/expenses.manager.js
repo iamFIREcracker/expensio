@@ -1,6 +1,6 @@
 var ExpensesManager = (function() {
     var logger = null;
-    var refreshtimeout = null;
+    var date = null;
     var ui = null;
 
     var $exp_add = null;
@@ -14,9 +14,9 @@ var ExpensesManager = (function() {
             }(this));
         },
 
-        onReady: function(logger_, refreshtimeout_, ui_) {
+        onReady: function(logger_, date_, ui_) {
             logger = logger_;
-            refreshtimeout = refreshtimeout_;
+            date = date_;
             ui = ui_;
             $exp_add = $('#exp_add');
 
@@ -39,15 +39,21 @@ var ExpensesManager = (function() {
         },
 
         onUpdate: function() {
+            var latest = ui.getLatest();
+            var data = {
+                since: date.getSince(),
+                to: date.getTo(),
+            }
+
+            if (latest) {
+                data['latest'] = latest;
+            }
+
             $.ajax({
                 url: '/expenses.json',
                 type: 'GET',
                 dataType: 'json',
-                data: {
-                    year: ui.getYear(),
-                    month: ui.getMonth(),
-                    latest: ui.getLatestUpdate(),
-                },
+                data: data,
 
                 success: AjaxCallbackWrapper(function(data, _this) {
                     _this._onUpdateSuccess(data);
