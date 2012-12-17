@@ -76,7 +76,6 @@ class CategoriesHandler(BaseHandler):
         updated = (
                 LatestExpensesInBetween(
                     self.current_user().id, since, to, latest)
-                .group_by(Expense.category)
                 .order_by(Expense.category.asc())
                 .all())
 
@@ -85,7 +84,6 @@ class CategoriesHandler(BaseHandler):
         expenses = [] if not updated else (
                 ExpensesInBetween(self.current_user().id, since, to)
                 .filter(Expense.category.in_((e.category for e in updated)))
-                .group_by(Expense.category)
                 .order_by(Expense.category.asc())
                 .all())
 
