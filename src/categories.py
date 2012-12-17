@@ -6,6 +6,7 @@ from operator import attrgetter
 
 import web
 
+from expenses import LatestExpensesInBetween
 from expenses import ExpensesInBetween
 from formatters import dateformatter
 from models import Expense
@@ -70,11 +71,25 @@ class CategoriesHandler(BaseHandler):
     def GET(self):
         since, to, latest = parsedateparams()
 
-        expenses = (
-                ExpensesInBetween(self.current_user().id, since, to, latest)
+        # Find all the expenses which have been *created* in between `since` and
+        # `to` and *modified* after `latest`.
+        updated = (
+                LatestExpensesInBetween(
+                    self.current_user().id, since, to, latest)
                 .group_by(Expense.category)
                 .order_by(Expense.category.asc())
                 .all())
+
+        # Of these, extract the categories and look for all the expenses
+        # between `since` and `to` having one of the extracted categories.
+        expenses = [] if not updated else (
+                ExpensesInBetween(self.current_user().id, since, to)
+                .filter(Expense.category.in_((e.category for e in updated)))
+                .group_by(Expense.category)
+                .order_by(Expense.category.asc())
+                .all())
+
+        # Finally aggretate the amounts and the last modified date
         categories = [ComputeCategoryAggregate(group)
                         for (key, group) in groupby(
                             expenses, key=attrgetter('category'))]

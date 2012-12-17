@@ -52,15 +52,23 @@ class ExpenseWrapper(object):
         self.currency = currency
 
 
-def ExpensesInBetween(user_id, since, to, latest):
+def ExpensesInBetween(user_id, since, to):
     """
     Get all the expenses associated to the given user, which have been created
-    between `since` and `to` and that have been modified after `latest`
+    between `since` and `to`
     """
     return (web.ctx.orm.query(Expense)
                 .filter_by(user_id=user_id)
                 .filter(Expense.date >= since)
-                .filter(Expense.date < to)
+                .filter(Expense.date < to))
+
+
+def LatestExpensesInBetween(user_id, since, to, latest):
+    """
+    Get all the expenses associated to the given user, which have been created
+    between `since` and `to` and that have been modified after `latest`
+    """
+    return (ExpensesInBetween(user_id, since, to)
                 .filter(Expense.updated > latest))
 
 
@@ -70,7 +78,8 @@ class ExpensesHandler(BaseHandler):
         since, to, latest = parsedateparams()
 
         expenses = (
-                ExpensesInBetween(self.current_user().id, since, to, latest)
+                LatestExpensesInBetween(
+                    self.current_user().id, since, to, latest)
                 .order_by(Expense.date.desc())
                 .all())
 
