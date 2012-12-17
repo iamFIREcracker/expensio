@@ -5,6 +5,14 @@ var ExpensesManager = (function() {
 
     var $exp_add = null;
 
+    var onUpdateSuccess = function(data) {
+        ui.onNewData(data);
+    };
+
+    var onUpdateError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
     return {
         setupOnAddSubmit: function($form) {
             $form.submit(function(_this) {
@@ -30,14 +38,6 @@ var ExpensesManager = (function() {
         },
 
 
-        _onUpdateSuccess: function(data) {
-            ui.onNewData(data);
-        },
-
-        _onUpdateError: function(data) {
-            logger.error('Something went wrong while contacting the server');
-        },
-
         onUpdate: function() {
             var latest = ui.getLatest();
             var data = {
@@ -54,14 +54,8 @@ var ExpensesManager = (function() {
                 type: 'GET',
                 dataType: 'json',
                 data: data,
-
-                success: AjaxCallbackWrapper(function(data, _this) {
-                    _this._onUpdateSuccess(data);
-                }, this),
-
-                error: AjaxCallbackWrapper(function(data, _this) {
-                    _this._onUpdateError(data);
-                }, this),
+                success: onUpdateSuccess,
+                error: onUpdateError,
             });
 
             return false;

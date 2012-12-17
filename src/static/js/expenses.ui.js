@@ -2,13 +2,14 @@ var ExpensesUI = (function() {
     var __beforeanimatetimeout = 200;
     var __animationtimeout = 200; // milliseconds
 
+    var palette = null;
     var $expenses = null;
 
     var expenses = null;
     var latest = null;
 
 
-    var _init = function() {
+    var init = function() {
         $expenses.empty();
         expenses = Object();
         latest = '';
@@ -19,12 +20,12 @@ var ExpensesUI = (function() {
             palette = palette_;
             $expenses = $expenses_;
 
-            _init();
+            init();
         },
 
 
         onMonthChange: function(year, month) {
-            _init();
+            init();
         },
 
 
