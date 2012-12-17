@@ -2,41 +2,41 @@ var DateManager = (function() {
     var __months = [ "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December" ];
 
-    var _$title = null;
-    var _curyear = null;
-    var _curmonth = null;
+    var $title = null;
+    var curyear = null;
+    var curmonth = null;
 
     var _init = function() {
-        _$title.text(sprintf("%s %d", __months[_curmonth], _curyear));
+        $title.text(sprintf("%s %d", __months[curmonth], curyear));
     };
 
     return {
-        onReady: function($title) {
+        onReady: function($title_) {
             var date = new Date();
 
-            _$title = $title;
-            _curyear = date.getYear() + 1900; // Fix relative to 1900
-            _curmonth = date.getMonth(); // 0-indexed months
+            $title = $title_;
+            curyear = date.getYear() + 1900; // Fix relative to 1900
+            curmonth = date.getMonth(); // 0-indexed months
 
             _init();
         },
 
         onMonthChange: function(year, month) {
-            _curyear = year;
-            _curmonth = month;
+            curyear = year;
+            curmonth = month;
 
             _init();
         },
 
 
         getSince: function() {
-            return sprintf('%d-%d-01', _curyear, _curmonth + 1)
+            return sprintf('%d-%d-01', curyear, curmonth + 1)
         },
 
         getTo: function() {
-            var lastofmonth = new Date(_curyear, _curmonth + 1, 0);
+            var lastofmonth = new Date(curyear, curmonth + 1, 0);
             return sprintf(
-                    "%d-%d-%d", _curyear, _curmonth + 1, lastofmonth.getDate());
+                    "%d-%d-%d", curyear, curmonth + 1, lastofmonth.getDate());
         },
     };
 
