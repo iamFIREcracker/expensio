@@ -4,14 +4,10 @@
 from __future__ import division
 from __future__ import unicode_literals
 
-import os
 import time
 from datetime import datetime
 
 import web
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import sessionmaker
-from web.contrib.template import render_jinja
 
 from auth import LoginGoogleHandler
 from auth import LoginGoogleAuthorizedHandler
@@ -26,12 +22,10 @@ from expenses import ExpensesAddHandler
 from expenses import ExpensesEditHandler
 from expenses import ExpensesDeleteHandler
 from expenses import ExpensesImportHandler
-from filters import datetimeformat
-from filters import cashformat
 from forms import expenses_add
 from forms import users_edit
 from forms import FORM_DATE_FORMAT
-from models import engine
+from utils import applicationinitializer
 from utils import me
 from utils import protected
 from utils import BaseHandler
@@ -65,41 +59,7 @@ urls = (
 
 
 application = web.application(urls, globals())
-db = web.database(dbn='sqlite', db='sessions.db')
-session = web.session.Session(application, web.session.DBStore(db, 'session'))
-
-def load_session():
-    web.ctx.session = session
-application.add_processor(web.loadhook(load_session))
-
-def load_path_url():
-    web.ctx.path_url = web.ctx.home + web.ctx.path
-application.add_processor(web.loadhook(load_path_url))
-
-def load_sqla(handler):
-    web.ctx.orm = scoped_session(sessionmaker(bind=engine))
-    try:
-        return handler()
-    except web.HTTPError:
-       web.ctx.orm.commit()
-       raise
-    except:
-        web.ctx.orm.rollback()
-        raise
-    finally:
-        web.ctx.orm.commit()
-application.add_processor(load_sqla)
-
-def load_render():
-    working_dir = os.path.dirname(__file__)
-    render = render_jinja(os.path.join(working_dir, 'templates'),
-            encoding='utf-8', extensions=['jinja2.ext.do'])
-
-    render._lookup.filters.update(
-            datetime=datetimeformat, cash=cashformat)
-    web.ctx.render = render;
-application.add_processor(web.loadhook(load_render))
-
+applicationinitializer(application)
 
 
 class MainHandler(BaseHandler):
