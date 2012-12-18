@@ -18,12 +18,10 @@ var CategoriesManager = (function() {
             ui = ui_;
         },
 
-
         onMonthChange: function(year, month) {
             ui.onMonthChange(year, month);
             this.onUpdate();
         },
-
 
         onUpdate: function() {
             var latest = ui.getLatest();
