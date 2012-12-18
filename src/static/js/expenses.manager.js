@@ -37,6 +37,7 @@ var ExpensesManager = (function() {
             addsubmitlisteners.push(func)
         },
 
+
         onMonthChange: function(year, month) {
             ui.onMonthChange(year, month);
             this.onUpdate();

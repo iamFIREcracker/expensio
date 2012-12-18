@@ -65,7 +65,8 @@ urls = (
 
 
 application = web.application(urls, globals())
-session = web.session.Session(application, web.session.DiskStore('sessions'))
+db = web.database(dbn='sqlite', db='sessions.db')
+session = web.session.Session(application, web.session.DBStore(db, 'session'))
 
 def load_session():
     web.ctx.session = session
