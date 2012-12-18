@@ -13,7 +13,6 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from web.contrib.template import render_jinja
 
-from amounts import AmountsHandler
 from auth import LoginGoogleHandler
 from auth import LoginGoogleAuthorizedHandler
 from auth import LoginFacebookHandler
@@ -21,6 +20,7 @@ from auth import LoginFacebookAuthorizedHandler
 from auth import LoginTwitterHandler
 from auth import LoginTwitterAuthorizedHandler
 from categories import CategoriesHandler
+from days import DaysHandler
 from expenses import ExpensesHandler
 from expenses import ExpensesAddHandler
 from expenses import ExpensesEditHandler
@@ -51,7 +51,7 @@ urls = (
 
     '/users/(.+)/edit', 'UsersEditHandler',
 
-    '/amounts.json', 'AmountsHandler',
+    '/days.json', 'DaysHandler',
 
     '/categories.json', 'CategoriesHandler',
 
