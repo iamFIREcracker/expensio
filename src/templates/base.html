@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/css/palette.css" type="text/css" />
     <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
     <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="/static/js/sprintf.js"></script>
     <script src="/static/js/common.js"></script>
     <script src="/static/js/logger.js"></script>
@@ -20,6 +21,8 @@
     <script src="/static/js/amounts.manager.js"></script>
     <script src="/static/js/expenses.ui.js"></script>
     <script src="/static/js/expenses.manager.js"></script>
+    <script src="/static/js/categories.ui.js"></script>
+    <script src="/static/js/categories.manager.js"></script>
     <script>
     $(function() {
         Logger.onReady($('#message'), 2000);
@@ -30,14 +33,18 @@
         //AmountsManager.onReady(Logger, 60000, AmountsUI);
         ExpensesUI.onReady(PaletteManager, $('#expenses'));
         ExpensesManager.onReady(Logger, DateManager, ExpensesUI);
+        CategoriesUI.onReady(PaletteManager, $('#categories'));
+        CategoriesManager.onReady(Logger, DateManager, CategoriesUI);
         Manager.onReady(Logger, 10000);
         Manager.update(function() {
             ExpensesManager.onUpdate();
+            CategoriesManager.onUpdate();
             //AmountsManager.onUpdate();
         })
         Manager.monthChange(function(year, month) {
             DateManager.onMonthChange(year, month);
             ExpensesManager.onMonthChange(year, month);
+            CategoriesManager.onMonthChange(year, month);
         });
 
         {% block jsready %}{% endblock %}

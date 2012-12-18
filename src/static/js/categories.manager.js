@@ -1,56 +1,51 @@
 var CategoriesManager = (function() {
     var logger = null;
-    var refreshtimeout = null;
+    var date = null;
     var ui = null;
-    var timeoutid = null;
+
+    var onUpdateSuccess = function(data) {
+        ui.onNewData(data);
+    };
+
+    var onUpdateError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
 
     return {
-        onReady: function(logger_, refreshtimeout_, ui_) {
+        onReady: function(logger_, date_, ui_) {
             logger = logger_;
-            refreshtimeout = refreshtimeout_;
+            date = date_;
             ui = ui_;
         },
 
 
-        _onUpdateSuccess: function(data) {
-            ui.onNewData(data);
-
-            this.update(refreshtimeout);
+        onMonthChange: function(year, month) {
+            ui.onMonthChange(year, month);
+            this.onUpdate();
         },
 
-        _onUpdateError: function(data) {
-            logger.error('Something went wrong while contacting the server');
-        },
 
-        _onUpdate: function() {
+        onUpdate: function() {
+            var latest = ui.getLatest();
+            var data = {
+                since: date.getSince(),
+                to: date.getTo(),
+            }
+
+            if (latest) {
+                data['latest'] = latest;
+            }
+
             $.ajax({
                 url: '/categories.json',
                 type: 'GET',
                 dataType: 'json',
-                data: {
-                    year: ui.getYear(),
-                    month: ui.getMonth(),
-                    latest: ui.getLatestUpdate(),
-                },
+                data: data,
+                success: onUpdateSuccess,
+                error: onUpdateError,
+            });
 
-                success: AjaxCallbackWrapper(function(data, _this) {
-                    _this._onUpdateSuccess(data);
-                }, this),
-
-                error: AjaxCallbackWrapper(function(data, _this) {
-                    _this._onUpdateError(data);
-                }, this),
-            })
-        },
-
-        update: function(timeout) {
-            if (timeoutid != null) {
-                clearTimeout(timeoutid);
-            }
-
-            timeoutid = setTimeout(function(_this) {
-                _this._onUpdate();
-            }, timeout, this);
+            return false;
         },
     }
 })();
