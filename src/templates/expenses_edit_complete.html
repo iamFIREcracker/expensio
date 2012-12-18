@@ -1,6 +1,10 @@
 {% extends 'base_2row_2col.html' %}
 
+{% block pre_row1 %}
+    {% include 'elements/logo_small.html' %}
+{% endblock %}
+
 {% block row1_col1 %}
-    <h2>Edit expense</h2>
+    <h3 class="title mid">Edit expense</h3>
     {% include 'expenses_edit.html' %}
 {% endblock %}
