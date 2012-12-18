@@ -50,7 +50,10 @@ var CategoriesUI = (function() {
                     dataLabels: {
                         enabled: false
                     }
-                }
+                },
+                series: {
+                    pointWidth: 30,
+                },
             },
             legend: {
                 enabled: false
