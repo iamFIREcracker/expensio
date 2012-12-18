@@ -100,6 +100,7 @@ var DaysUI = (function() {
         chart.series[0].setData(dayamounts);
         chart.xAxis[0].setCategories(daynames);
     }
+
     var updateDay = function(obj) {
         var i = obj.delta + __daysnumber - 1;
         var prev = days[i];
@@ -147,6 +148,10 @@ var DaysUI = (function() {
             }
         },
 
+
+        getN: function() {
+            return __daysnumber;
+        },
 
         getLatest: function() {
             return latest;

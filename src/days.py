@@ -13,7 +13,7 @@ from expenses import LatestExpensesInBetween
 from formatters import dateformatter
 from models import Expense
 from utils import applicationinitializer
-from utils import parsedateparams
+from utils import parsedateparams2
 from utils import protected
 from utils import jsonify
 from utils import BaseHandler
@@ -60,7 +60,7 @@ def AccumulateDayAggregate(today):
                 amount + expense.amount if not expense.deleted else amount,
                 expense.updated if updated is None or expense.updated > updated
                         else updated,
-                (expense.date - today).days)
+                (expense.date.date() - today.date()).days)
     return inner
 
 
@@ -88,7 +88,7 @@ def PlainDate(expense):
 class DaysHandler(BaseHandler):
     @protected
     def GET(self):
-        since, to, latest = parsedateparams()
+        since, to, latest = parsedateparams2()
 
         # Find all the expenses changed after `latest` and created between
         # `since` and `to`

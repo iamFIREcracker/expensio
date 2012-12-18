@@ -1,6 +1,5 @@
 var DaysManager = (function() {
     var logger = null;
-    var date = null;
     var ui = null;
 
     var onUpdateSuccess = function(data) {
@@ -12,9 +11,8 @@ var DaysManager = (function() {
     };
 
     return {
-        onReady: function(logger_, date_, ui_) {
+        onReady: function(logger_, ui_) {
             logger = logger_;
-            date = date_;
             ui = ui_;
         },
 
@@ -22,8 +20,7 @@ var DaysManager = (function() {
         onUpdate: function() {
             var latest = ui.getLatest();
             var data = {
-                since: date.getSince(),
-                to: date.getTo(),
+                n: ui.getN(),
             }
 
             if (latest) {
