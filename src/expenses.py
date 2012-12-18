@@ -13,6 +13,7 @@ from forms import FORM_DATE_FORMAT
 from forms import FORM_PERIOD_FORMAT
 from models import Expense
 from utils import applicationinitializer
+from utils import active
 from utils import owner
 from utils import protected
 from utils import jsonify
@@ -104,6 +105,7 @@ class ExpensesAddHandler(BaseHandler):
 class ExpensesEditHandler(BaseHandler):
     @protected
     @owner(Expense)
+    @active
     def GET(self, id):
         form = expenses_edit()
         item = self.current_item()
@@ -114,6 +116,7 @@ class ExpensesEditHandler(BaseHandler):
 
     @protected
     @owner(Expense)
+    @active
     def POST(self, id):
         form = expenses_edit()
         if form.validates():
@@ -138,6 +141,7 @@ class ExpensesEditHandler(BaseHandler):
 class ExpensesDeleteHandler(BaseHandler):
     @protected
     @owner(Expense)
+    @active
     def POST(self, id):
         e = self.current_item()
         e.deleted = True

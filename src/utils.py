@@ -123,6 +123,14 @@ def owner(model):
     return inner1
 
 
+def active(func):
+    def inner1(self, id):
+        if self.current_item().deleted:
+            raise web.unauthorized()
+
+        return func(self, id)
+    return inner1
+
 def me(func):
     def inner1(self, id):
         if id != self.current_user().id:
