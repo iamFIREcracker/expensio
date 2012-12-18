@@ -20,20 +20,19 @@ var ExpensesUI = (function() {
         var prev = expenses[obj.id];
 
         /*
-            * Update the variable containing the date of the latest update.
-            * This operation should be done on all received updates, even those
-            * representing deleted items.
-            */
+         * Update the variable containing the date of the latest update.
+         * This operation should be done on all received updates, even those
+         * representing deleted items.
+         */
         if (obj.updated > latest) {
             latest = obj.updated;
         }
 
         /*
-            * The current expense has been deleted.  Check for a previously
-            * received update: if preset, issue a graceful remove, otherwise
-            * skip the element and return.
-            */
-
+         * The current expense has been deleted.  Check for a previously
+         * received update: if preset, issue a graceful remove, otherwise
+         * skip the element and return.
+         */
         if (obj.deleted === true) {
             if (prev === undefined) {
                 return;
@@ -45,18 +44,18 @@ var ExpensesUI = (function() {
         }
 
         /*
-            * If we are here, we received an update for the current expense.
-            * Remove the previous element.
-            */
+         * If we are here, we received an update for the current expense.
+         * Remove the previous element.
+         */
         if (prev !== undefined) {
             prev.remove();
             delete expenses[prev.id];
         }
 
         /*
-            * Add the expense to internal data structures 
-            * XXX fix ordering!!!!
-            */
+         * Add the expense to internal data structures 
+         * XXX fix ordering!!!!
+         */
         var newexp = Expense(obj.id, obj.amount, obj.currency,
                 obj.category, obj.note, obj.date);
         for (var id in expenses) {
@@ -74,8 +73,8 @@ var ExpensesUI = (function() {
         }
 
         /*
-            * Trigger animations.
-            */
+         * Trigger animations.
+         */
         newexp.flash();
     };
 
