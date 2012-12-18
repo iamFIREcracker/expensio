@@ -68,98 +68,14 @@ h1 {
     text-align: center;
 }
 
-.day_bar_hover {
-    background: #222 !important;
-}
 
 #days {
-    width: 100%;
-    height: 150px;
-    text-align: center;
-    border-bottom: 1px solid #222;
-    margin-bottom: 50px;
-}
-
-.day {
-    display: inline-block;
-    height: 100%;
-    width: 2.5%;
-}
-
-.day_bar_container {
-    position: relative;
-    display: inline-block;
-    height: 100%;
-    width: 100%;
-}
-
-.day_bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #ccc;
-}
-
-.day_tooltip_hover:hover {
-    position: relative;
-}
-
-/* bubble */
-.day_tooltip_hover:before {
-    padding: 5px;
-    background: #222;
-    color: #fff;
-    content: attr(tooltip-data);
-    display: none;
-    position: absolute;
-    bottom: -38px;
-    right: -10px;
-    width: 300px;
-}
-
-/* triangle */
-.day_tooltip_hover:after {
-    border: 10px solid;
-    border-color: transparent transparent #222 transparent;
-    content: "";
-    display: none;
-    height: 2px;
-    width: 2px;
-    position: absolute;
-    top: 8px;
-    right: -3px;
-}
-
-.day_tooltip_hover:hover:after, .day_tooltip_hover:hover:before {
-    display: block;
+    height: 200px;
 }
 
 
-.cat {
-    width: 100%;
-    font-size: 110%;
-}
-
-.cat_name {
-    display: inline-block;
-    width: 16%;
-    padding: 5px;
-    overflow: hidden;
-}
-
-.cat_amount {
-    display: inline-block;
-    width: 19%;
-}
-
-.cat_bar_container {
-    display: inline-block;
-    width: 65%;
-}
-
-.cat_bar {
-    display: inline-block;
+#categories {
+    height: 300px;
 }
 
 

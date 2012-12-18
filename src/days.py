@@ -8,6 +8,7 @@ import web
 
 from config import LATEST_DAYS_DATE_FORMAT
 from expenses import ExpensesInBetween
+from expenses import LatestExpensesInBetween
 from formatters import dateformatter
 from models import Expense
 from utils import applicationinitializer
@@ -88,14 +89,18 @@ class DaysHandler(BaseHandler):
     def GET(self):
         since, to, latest = parsedateparams()
 
-        expenses = (
-                ExpensesInBetween(self.current_user().id, since, to, latest)
+        # Find all the expenses changed after `latest` and created between
+        # `since` and `to`
+        updated = (
+                LatestExpensesInBetween(
+                    self.current_user().id, since, to, latest)
                 .order_by(Expense.date.asc())
                 .all())
 
+        # Of theses, extract all the 
         days = [ComputeDayAggregate(group)
                     for (key, group) in groupby(
-                        expenses, key=PlainDate)]
+                        updated, key=PlainDate)]
 
         return jsonify(
                 days=[DayWrapper(d, self.current_user().currency)
