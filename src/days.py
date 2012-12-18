@@ -5,6 +5,7 @@ from datetime import datetime
 from itertools import groupby
 
 import web
+from sqlalchemy.sql import extract
 
 from config import LATEST_DAYS_DATE_FORMAT
 from expenses import ExpensesInBetween
@@ -98,13 +99,26 @@ class DaysHandler(BaseHandler):
                 .all())
 
         # Of theses, extract all the 
+        expenses = [] if not updated else (
+                ExpensesInBetween(self.current_user().id, since, to)
+                .filter(extract('year', Expense.date)
+                    .in_(e.date.year for e in updated))
+                .filter(extract('month', Expense.date)
+                    .in_(e.date.month for e in updated))
+                .filter(extract('day', Expense.date)
+                    .in_(e.date.day for e in updated))
+                .order_by(Expense.date.asc())
+                .all())
+
         days = [ComputeDayAggregate(group)
                     for (key, group) in groupby(
-                        updated, key=PlainDate)]
+                        expenses, key=PlainDate)]
 
-        return jsonify(
+        d = jsonify(
                 days=[DayWrapper(d, self.current_user().currency)
                     for d in days])
+        web.debug(d)
+        return d
 
 
 if __name__ == '__main__':
