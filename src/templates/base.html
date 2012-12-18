@@ -36,6 +36,7 @@
         CategoriesUI.onReady(PaletteManager, $('#categories'));
         CategoriesManager.onReady(Logger, DateManager, CategoriesUI);
         Manager.onReady(Logger, 10000);
+
         Manager.update(function() {
             DaysManager.onUpdate();
             ExpensesManager.onUpdate();
@@ -46,6 +47,11 @@
             ExpensesManager.onMonthChange(year, month);
             CategoriesManager.onMonthChange(year, month);
         });
+
+        ExpensesManager.addSubmit(function() {
+            DaysManager.onUpdate();
+            CategoriesManager.onUpdate();
+        })
 
         {% block jsready %}{% endblock %}
     });

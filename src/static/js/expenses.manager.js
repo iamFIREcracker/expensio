@@ -2,6 +2,7 @@ var ExpensesManager = (function() {
     var logger = null;
     var date = null;
     var ui = null;
+    var addsubmitlisteners = Array();
 
     var $exp_add = null;
 
@@ -31,6 +32,10 @@ var ExpensesManager = (function() {
             this.setupOnAddSubmit($exp_add);
         },
 
+
+        addSubmit: function(func) {
+            addsubmitlisteners.push(func)
+        },
 
         onMonthChange: function(year, month) {
             ui.onMonthChange(year, month);
@@ -72,7 +77,11 @@ var ExpensesManager = (function() {
             if ($data.find('.wrong').length == 0) {
                 logger.success('Expense tracked successfully!');
 
-                this.onUpdate()
+                this.onUpdate();
+
+                $.each(addsubmitlisteners, function(index, func) {
+                    func();
+                });
             }
         },
 
