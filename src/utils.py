@@ -26,8 +26,12 @@ from models import User
 
 
 def applicationinitializer(application):
+    db = web.database(dbn='sqlite', db='sessions.db')
+    session = web.session.Session(
+            application, web.session.DBStore(db, 'session'))
+
     def load_session():
-        web.ctx.session = web.session.Session(application, web.session.DiskStore('sessions'))
+        web.ctx.session = session;
     application.add_processor(web.loadhook(load_session))
 
     def load_path_url():
