@@ -63,7 +63,7 @@ var CategoriesUI = (function() {
                 enabled: false
             },
             series: [{
-                name: 'Amounts',
+                name: 'Amount',
                 data: [],
             }]
         });

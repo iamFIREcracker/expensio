@@ -43,7 +43,7 @@ var DaysUI = (function() {
                 min: 0,
                 title: {
                     text: 'Amount (€)',
-                    align: 'high'
+                    aligh: 'high',
                 },
                 labels: {
                     overflow: 'justify'
@@ -69,7 +69,7 @@ var DaysUI = (function() {
                 enabled: false
             },
             series: [{
-                name: 'Amounts',
+                name: 'Amount',
                 data: [],
             }]
         });
