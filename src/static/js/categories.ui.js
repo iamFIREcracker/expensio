@@ -92,7 +92,11 @@ var CategoriesUI = (function() {
             var c = categories[sortable[i]]
 
             catnames.push(c.name);
-            catamounts.push({y: c.amount, color: palette.background(c.name), obj: c});
+            catamounts.push({
+                y: c.amount,
+                color: palette.background(c.name),
+                obj: c,
+            });
         }
 
         chart.series[0].setData(catamounts);
