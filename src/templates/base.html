@@ -30,7 +30,9 @@
         UsersManager.onReady(Logger);
         DaysUI.onReady(Formatter, PaletteManager, $('#days'));
         DaysManager.onReady(Logger, DaysUI);
-        ExpensesUI.onReady(PaletteManager, $('#expenses'));
+        ExpensesUI.onReady(
+                Formatter, PaletteManager, $('#current_month_overall'),
+                $('#expenses'));
         ExpensesManager.onReady(Logger, DateManager, ExpensesUI);
         CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
         CategoriesManager.onReady(Logger, DateManager, CategoriesUI);

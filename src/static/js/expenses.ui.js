@@ -2,7 +2,9 @@ var ExpensesUI = (function() {
     var __beforeanimatetimeout = 200;
     var __animationtimeout = 200; // milliseconds
 
+    var formatter = null;
     var palette = null;
+    var $title = null;
     var $expenses = null;
 
     var expenses = null;
@@ -10,11 +12,11 @@ var ExpensesUI = (function() {
 
 
     var init = function() {
+        $title.empty();
         $expenses.empty();
         expenses = Object();
         latest = '';
     };
-
 
     var updateExpense = function(obj) {
         var prev = expenses[obj.id];
@@ -78,9 +80,24 @@ var ExpensesUI = (function() {
         newexp.flash();
     };
 
+    var updateTitle = function() {
+        var overall = 0.0;
+        var currency = '';
+
+        $.each(expenses, function() {
+            overall += this.amount;
+            currency = this.currency;
+        });
+
+        console.log($title);
+        $title.text(sprintf("%s", formatter.amount(overall, currency)));
+    };
+
     return {
-        onReady: function(palette_, $expenses_) {
+        onReady: function(formatter_, palette_, $title_, $expenses_) {
+            formatter = formatter_;
             palette = palette_;
+            $title = $title_;
             $expenses = $expenses_;
 
             init();
@@ -94,6 +111,7 @@ var ExpensesUI = (function() {
             $.each(data.expenses, EachCallbackWrapper(function(i, value, _this) {
                 updateExpense(value);
             }, this));
+            updateTitle();
         },
 
 

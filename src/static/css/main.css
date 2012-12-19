@@ -5,6 +5,7 @@ body {
 
 h1, h2, h3 {
     margin-top: 0;
+    margin-bottom: 5px;
 }
 
 h1 {
@@ -33,6 +34,10 @@ h1 {
 
 .mid-large {
     font-size: 250%;
+}
+
+.mid-mid-large {
+    font-size: 175%;
 }
 
 .mid {
@@ -78,6 +83,10 @@ h1 {
     text-align: center;
 }
 
+#current_month_overall {
+    color: #888;
+    text-shadow: none;
+}
 
 #days {
     height: 200px;
