@@ -29,7 +29,7 @@ var CategoriesUI = (function() {
             xAxis: {
                 title: {
                     text: null
-                }
+                },
             },
             yAxis: {
                 min: 0,
@@ -38,7 +38,7 @@ var CategoriesUI = (function() {
                 },
                 labels: {
                     overflow: 'justify'
-                }
+                },
             },
             tooltip: {
                 enabled: false,
