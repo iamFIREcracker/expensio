@@ -83,7 +83,6 @@ h1 {
     height: 200px;
 }
 
-
 #categories {
     height: 300px;
 }
@@ -132,4 +131,19 @@ h1 {
     text-align: right;
     display: inline-block;
     width: 19%;
+}
+
+.exp_date a, .exp_date a:visited, .exp_date a:hover, .exp_date a:active {
+    color: #111;
+}
+
+.exp:first-child {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.exp + .exp {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid #ddd;
 }
