@@ -44,6 +44,7 @@
         })
         Manager.monthChange(function(year, month) {
             DateManager.onMonthChange(year, month);
+            PaletteManager.onMonthChange(year, month);
             ExpensesManager.onMonthChange(year, month);
             CategoriesManager.onMonthChange(year, month);
         });

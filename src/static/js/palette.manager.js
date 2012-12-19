@@ -10,9 +10,17 @@ var PaletteManager = (function() {
     ];
     var mapping = null;
 
+    var init = function() {
+        mapping = Object();
+    };
+
     return {
         onReady: function() {
-            mapping = Object();
+            init();
+        },
+
+        onMonthChange: function() {
+            init();
         },
 
 
