@@ -41,16 +41,18 @@ var CategoriesUI = (function() {
                 }
             },
             tooltip: {
-                formatter: function() {
-                    var c = this.point.obj;
-                    return sprintf(
-                        "Amount: %s", formatter.amount(c.amount, c.currency))
-                }
+                enabled: false,
             },
             plotOptions: {
                 bar: {
                     dataLabels: {
-                        enabled: false
+                        enabled: true,
+                        formatter: function() {
+                            var c = this.point.obj;
+                            return sprintf(
+                                "%s", formatter.amount(c.amount, c.currency))
+                        }
+
                     }
                 },
                 series: {
