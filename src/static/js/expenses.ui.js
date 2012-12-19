@@ -90,7 +90,7 @@ var ExpensesUI = (function() {
         });
 
         console.log($title);
-        $title.text(sprintf("%s", formatter.amount(overall, currency)));
+        $title.text(sprintf("Total: %s", formatter.amount(overall, currency)));
     };
 
     return {
