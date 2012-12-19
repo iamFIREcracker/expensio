@@ -38,10 +38,16 @@ var PaletteManager = (function() {
             return chart;
         },
 
+        foreground: function(key) {
+            var i = this.get(key);
+
+            return palette[i].fg;
+        },
+
         background: function(key) {
             var i = this.get(key);
 
             return palette[i].bg;
-        }
+        },
     }
 })();

@@ -117,7 +117,11 @@ var Expense = function(ui, palette, formatter) {
 '<div class="exp">' +
     '<span class="exp_amount">' + formatter.amount(amount, currency) + '</span>' +
     '<span class="exp_inner">' +
-        '<span class="exp_category palette palette' + palette.get(category) + '">' + category + '</span>' +
+        '<span class="exp_category palette" ' +
+            'style="background-color: '+ palette.background(category) + '; ' +
+                'color: ' + palette.foreground(category) + '">' +
+                category +
+        '</span>' +
         '<span class="exp_note">' + note + '</span>' +
     '</span>' +
     '<span class="exp_date"><a href="/expenses/' + id + '/edit">' + formatter.date(date) + '</a></span>' +
