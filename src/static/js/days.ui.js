@@ -37,6 +37,9 @@ var DaysUI = (function() {
                 labels: {
                     rotation: -45,
                     align: 'right',
+                    style: {
+                        fontSize: '9px',
+                    },
                 },
             },
             yAxis: {
