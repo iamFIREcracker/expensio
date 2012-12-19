@@ -1,5 +1,6 @@
 body {
     font-family: arial, sans-serif;
+    color: #222;
 }
 
 h1, h2, h3 {
@@ -7,14 +8,19 @@ h1, h2, h3 {
 }
 
 h1 {
-    margin-top: 20px;
     font-size: 500%;
     font-style: italic;
 }
 
-/*.grid {*/
-    /*border: 1px solid grey;*/
-/*}*/
+
+.grid {
+    padding-top: 0px !important;
+}
+
+.grid-pad {
+    padding: 20px 0 20px 0;
+}
+
 
 .title {
     text-align: center;
@@ -85,17 +91,18 @@ h1 {
 
 .exp {
     width: 100%;
-    font-size: 110%;
+    font-size: 90%;
     padding: 5px;
 }
 
 .exp_amount {
     display: inline-block;
-    width: 19%;
+    width: 15%;
 }
 
 .exp_category {
     display: inline-block;
+    padding: 2px;
 }
 
 .exp_note {
