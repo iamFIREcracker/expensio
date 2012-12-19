@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 from datetime import datetime
 
 from web import form
@@ -11,8 +13,8 @@ FORM_PERIOD_FORMAT = '%Y-%m'
 
 
 validcurrency = form.Validator(
-        '&euro;, &pound;, &yen;',
-        lambda v: v in ['&euro;', '&pound;', '&yen;'])
+        '€, $ ..',
+        lambda v: v in ['€', '$'])
 
 validamount = form.Validator(
         '1000.00',
