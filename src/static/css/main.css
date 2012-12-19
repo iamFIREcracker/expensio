@@ -133,17 +133,21 @@ h1 {
     width: 19%;
 }
 
-.exp_date a, .exp_date a:visited, .exp_date a:hover, .exp_date a:active {
-    color: #111;
-}
-
 .exp:first-child {
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }
 
 .exp + .exp {
-    margin-top: 2px;
-    margin-bottom: 2px;
     border-bottom: 1px solid #ddd;
 }
+
+.exp a, .exp a:visited, .exp a:hover, .exp a:active {
+    color: #111;
+    text-decoration: none;
+}
+
+.exp:hover {
+    background-color: #eee;
+}
+

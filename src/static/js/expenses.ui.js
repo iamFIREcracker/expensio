@@ -115,16 +115,18 @@ var Expense = function(ui, palette, formatter) {
             date: date,
             $elem: $('' +
 '<div class="exp">' +
-    '<span class="exp_amount">' + formatter.amount(amount, currency) + '</span>' +
-    '<span class="exp_inner">' +
-        '<span class="exp_category palette" ' +
-            'style="background-color: '+ palette.background(category) + '; ' +
-                'color: ' + palette.foreground(category) + '">' +
-                category +
+    '<a href="/expenses/' + id + '/edit">' +
+        '<span class="exp_amount">' + formatter.amount(amount, currency) + '</span>' +
+        '<span class="exp_inner">' +
+            '<span class="exp_category palette" ' +
+                'style="background-color: '+ palette.background(category) + '; ' +
+                    'color: ' + palette.foreground(category) + '">' +
+                    category +
+            '</span>' +
+            '<span class="exp_note">' + note + '</span>' +
         '</span>' +
-        '<span class="exp_note">' + note + '</span>' +
-    '</span>' +
-    '<span class="exp_date"><a href="/expenses/' + id + '/edit">' + formatter.date(date) + '</a></span>' +
+        '<span class="exp_date">' + formatter.date(date) + '</span>' +
+    '</a>' +
 '</div>'
                 ),
             _timeoutid: null,
