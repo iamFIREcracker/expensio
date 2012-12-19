@@ -46,8 +46,7 @@ var DaysUI = (function() {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Amount (€)',
-                    aligh: 'high',
+                    text: null,
                 },
                 labels: {
                     overflow: 'justify'
