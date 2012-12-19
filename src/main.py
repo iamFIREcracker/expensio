@@ -66,8 +66,7 @@ class MainHandler(BaseHandler):
             return web.ctx.render.info()
         else:
             form = expenses_add()
-            form.get('date').value = datetime.strftime(datetime.today(),
-                    FORM_DATE_FORMAT)
+
             return web.ctx.render.index(user=self.current_user(),
                     expenses_add=form)
 
