@@ -1,4 +1,5 @@
 var CategoriesUI = (function() {
+    var formatter = null;
     var palette = null;
     var $categories = null;
     var chart = null;
@@ -33,8 +34,7 @@ var CategoriesUI = (function() {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Amount (€)',
-                    align: 'high'
+                    text: null,
                 },
                 labels: {
                     overflow: 'justify'
@@ -42,8 +42,9 @@ var CategoriesUI = (function() {
             },
             tooltip: {
                 formatter: function() {
-                    return ''+
-                        this.series.name +': '+ this.y;
+                    var c = this.point.obj;
+                    return sprintf(
+                        "Amount: %s", formatter.amount(c.amount, c.currency))
                 }
             },
             plotOptions: {
@@ -89,7 +90,7 @@ var CategoriesUI = (function() {
             var c = categories[sortable[i]]
 
             catnames.push(c.name);
-            catamounts.push(c.amount);
+            catamounts.push({y: c.amount, obj: c});
         }
 
         chart.series[0].setData(catamounts);
@@ -126,7 +127,8 @@ var CategoriesUI = (function() {
     };
 
     return {
-        onReady: function(palette_, $categories_) {
+        onReady: function(formatter_, palette_, $categories_) {
+            formatter = formatter_;
             palette = palette_;
             $categories = $categories_;
 

@@ -33,7 +33,7 @@
         DaysManager.onReady(Logger, DaysUI);
         ExpensesUI.onReady(PaletteManager, $('#expenses'));
         ExpensesManager.onReady(Logger, DateManager, ExpensesUI);
-        CategoriesUI.onReady(PaletteManager, $('#categories'));
+        CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
         CategoriesManager.onReady(Logger, DateManager, CategoriesUI);
         Manager.onReady(Logger, 10000);
 
