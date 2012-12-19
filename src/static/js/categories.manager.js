@@ -26,8 +26,8 @@ var CategoriesManager = (function() {
         onUpdate: function() {
             var latest = ui.getLatest();
             var data = {
-                since: date.getSince(),
-                to: date.getTo(),
+                since: date.startofcurrentmonth(),
+                to: date.endofcurrentmonth(),
             }
 
             if (latest) {

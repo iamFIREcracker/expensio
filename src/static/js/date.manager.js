@@ -48,22 +48,22 @@ var DateManager = (function() {
                     '%d-%d-%d', year(today), month(today) + 1, day(today));
         },
 
-        getSince: function() {
-            return sprintf('%d-%d-01', curyear, curmonth + 1)
-        },
-
-        getTo: function() {
-            var lastofmonth = new Date(curyear, curmonth + 1, 0);
-
-            return sprintf(
-                    "%d-%d-%d", curyear, curmonth + 1, day(lastofmonth));
-        },
-
         ndaysback: function(n) {
             var date = new Date(year(today), month(today), day(today) - n);
 
             return sprintf(
                     "%d-%d-%d", year(date), month(date) + 1, day(date));
+        },
+
+        startofcurrentmonth: function() {
+            return sprintf('%d-%d-01', curyear, curmonth + 1)
+        },
+
+        endofcurrentmonth: function() {
+            var lastofmonth = new Date(curyear, curmonth + 1, 0);
+
+            return sprintf(
+                    "%d-%d-%d", curyear, curmonth + 1, day(lastofmonth));
         },
     };
 
