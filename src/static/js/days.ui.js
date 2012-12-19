@@ -1,6 +1,7 @@
 var DaysUI = (function() {
     var __daysnumber = 30;
 
+    var formatter = null;
     var $days = null;
     var chart = null;
     var days = null;
@@ -54,8 +55,15 @@ var DaysUI = (function() {
             },
             tooltip: {
                 formatter: function() {
-                    return ''+
-                        this.series.name +': '+ this.y;
+                    if (!this.y)
+                        return false;
+
+                    var d = this.point.obj;
+                    return sprintf(
+                        "Amount: %s", formatter.amount(d.amount, d.currency))
+//                    return sprintf(
+                        //"Date: %s Amount: %s", formatter.date(d.date),
+                        //formatter.amount(d.amount, d.currency))
                 }
             },
             plotOptions: {
@@ -97,7 +105,7 @@ var DaysUI = (function() {
                 dayamounts.push(0.0);
             } else {
                 daynames.push(d.date);
-                dayamounts.push(d.amount);
+                dayamounts.push({y: d.amount, obj: d});
             }
         }
 
@@ -136,7 +144,8 @@ var DaysUI = (function() {
     };
 
     return {
-        onReady: function($days_) {
+        onReady: function(formatter_, $days_) {
+            formatter = formatter_;
             $days = $days_;
 
             init();
