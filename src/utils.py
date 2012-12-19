@@ -86,17 +86,6 @@ def parsedateparams():
     return (since, to, latest)
 
 
-def parsedateparams2():
-    today = datetime.today()
-
-    data = web.input(n=30, latest=EPOCH)
-    since = today - timedelta(int(data.n))
-    to = today
-    latest = datetime.strptime(data.latest, DATE_FORMAT)
-
-    return (since, to, latest)
-
-
 def protected(func):
     def inner(self, *args, **kwargs):
         if not self.current_user():
