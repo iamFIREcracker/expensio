@@ -1,5 +1,5 @@
 var PaletteManager = (function() {
-    var chart = '#555';
+    var chart = '#555555';
     var palette = [
         {bg: '#FF1919', fg: '#ffe',}, // red
         {bg: '#FF9C19', fg: '#222',}, // orange

@@ -69,9 +69,6 @@ var DaysUI = (function() {
                         enabled: false
                     }
                 },
-                series: {
-                    color: palette.chart(),
-                },
             },
             legend: {
                 enabled: false
@@ -105,7 +102,7 @@ var DaysUI = (function() {
                 dayamounts.push(0.0);
             } else {
                 daynames.push(d.date);
-                dayamounts.push({y: d.amount, obj: d});
+                dayamounts.push({y: d.amount, color: palette.chart(), obj: d});
             }
         }
 
