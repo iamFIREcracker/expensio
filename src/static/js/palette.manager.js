@@ -1,4 +1,5 @@
 var PaletteManager = (function() {
+    var chart = '#555';
     var palette = [
         {bg: 'red', fg: 'white',},
         {bg: 'orange', fg: 'white',},
@@ -31,6 +32,10 @@ var PaletteManager = (function() {
                 mapping[key] = size(mapping);
                 return mapping[key]
             }
+        },
+
+        chart: function() {
+            return chart;
         },
 
         background: function(key) {

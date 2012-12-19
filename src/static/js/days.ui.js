@@ -2,6 +2,7 @@ var DaysUI = (function() {
     var __daysnumber = 30;
 
     var formatter = null;
+    var palette = null;
     var $days = null;
     var chart = null;
     var days = null;
@@ -60,9 +61,6 @@ var DaysUI = (function() {
                     var d = this.point.obj;
                     return sprintf(
                         "Amount: %s", formatter.amount(d.amount, d.currency))
-//                    return sprintf(
-                        //"Date: %s Amount: %s", formatter.date(d.date),
-                        //formatter.amount(d.amount, d.currency))
                 }
             },
             plotOptions: {
@@ -70,7 +68,10 @@ var DaysUI = (function() {
                     dataLabels: {
                         enabled: false
                     }
-                }
+                },
+                series: {
+                    color: palette.chart(),
+                },
             },
             legend: {
                 enabled: false
@@ -143,8 +144,9 @@ var DaysUI = (function() {
     };
 
     return {
-        onReady: function(formatter_, $days_) {
+        onReady: function(formatter_, palette_, $days_) {
             formatter = formatter_;
+            palette = palette_;
             $days = $days_;
 
             init();
