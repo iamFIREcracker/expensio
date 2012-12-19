@@ -89,7 +89,6 @@ var ExpensesUI = (function() {
             currency = this.currency;
         });
 
-        console.log($title);
         $title.text(sprintf("Total: %s", formatter.amount(overall, currency)));
     };
 

@@ -13,7 +13,7 @@ from expenses import LatestExpensesInBetween
 from formatters import dateformatter
 from models import Expense
 from utils import applicationinitializer
-from utils import parsedateparams2
+from utils import parsedateparams
 from utils import protected
 from utils import jsonify
 from utils import BaseHandler
@@ -88,7 +88,7 @@ def PlainDate(expense):
 class DaysHandler(BaseHandler):
     @protected
     def GET(self):
-        since, to, latest = parsedateparams2()
+        since, to, latest = parsedateparams()
 
         # Find all the expenses changed after `latest` and created between
         # `since` and `to`
