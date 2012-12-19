@@ -1,13 +1,13 @@
 var PaletteManager = (function() {
     var chart = '#555';
     var palette = [
-        {bg: 'red', fg: 'white',},
-        {bg: 'orange', fg: 'white',},
-        {bg: 'yellow', fg: 'black',},
-        {bg: 'green', fg: 'white',},
-        {bg: 'blue', fg: 'white',},
-        {bg: 'indigo', fg: 'white',},
-        {bg: 'violet', fg: 'white',},
+        {bg: '#FF1919', fg: '#ffe',}, // red
+        {bg: '#FF9C19', fg: '#222',}, // orange
+        {bg: '#FFE819', fg: '#222',}, // yellow
+        {bg: '#10A510', fg: '#ffe',}, // blue
+        {bg: '#3333FF', fg: '#ffe',},
+        {bg: 'indigo',  fg: '#ffe',},
+        {bg: 'violet',  fg: '#ffe',},
     ];
     var mapping = null;
 

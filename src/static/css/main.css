@@ -1,6 +1,6 @@
 body {
     font-family: arial, sans-serif;
-    color: #222;
+    color: #111;
 }
 
 h1, h2, h3 {
@@ -90,8 +90,8 @@ h1 {
 
 
 .palette {
-    padding-left: 4px;
-    padding-right: 4px;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
 
     background-color: #ddd;
 }
