@@ -61,7 +61,7 @@ def ExpensesInBetween(user_id, since, to):
     return (web.ctx.orm.query(Expense)
                 .filter_by(user_id=user_id)
                 .filter(Expense.date >= since)
-                .filter(Expense.date < to))
+                .filter(Expense.date <= to))
 
 
 def LatestExpensesInBetween(user_id, since, to, latest):
