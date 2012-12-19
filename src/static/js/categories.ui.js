@@ -17,6 +17,7 @@ var CategoriesUI = (function() {
             chart: {
                 renderTo: $categories[0].id,
                 type: 'bar',
+                animation: false,
             },
             title: {
                 text: null,
@@ -52,7 +53,7 @@ var CategoriesUI = (function() {
                     }
                 },
                 series: {
-                    pointWidth: 30,
+                    pointWidth: 20,
                 },
             },
             legend: {

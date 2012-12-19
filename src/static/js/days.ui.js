@@ -22,6 +22,7 @@ var DaysUI = (function() {
             chart: {
                 renderTo: $days[0].id,
                 type: 'column',
+                animation: false,
             },
             title: {
                 text: null,
