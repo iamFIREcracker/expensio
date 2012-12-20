@@ -101,7 +101,7 @@ var DaysUI = (function() {
                 daynames.push("");
                 dayamounts.push(0.0);
             } else {
-                daynames.push(d.date);
+                daynames.push(formatter.date(d.date));
                 dayamounts.push({y: d.amount, color: palette.chart(), obj: d});
             }
         }
