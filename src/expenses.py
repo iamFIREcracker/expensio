@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
-
 import web
 
 import formatters
@@ -11,7 +9,6 @@ from forms import expenses_add
 from forms import expenses_edit
 from forms import expenses_import
 from forms import fetch_expenses
-from forms import FORM_DATE_FORMAT
 from models import Expense
 from utils import applicationinitializer
 from utils import active
