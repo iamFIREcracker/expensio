@@ -17,12 +17,9 @@ validcurrency = form.Validator(
         '€, $ ..',
         lambda v: v in ['€', '$'])
 
-validamount = form.Validator(
-        '1000.00',
-        float)
+validamount = form.Validator('1000.00', parsers.amount)
 
-validdatetime = form.Validator(
-        'yyyy-mm-dd', lambda v: parsers.date(v))
+validdatetime = form.Validator('yyyy-mm-dd', parsers.date)
 
 
 users_edit = form.Form(
@@ -74,7 +71,7 @@ def fetch_expenses(form):
 
         expenses.append((
             datetime.strptime(period + date_, FORM_PERIOD_FORMAT + '%d'),
-            category_, float(amount_), note_,))
+            category_, parsers.amount(amount_), note_,))
     return expenses
 
 

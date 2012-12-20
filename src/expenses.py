@@ -93,8 +93,9 @@ class ExpensesAddHandler(BaseHandler):
         form = expenses_add()
         if form.validates():
             e = Expense(user_id=self.current_user().id,
-                    amount=float(form.d.amount), category=form.d.category,
-                    note=form.d.note, date=parsers.date(form.d.date))
+                    amount=parsers.amount(form.d.amount),
+                    category=form.d.category, note=form.d.note,
+                    date=parsers.date(form.d.date))
             web.ctx.orm.add(e)
         return web.ctx.render.expenses_add(expenses_add=form)
 
@@ -126,7 +127,7 @@ class ExpensesEditHandler(BaseHandler):
             web.ctx.orm.add(deleted)
 
             # Now apply edit operations on the current expense
-            e.amount = float(form.d.amount)
+            e.amount = parsers.amount(form.d.amount)
             e.category = form.d.category
             e.note = form.d.note
             e.date = parsers.date(form.d.date)

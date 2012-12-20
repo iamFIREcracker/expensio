@@ -7,6 +7,9 @@ from config import DATE_FORMAT
 from config import DATETIME_FORMAT
 
 
+def amount(value):
+    return float(value)
+
 def date(value):
     return datetime_.strptime(value, DATETIME_FORMAT)
 
