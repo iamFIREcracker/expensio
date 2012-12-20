@@ -10,7 +10,6 @@ h1, h2, h3 {
 
 h1 {
     font-size: 500%;
-    font-style: italic;
 }
 
 
@@ -126,9 +125,8 @@ h1 {
 }
 
 .exp_note {
-    margin-left: 1%;
+    margin-left: 2%;
     color: #555;
-    font-style: italic;
     display: inline-block;
 }
 
