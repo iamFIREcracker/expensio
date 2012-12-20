@@ -26,7 +26,6 @@ var UsersManager = (function() {
 
         onEditSubmit: function(form) {
             $form = $(form);
-            console.log($form);
             $.ajax({
                 url: '/users/' + $form.find('#id').val() + '/edit',
                 type: 'POST',
