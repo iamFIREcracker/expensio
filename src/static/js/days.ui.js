@@ -111,7 +111,7 @@ var DaysUI = (function() {
     }
 
     var updateDay = function(obj) {
-        var i = obj.delta + __daysnumber - 1;
+        var i = obj.delta + __daysnumber;
         var prev = days[i];
 
         /*
