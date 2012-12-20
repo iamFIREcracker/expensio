@@ -4,11 +4,11 @@
 from datetime import datetime as datetime_
 
 from config import DATE_FORMAT
-from config import LATEST_DAYS_DATE_FORMAT
+from config import DATETIME_FORMAT
 
 
 def date(value):
-    return datetime_.strftime(value, LATEST_DAYS_DATE_FORMAT)
+    return datetime_.strftime(value, DATETIME_FORMAT)
 
 
 def datetime(value):
