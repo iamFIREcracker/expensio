@@ -5,7 +5,8 @@ from datetime import datetime
 
 import web
 
-from formatters import dateformatter
+import formatters
+import parsers
 from forms import expenses_add
 from forms import expenses_edit
 from forms import expenses_import
@@ -38,9 +39,9 @@ applicationinitializer(application)
 class ExpenseWrapper(object):
     __serializable__ = {
             'id': lambda o: o.e.id,
-            'date': lambda o: dateformatter(o.e.date),
-            'created': lambda o: dateformatter(o.e.created),
-            'updated': lambda o: dateformatter(o.e.updated),
+            'date': lambda o: formatters.date(o.e.date),
+            'created': lambda o: formatters.datetime(o.e.created),
+            'updated': lambda o: formatters.datetime(o.e.updated),
             'category': lambda o: o.e.category,
             'amount': lambda o: o.e.amount,
             'currency': lambda o: o.currency,
@@ -96,8 +97,7 @@ class ExpensesAddHandler(BaseHandler):
         if form.validates():
             e = Expense(user_id=self.current_user().id,
                     amount=float(form.d.amount), category=form.d.category,
-                    note=form.d.note,
-                    date=datetime.strptime(form.d.date, FORM_DATE_FORMAT))
+                    note=form.d.note, date=parsers.date(form.d.date))
             web.ctx.orm.add(e)
         return web.ctx.render.expenses_add(expenses_add=form)
 
@@ -110,8 +110,7 @@ class ExpensesEditHandler(BaseHandler):
         form = expenses_edit()
         item = self.current_item()
         form.fill(id=item.id, amount=item.amount, category=item.category,
-                note=item.note,
-                date=datetime.strftime(item.date, FORM_DATE_FORMAT))
+                note=item.note, date=parsers.date(item.date))
         return web.ctx.render.expenses_edit_complete(expenses_edit=form)
 
     @protected
@@ -133,7 +132,7 @@ class ExpensesEditHandler(BaseHandler):
             e.amount = float(form.d.amount)
             e.category = form.d.category
             e.note = form.d.note
-            e.date = datetime.strptime(form.d.date, FORM_DATE_FORMAT)
+            e.date = parsers.date(form.d.date)
             web.ctx.orm.add(e)
         return web.ctx.render.expenses_edit(expenses_edit=form)
 

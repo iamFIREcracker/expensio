@@ -5,7 +5,6 @@ from __future__ import division
 from __future__ import unicode_literals
 
 import time
-from datetime import datetime
 
 import web
 
@@ -24,7 +23,6 @@ from expenses import ExpensesDeleteHandler
 from expenses import ExpensesImportHandler
 from users import UsersEditHandler
 from forms import expenses_add
-from forms import FORM_DATE_FORMAT
 from utils import applicationinitializer
 from utils import BaseHandler
 

@@ -7,10 +7,9 @@ from itertools import groupby
 import web
 from sqlalchemy.sql import extract
 
-from config import LATEST_DAYS_DATE_FORMAT
+import formatters
 from expenses import ExpensesInBetween
 from expenses import LatestExpensesInBetween
-from formatters import dateformatter
 from models import Expense
 from utils import applicationinitializer
 from utils import parsedateparams
@@ -31,8 +30,8 @@ applicationinitializer(application)
 
 class DayWrapper(object):
     __serializable__ = {
-            'date': lambda o: dateformatter(o.d[0], LATEST_DAYS_DATE_FORMAT),
-            'updated': lambda o: dateformatter(o.d[1]),
+            'date': lambda o: formatters.date(o.d[0]),
+            'updated': lambda o: formatters.datetime(o.d[1]),
             'amount': lambda o: o.d[2],
             'delta': lambda o: int(o.d[3]),
             'currency': lambda o: o.currency,
@@ -82,7 +81,7 @@ def PlainDate(expense):
     Get the day in which the expense has been created (info regarding time is
     not taken into consideration).
     """
-    return dateformatter(expense.date, LATEST_DAYS_DATE_FORMAT)
+    return formatters.date(expense.date)
 
 
 class DaysHandler(BaseHandler):

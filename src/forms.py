@@ -7,8 +7,9 @@ from datetime import datetime
 
 from web import form
 
+import parsers
 
-FORM_DATE_FORMAT = '%Y-%m-%d'
+
 FORM_PERIOD_FORMAT = '%Y-%m'
 
 
@@ -21,8 +22,7 @@ validamount = form.Validator(
         float)
 
 validdatetime = form.Validator(
-        'yyyy-mm-dd',
-        lambda v: datetime.strptime(v, FORM_DATE_FORMAT))
+        'yyyy-mm-dd', lambda v: parsers.date(v))
 
 
 users_edit = form.Form(

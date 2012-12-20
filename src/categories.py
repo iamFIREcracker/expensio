@@ -6,9 +6,9 @@ from operator import attrgetter
 
 import web
 
+import formatters
 from expenses import LatestExpensesInBetween
 from expenses import ExpensesInBetween
-from formatters import dateformatter
 from models import Expense
 from utils import applicationinitializer
 from utils import protected
@@ -28,7 +28,7 @@ applicationinitializer(application)
 class CategoryWrapper(object):
     __serializable__ = {
         'name': lambda o: o.c[0],
-        'updated': lambda o: dateformatter(o.c[1]),
+        'updated': lambda o: formatters.datetime(o.c[1]),
         'amount': lambda o: o.c[2],
         'currency': lambda o: o.currency,
         }

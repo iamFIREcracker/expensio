@@ -8,8 +8,7 @@ from config import LATEST_DAYS_DATE_FORMAT
 
 
 def date(value):
-    return datetime_.strftime(value, LATEST_DAYS_DATE_FORMAT)
-
+    return datetime_.strptime(value, LATEST_DAYS_DATE_FORMAT)
 
 def datetime(value):
-    return datetime_.strftime(value, DATE_FORMAT)
+    return datetime_.strptime(value, DATE_FORMAT)

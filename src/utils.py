@@ -14,12 +14,11 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from web.contrib.template import render_jinja
 
-from config import LATEST_DAYS_DATE_FORMAT
-from config import DATE_FORMAT
+import formatters
+import parsers
 from config import EPOCH
 from filters import datetimeformat
 from filters import cashformat
-from formatters import dateformatter
 from models import engine
 from models import AlchemyEncoder # XXX WTF?
 from models import User
@@ -78,12 +77,12 @@ def parsedateparams():
     endsofmonth = date(today.year, today.month, days - 1)
 
     data = web.input(
-            since=dateformatter(startofmonth, LATEST_DAYS_DATE_FORMAT),
-            to=dateformatter(endsofmonth, LATEST_DAYS_DATE_FORMAT),
+            since=formatters.date(startofmonth),
+            to=formatters.date(endsofmonth),
             latest=EPOCH)
-    since = datetime.strptime(data.since, LATEST_DAYS_DATE_FORMAT)
-    to = datetime.strptime(data.to, LATEST_DAYS_DATE_FORMAT)
-    latest = datetime.strptime(data.latest, DATE_FORMAT)
+    since = parsers.date(data.since)
+    to = parsers.date(data.to)
+    latest = parsers.datetime(data.latest)
 
     return (since, to, latest)
 
