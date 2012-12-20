@@ -27,10 +27,10 @@ var PaletteManager = (function() {
 
         get: function(key) {
             if (key in mapping)
-                return mapping[key];
+                return mapping[key] % palette.length;
             else {
                 mapping[key] = size(mapping);
-                return mapping[key]
+                return mapping[key] % palette.length;
             }
         },
 
