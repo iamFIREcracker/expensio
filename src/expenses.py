@@ -9,8 +9,8 @@ from formatters import dateformatter
 from forms import expenses_add
 from forms import expenses_edit
 from forms import expenses_import
+from forms import fetch_expenses
 from forms import FORM_DATE_FORMAT
-from forms import FORM_PERIOD_FORMAT
 from models import Expense
 from utils import applicationinitializer
 from utils import active
@@ -160,20 +160,14 @@ class ExpensesImportHandler(BaseHandler):
     @protected
     def POST(self):
         form = expenses_import()
-        if not form.validates():
-            return web.ctx.render.expenses_import_complete(
-                    user=self.current_user(), expenses_import=form)
-
-        for line in form.d.expenses.split('\r\n'):
-            tokens = line.split('\t')
-            date = datetime.strptime(form.d.period + tokens[0],
-                    FORM_PERIOD_FORMAT + '%d')
-            amount = tokens[2].split()[1]
-            note = tokens[3] if len(tokens) >= 4 else ''
-            expense = Expense(user_id=self.current_user().id, date=date,
-                    category=tokens[1], amount=amount, note=note)
-            web.ctx.orm.add(expense)
-        web.seeother('/')
+        if form.validates():
+            web.ctx.orm.add_all(
+                Expense(user_id=self.current_user().id, date=date,
+                        category=category, amount=amount, note=note)
+                    for (date, category, amount, note)
+                            in fetch_expenses(form.d))
+        return web.ctx.render.expenses_import(
+                user=self.current_user(), expenses_import=form)
 
 
 if __name__ == '__main__':

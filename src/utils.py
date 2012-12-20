@@ -26,9 +26,11 @@ from models import User
 
 
 def applicationinitializer(application):
-    db = web.database(dbn='sqlite', db='sessions.db')
+    #db = web.database(dbn='sqlite', db='sessions.db')
+    #session = web.session.Session(
+            #application, web.session.DBStore(db, 'session'))
     session = web.session.Session(
-            application, web.session.DBStore(db, 'session'))
+            application, web.session.DiskStore('sessions'))
 
     def load_session():
         web.ctx.session = session;

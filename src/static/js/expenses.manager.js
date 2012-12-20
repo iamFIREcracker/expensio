@@ -23,6 +23,7 @@ var ExpensesManager = (function() {
             }(this));
         },
 
+
         onReady: function(logger_, date_, ui_) {
             logger = logger_;
             date = date_;
@@ -32,17 +33,10 @@ var ExpensesManager = (function() {
             this.setupOnAddSubmit($exp_add);
         },
 
-
-        addSubmit: function(func) {
-            addsubmitlisteners.push(func)
-        },
-
-
         onMonthChange: function(year, month) {
             ui.onMonthChange(year, month);
             this.onUpdate();
         },
-
 
         onUpdate: function() {
             var latest = ui.getLatest();
@@ -65,6 +59,11 @@ var ExpensesManager = (function() {
             });
 
             return false;
+        },
+
+
+        addSubmit: function(func) {
+            addsubmitlisteners.push(func)
         },
 
 
@@ -179,6 +178,44 @@ var ExpensesManager = (function() {
 
                 error: AjaxCallbackWrapper(function(data, _this) {
                     _this._onDeleteSubmitError(data);
+                }, this),
+            });
+
+            return false;
+        },
+
+
+        _onImportSubmitSuccess: function(data) {
+            $data = $(data);
+            $form.replaceWith($data);
+            if ($data.find('.wrong').length == 0) {
+                logger.success(
+                        'Expenses imported successfully!', function() {
+                            setTimeout(function() {
+                                parent.history.back();
+                            }, 2000);
+                        });
+            }
+        },
+
+        _onImportSubmitError: function(data) {
+            logger.error('Something went wrong while contacting the server');
+        },
+
+        onImportSubmit: function(form) {
+            $form = $(form);
+            $.ajax({
+                url: '/expenses/import',
+                type: 'POST',
+                dataType: 'html',
+                data: $form.serialize(),
+
+                success: AjaxCallbackWrapper(function(data, _this) {
+                    _this._onImportSubmitSuccess(data);
+                }, this),
+
+                error: AjaxCallbackWrapper(function(data, _this) {
+                    _this._onImportSubmitError(data);
                 }, this),
             });
 

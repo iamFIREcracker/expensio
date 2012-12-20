@@ -61,13 +61,32 @@ expenses_edit = form.Form(
 
 
 validperiod = form.Validator(
-        '2012-11',
+        'yyyy-mm',
         lambda v: datetime.strptime(v, FORM_PERIOD_FORMAT))
+
+def fetch_expenses(form):
+    period = form.period
+    data = form.data
+    expenses = []
+
+    for line in data.split('\r\n'):
+        (date_, category_, amount_, note_) = line.split('\t')
+
+        expenses.append((
+            datetime.strptime(period + date_, FORM_PERIOD_FORMAT + '%d'),
+            category_, float(amount_), note_,))
+    return expenses
+
+
+validimportdata = form.Validator(
+        '2012-11-12	dinner	25	Dinner with parents', fetch_expenses)
 
 
 expenses_import = form.Form(
         form.Textbox('period', validperiod, description='Period'),
-        form.Textarea('expenses', form.notnull, description='', cols=80,
+        form.Textarea('data', form.notnull, description='Data', cols=80,
             rows=24),
-        form.Button('Import', type='sumbit'),
+        form.Button('Import', type='sumbit',
+            onclick='ExpensesManager.onImportSubmit(this.form);'),
+        validators=[validimportdata]
     )
