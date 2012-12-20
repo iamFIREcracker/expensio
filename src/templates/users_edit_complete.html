@@ -1,5 +1,13 @@
 {% extends 'base_2row_2col.html' %}
 
+{% block js %}
+<script src="/static/js/users.manager.js"></script>
+{% endblock %}
+
+{% block jsready %}
+UsersManager.onReady(Logger);
+{% endblock %}
+
 {% block pre_row1 %}
     {% include 'elements/logo_small.html' %}
 {% endblock %}
