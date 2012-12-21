@@ -19,6 +19,17 @@ def currency(value):
     else:
         return value
 
+def expenses(period, data):
+    expenses = []
+
+    for line in data.split('\r\n'):
+        (date_, category_, amount_, note_) = line.split('\t')
+
+        expenses.append((
+            date('-'.join([period, date_])),
+            category_, amount(amount_), note_,))
+    return expenses
+
 def date(value):
     return datetime_.strptime(value, DATETIME_FORMAT)
 

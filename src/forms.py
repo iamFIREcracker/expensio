@@ -1,25 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import web
 from web import form
 
 import parsers
-
-
-def fetch_expenses(form):
-    period = form.period
-    data = form.data
-    expenses = []
-
-    for line in data.split('\r\n'):
-        (date_, category_, amount_, note_) = line.split('\t')
-
-        web.debug(period, date_, )
-        expenses.append((
-            parsers.date('-'.join([period, date_])),
-            category_, parsers.amount(amount_), note_,))
-    return expenses
 
 
 validcurrency = form.Validator('€, $ ..', parsers.currency)
@@ -27,7 +11,8 @@ validamount = form.Validator('1000.00', parsers.amount)
 validdate = form.Validator('yyyy-mm-dd', parsers.date)
 validperiod = form.Validator('yyyy-mm', parsers.period)
 validimportdata = form.Validator(
-        '2012-11-12	dinner	25	Dinner with parents', fetch_expenses)
+        '2012-11-12	dinner	25	Dinner with parents',
+        lambda f: parsers.expenses(f.period, f.data))
 
 
 users_edit = form.Form(

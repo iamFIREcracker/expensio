@@ -8,7 +8,6 @@ import parsers
 from forms import expenses_add
 from forms import expenses_edit
 from forms import expenses_import
-from forms import fetch_expenses
 from models import Expense
 from utils import applicationinitializer
 from utils import active
@@ -162,7 +161,7 @@ class ExpensesImportHandler(BaseHandler):
                 Expense(user_id=self.current_user().id, date=date,
                         category=category, amount=amount, note=note)
                     for (date, category, amount, note)
-                            in fetch_expenses(form.d))
+                            in parsers.expenses(form.d.period, form.d.data))
         return web.ctx.render.expenses_import(
                 user=self.current_user(), expenses_import=form)
 
