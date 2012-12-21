@@ -111,10 +111,6 @@ h1 {
     display: inline-block;
 }
 
-.exp_attach img {
-    vertical-align: middle;
-}
-
 .exp_amount {
     margin-left: 3%;
     display: inline-block;
@@ -124,7 +120,7 @@ h1 {
 .exp_inner {
     white-space: nowrap;
     display: inline-block;
-    width: 58%;
+    width: 52%;
     overflow-x: hidden;
 }
 
@@ -143,12 +139,21 @@ h1 {
     margin-left: 1%;
     text-align: right;
     display: inline-block;
-   width: 14%;
+    width: 14%;
 }
 
 .exp_edit {
     margin-left: 3%;
     display: inline-block;
+}
+
+.exp_delete {
+    margin-left: 2%;
+    display: inline-block;
+}
+
+.exp img {
+    vertical-align: middle;
 }
 
 
