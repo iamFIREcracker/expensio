@@ -137,16 +137,15 @@ var ExpensesManager = (function() {
 
         onAddExpense: function($exp) {
             $exp.find('.exp_delete').click(function() {
-                console.log($exp.find('.exp_delete'));
                 var $form = $(this);
-                console.log($form);
-
-                $form.ajaxSubmit({
-                    dataType: 'html',
-                    url: '/expenses/' + $form.find('#id').val() + '/delete',
-                    success: onDeleteSubmitSuccess,
-                    error: onDeleteSubmitError,
-                });
+                if (window.confirm("Deleting expense")) {
+                    $form.ajaxSubmit({
+                        dataType: 'html',
+                        url: '/expenses/' + $form.find('#id').val() + '/delete',
+                        success: onDeleteSubmitSuccess,
+                        error: onDeleteSubmitError,
+                    });
+                }
 
                 return false;
             })
