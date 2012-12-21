@@ -32,7 +32,7 @@ class DayWrapper(object):
     __serializable__ = {
             'date': lambda o: formatters.date(o.d[0]),
             'updated': lambda o: formatters.datetime(o.d[1]),
-            'amount': lambda o: o.d[2],
+            'amount': lambda o: formatters.amount(o.d[2]),
             'delta': lambda o: int(o.d[3]),
             'currency': lambda o: o.currency,
             }

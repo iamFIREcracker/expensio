@@ -39,7 +39,7 @@ class ExpenseWrapper(object):
             'created': lambda o: formatters.datetime(o.e.created),
             'updated': lambda o: formatters.datetime(o.e.updated),
             'category': lambda o: o.e.category,
-            'amount': lambda o: o.e.amount,
+            'amount': lambda o: formatters.amount(o.e.amount),
             'currency': lambda o: o.currency,
             'note': lambda o: o.e.note,
             'attachment': lambda o: 'http://scrineum.unipv.it/rivista/nicolaj/scontrino.jpg',
@@ -107,8 +107,9 @@ class ExpensesEditHandler(BaseHandler):
     def GET(self, id):
         form = expenses_edit()
         item = self.current_item()
-        form.fill(id=item.id, amount=item.amount, category=item.category,
-                note=item.note, date=parsers.date(item.date))
+        form.fill(id=item.id, amount=formatters.amount(item.amount),
+                category=item.category, note=item.note,
+                date=formatters.date(item.date))
         return web.ctx.render.expenses_edit_complete(expenses_edit=form)
 
     @protected

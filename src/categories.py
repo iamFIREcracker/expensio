@@ -29,7 +29,7 @@ class CategoryWrapper(object):
     __serializable__ = {
         'name': lambda o: o.c[0],
         'updated': lambda o: formatters.datetime(o.c[1]),
-        'amount': lambda o: o.c[2],
+        'amount': lambda o: formatters.amount(o.c[2]),
         'currency': lambda o: o.currency,
         }
 

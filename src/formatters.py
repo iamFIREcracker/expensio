@@ -7,6 +7,10 @@ from config import DATE_FORMAT
 from config import DATETIME_FORMAT
 
 
+def amount(value):
+    return "{:,.2f}".format(value)
+
+
 def date(value):
     return datetime_.strftime(value, DATETIME_FORMAT)
 
