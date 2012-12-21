@@ -4,9 +4,7 @@
 import calendar
 import os
 import json
-import time
 from datetime import date
-from datetime import timedelta
 from datetime import datetime
 
 import web
@@ -17,8 +15,6 @@ from web.contrib.template import render_jinja
 import formatters
 import parsers
 from config import EPOCH
-from filters import datetimeformat
-from filters import cashformat
 from models import engine
 from models import AlchemyEncoder # XXX WTF?
 from models import User
@@ -57,9 +53,6 @@ def applicationinitializer(application):
         working_dir = os.path.dirname(__file__)
         render = render_jinja(os.path.join(working_dir, 'templates'),
                 encoding='utf-8', extensions=['jinja2.ext.do'])
-
-        render._lookup.filters.update(
-                datetime=datetimeformat, cash=cashformat)
         web.ctx.render = render;
     application.add_processor(web.loadhook(load_render))
 
