@@ -8,7 +8,8 @@ from config import DATETIME_FORMAT
 
 
 def amount(value):
-    return "{:,.2f}".format(value)
+    #return "{:,.2f}".format(value)
+    return value
 
 
 def date(value):
