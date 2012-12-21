@@ -42,6 +42,7 @@ class ExpenseWrapper(object):
             'amount': lambda o: o.e.amount,
             'currency': lambda o: o.currency,
             'note': lambda o: o.e.note,
+            'attachment': lambda o: 'http://scrineum.unipv.it/rivista/nicolaj/scontrino.jpg',
             'deleted': lambda o: bool(o.e.deleted),
             }
 

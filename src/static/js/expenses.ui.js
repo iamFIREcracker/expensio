@@ -59,7 +59,7 @@ var ExpensesUI = (function() {
          * XXX fix ordering!!!!
          */
         var newexp = Expense(obj.id, obj.amount, obj.currency,
-                obj.category, obj.note, obj.date);
+                obj.category, obj.note, obj.date, obj.attachment);
         for (var id in expenses) {
             var curexp = expenses[id];
 
@@ -122,7 +122,7 @@ var ExpensesUI = (function() {
 
 
 var Expense = function(ui, palette, formatter) {
-    return function(id, amount, currency, category, note, date) {
+    return function(id, amount, currency, category, note, date, attachment) {
         return {
             id: id,
             amount: amount,
@@ -130,6 +130,7 @@ var Expense = function(ui, palette, formatter) {
             category: category,
             note: note,
             date: date,
+            attachment: attachment,
             $elem: $('' +
 '<div class="exp">' +
     '<a href="/expenses/' + id + '/edit">' +
@@ -144,6 +145,11 @@ var Expense = function(ui, palette, formatter) {
         '</span>' +
         '<span class="exp_date">' + formatter.date(date) + '</span>' +
     '</a>' +
+    '<span class="exp_attach">' +
+        '<a href="http://scrineum.unipv.it/rivista/nicolaj/scontrino.jpg" rel="lightbox" title="' + note + '">' +
+            '<img src="/static/images/attachment.png" />' +
+        '</a>' +
+    '</span>' +
 '</div>'
                 ),
             _timeoutid: null,
