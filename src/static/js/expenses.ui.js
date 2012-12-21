@@ -6,9 +6,9 @@ var ExpensesUI = (function() {
     var palette = null;
     var $title = null;
     var $expenses = null;
-
     var expenses = null;
     var latest = null;
+    var addexpenselisteners = Array();
 
 
     var init = function() {
@@ -60,6 +60,7 @@ var ExpensesUI = (function() {
          */
         var newexp = Expense(obj.id, obj.amount, obj.currency,
                 obj.category, obj.note, obj.date, obj.attachment);
+
         for (var id in expenses) {
             var curexp = expenses[id];
 
@@ -75,9 +76,12 @@ var ExpensesUI = (function() {
         }
 
         /*
-         * Trigger animations.
+         * Trigger animations and notify listeners
          */
         newexp.flash();
+        $.each(addexpenselisteners, function(index, func) {
+            func(newexp.$elem);
+        })
     };
 
     var updateTitle = function() {
@@ -114,6 +118,10 @@ var ExpensesUI = (function() {
         },
 
 
+        addExpense: function(func) {
+            addexpenselisteners.push(func)
+        },
+
         getLatest: function() {
             return latest;
         },
@@ -124,7 +132,6 @@ var ExpensesUI = (function() {
 var Expense = function(ui, palette, formatter) {
     return function(id, amount, currency, category, note, date, attachment) {
         var addAttachment = function(attachment, note) {
-            console.log(attachment, note);
             if (attachment == null)
                 return '' +
 '<span class="exp_attach">' +
@@ -164,11 +171,12 @@ var Expense = function(ui, palette, formatter) {
             '<img src="/static/images/edit.png" alt="Edit expense icon"/>' +
         '</a>' +
     '</span>' +
-    '<span class="exp_delete">' +
-        '<a href="/expenses/' + id + '/delete">' +
+    '<form class="exp_delete" method="post">' +
+        '<input type="hidden" value="' + id + '" name="id" id="id"/>' +
+        '<a href="/expenses/' + id + '/delete" title="Delete expense">' +
             '<img src="/static/images/delete.png" alt="Delete expense icon"/>' +
         '</a>' +
-    '</span>' +
+    '</form>' +
 '</div>'
                 ),
             _timeoutid: null,

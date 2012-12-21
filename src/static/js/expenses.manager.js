@@ -53,6 +53,22 @@ var ExpensesManager = (function() {
         logger.error('Something went wrong while contacting the server');
     };
 
+
+    var onDeleteSubmitSuccess = function(data) {
+        logger.success('Expense deleted successfully!');
+
+        this.onUpdate();
+
+        $.each(addsubmitlisteners, function(index, func) {
+            func();
+        });
+    };
+
+    var onDeleteSubmitError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+
     return {
         onReady: function(logger_, date_, ui_) {
             logger = logger_;
@@ -114,46 +130,26 @@ var ExpensesManager = (function() {
             return false;
         },
 
+        onAddExpense: function($exp) {
+            $exp.find('.exp_delete').click(function() {
+                console.log($exp.find('.exp_delete'));
+                var $form = $(this);
+                console.log($form);
+
+                $form.ajaxSubmit({
+                    dataType: 'html',
+                    url: '/expenses/' + $form.find('#id').val() + '/delete',
+                    success: onDeleteSubmitSuccess,
+                    error: onDeleteSubmitError,
+                });
+
+                return false;
+            })
+
+        },
 
         addSubmit: function(func) {
             addsubmitlisteners.push(func)
-        },
-
-
-        _onDeleteSubmitSuccess: function(data) {
-            var $data = $(data);
-            $form.replaceWith($data);
-            if ($data.find('.wrong').length == 0) {
-                logger.success(
-                        'Expense deleted successfully!', function() {
-                            setTimeout(function() {
-                                parent.history.back();
-                            }, 2000);
-                        });
-            }
-        },
-
-        _onDeleteSubmitError: function(data) {
-            logger.error('Something went wrong while contacting the server');
-        },
-
-        onDeleteSubmit: function(form) {
-            $form = $(form);
-            $.ajax({
-                url: '/expenses/' + $form.find('#id').val() + '/delete',
-                type: 'POST',
-                dataType: 'html',
-
-                success: AjaxCallbackWrapper(function(data, _this) {
-                    _this._onDeleteSubmitSuccess(data);
-                }, this),
-
-                error: AjaxCallbackWrapper(function(data, _this) {
-                    _this._onDeleteSubmitError(data);
-                }, this),
-            });
-
-            return false;
         },
 
 
