@@ -100,11 +100,9 @@ class ExpensesAddHandler(BaseHandler):
                     category=form.d.category, note=form.d.note,
                     date=parsers.date(form.d.date), attachment=url)
             web.ctx.orm.add(e)
+            form = expenses_add()
 
-        if attachment != '':
-            form.fill(
-                    amount=form.d.amount, category=form.d.category,
-                    note=form.d.note, date=form.d.date)
+        form.get('attachment').value = '';
         return web.ctx.render.expenses_add(expenses_add=form)
 
 
@@ -148,12 +146,8 @@ class ExpensesEditHandler(BaseHandler):
             # Bulk add
             web.ctx.orm.add_all([deleted, e])
 
-        if attachment != '':
-            form.fill(
-                    id=form.d.id, amount=form.d.amount,
-                    category=form.d.category, note=form.d.note,
-                    date=form.d.date)
-        web.debug(form.d.attachment)
+        form.get('attachment').value = '';
+        form.get('oldattachment').value = self.current_item().attachment
         return web.ctx.render.expenses_edit(expenses_edit=form)
 
 
