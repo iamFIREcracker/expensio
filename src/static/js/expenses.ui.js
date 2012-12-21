@@ -133,21 +133,24 @@ var Expense = function(ui, palette, formatter) {
             attachment: attachment,
             $elem: $('' +
 '<div class="exp">' +
-    '<a href="/expenses/' + id + '/edit">' +
-        '<span class="exp_amount">' + formatter.amount(amount, currency) + '</span>' +
-        '<span class="exp_inner">' +
-            '<span class="exp_category palette" ' +
-                'style="background-color: '+ palette.background(category) + '; ' +
-                    'color: ' + palette.foreground(category) + '">' +
-                    category +
-            '</span>' +
-            '<span class="exp_note">' + note + '</span>' +
-        '</span>' +
-        '<span class="exp_date">' + formatter.date(date) + '</span>' +
-    '</a>' +
     '<span class="exp_attach">' +
         '<a href="http://scrineum.unipv.it/rivista/nicolaj/scontrino.jpg" rel="lightbox" title="' + note + '">' +
             '<img src="/static/images/attachment.png" />' +
+        '</a>' +
+    '</span>' +
+    '<span class="exp_amount">' + formatter.amount(amount, currency) + '</span>' +
+    '<span class="exp_inner">' +
+        '<span class="exp_category palette" ' +
+            'style="background-color: '+ palette.background(category) + '; ' +
+                'color: ' + palette.foreground(category) + '">' +
+                category +
+        '</span>' +
+        '<span class="exp_note">' + note + '</span>' +
+    '</span>' +
+    '<span class="exp_date">' + formatter.date(date) + '</span>' +
+    '<span class="exp_edit">' +
+        '<a href="/expenses/' + id + '/edit">' +
+            '<img src="/static/images/edit.png" />' +
         '</a>' +
     '</span>' +
 '</div>'

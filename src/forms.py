@@ -43,10 +43,8 @@ expenses_edit = form.Form(
             id='category'),
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdate, description='Date'),
-        form.Button('Edit', type='submit',
-            onclick='ExpensesManager.onEditSubmit(this.form);'),
-        form.Button('Delete', type='submit',
-            onclick='ExpensesManager.onDeleteSubmit(this.form);'),
+        form.File('attachment', description='Attachment'),
+        form.Button('Edit', type='submit'),
     )
 
 expenses_import = form.Form(

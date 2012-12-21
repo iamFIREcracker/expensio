@@ -107,7 +107,16 @@ h1 {
     clear: both;
 }
 
+.exp_attach {
+    display: inline-block;
+}
+
+.exp_attach img {
+    vertical-align: middle;
+}
+
 .exp_amount {
+    margin-left: 3%;
     display: inline-block;
     width: 15%;
 }
@@ -115,7 +124,7 @@ h1 {
 .exp_inner {
     white-space: nowrap;
     display: inline-block;
-    width: 64%;
+    width: 58%;
     overflow-x: hidden;
 }
 
@@ -137,14 +146,11 @@ h1 {
    width: 14%;
 }
 
-.exp_attach {
+.exp_edit {
     margin-left: 3%;
     display: inline-block;
 }
 
-.exp_attach img {
-    vertical-align: middle;
-}
 
 .exp:first-child {
     border-top: 1px solid #ddd;
@@ -161,6 +167,6 @@ h1 {
 }
 
 .exp:hover {
-    background-color: #eee;
+    background-color: #fefefe;
 }
 
