@@ -4,6 +4,30 @@ var ExpensesManager = (function() {
     var ui = null;
     var addsubmitlisteners = Array();
 
+    var update = function() {
+        var latest = ui.getLatest();
+        var data = {
+            since: date.startofcurrentmonth(),
+            to: date.endofcurrentmonth(),
+        }
+
+        if (latest) {
+            data['latest'] = latest;
+        }
+
+        $.ajax({
+            url: '/expenses.json',
+            type: 'GET',
+            dataType: 'json',
+            data: data,
+            success: onUpdateSuccess,
+            error: onUpdateError,
+        });
+
+        return false;
+    };
+
+
     var onUpdateSuccess = function(data) {
         ui.onNewData(data);
     };
@@ -57,7 +81,7 @@ var ExpensesManager = (function() {
     var onDeleteSubmitSuccess = function(data) {
         logger.success('Expense deleted successfully!');
 
-        this.onUpdate();
+        update();
 
         $.each(addsubmitlisteners, function(index, func) {
             func();
@@ -104,30 +128,11 @@ var ExpensesManager = (function() {
 
         onMonthChange: function(year, month) {
             ui.onMonthChange(year, month);
-            this.onUpdate();
+            update();
         },
 
         onUpdate: function() {
-            var latest = ui.getLatest();
-            var data = {
-                since: date.startofcurrentmonth(),
-                to: date.endofcurrentmonth(),
-            }
-
-            if (latest) {
-                data['latest'] = latest;
-            }
-
-            $.ajax({
-                url: '/expenses.json',
-                type: 'GET',
-                dataType: 'json',
-                data: data,
-                success: onUpdateSuccess,
-                error: onUpdateError,
-            });
-
-            return false;
+            update();
         },
 
         onAddExpense: function($exp) {
