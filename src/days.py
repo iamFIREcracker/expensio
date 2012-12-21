@@ -113,11 +113,9 @@ class DaysHandler(BaseHandler):
                     for (key, group) in groupby(
                         expenses, key=PlainDate)]
 
-        d = jsonify(
+        return jsonify(
                 days=[DayWrapper(d, self.current_user().currency)
                     for d in days])
-        web.debug(d)
-        return d
 
 
 if __name__ == '__main__':
