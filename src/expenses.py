@@ -9,6 +9,7 @@ from forms import expenses_add
 from forms import expenses_edit
 from forms import expenses_import
 from models import Expense
+from upload import UploadedFile
 from utils import applicationinitializer
 from utils import active
 from utils import owner
@@ -90,10 +91,10 @@ class ExpensesHandler(BaseHandler):
 class ExpensesAddHandler(BaseHandler):
     @protected
     def POST(self):
-        attachment = web.input(attachment={}).attachment
+        attachment = UploadedFile('attachment')
         form = expenses_add()
         if form.validates():
-            url = '' if attachment == '' else web.ctx.uploadman.add(attachment)
+            url = web.ctx.uploadman.add(attachment) if attachment else None
 
             e = Expense(user_id=self.current_user().id,
                     amount=parsers.amount(form.d.amount),
@@ -122,10 +123,10 @@ class ExpensesEditHandler(BaseHandler):
     @owner(Expense)
     @active
     def POST(self, id):
-        attachment = web.input(attachment={}).attachment
+        attachment = UploadedFile('attachment')
         form = expenses_edit()
         if form.validates():
-            url = '' if attachment == '' else web.ctx.uploadman.add(attachment)
+            url = web.ctx.uploadman.add(attachment) if attachment else None
 
             e = self.current_item()
 
@@ -140,13 +141,14 @@ class ExpensesEditHandler(BaseHandler):
             e.category = form.d.category
             e.note = form.d.note
             e.date = parsers.date(form.d.date)
-            if attachment != '':
+            if attachment:
                 e.attachment = url
+            web.debug(e.attachment)
 
             # Bulk add
             web.ctx.orm.add_all([deleted, e])
 
-        form.get('attachment').value = '';
+        form.get('attachment').value = None
         form.get('oldattachment').value = self.current_item().attachment
         return web.ctx.render.expenses_edit(expenses_edit=form)
 
