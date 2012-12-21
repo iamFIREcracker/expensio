@@ -95,8 +95,7 @@ class ExpensesAddHandler(BaseHandler):
             e = Expense(user_id=self.current_user().id,
                     amount=parsers.amount(form.d.amount),
                     category=form.d.category, note=form.d.note,
-                    date=parsers.date(form.d.date),
-                    attachment='http://scrineum.unipv.it/rivista/nicolaj/scontrino.jpg')
+                    date=parsers.date(form.d.date))
             web.ctx.orm.add(e)
         return web.ctx.render.expenses_add(expenses_add=form)
 
@@ -120,21 +119,26 @@ class ExpensesEditHandler(BaseHandler):
         attachment = web.input(attachment={}).attachment
         form = expenses_edit()
         if form.validates():
+            url = '' if attachment == '' else web.ctx.uploadman.add(attachment)
+
             e = self.current_item()
 
             # Add a new expense being the copy of the current expense before
             # the edit operations have been applied
             deleted = Expense(original_id=e.id, user_id=self.current_user().id,
                     amount=e.amount, category=e.category, note=e.note,
-                    date=e.date, deleted=True)
-            web.ctx.orm.add(deleted)
+                    date=e.date, deleted=True, attachment=e.attachment)
 
             # Now apply edit operations on the current expense
             e.amount = parsers.amount(form.d.amount)
             e.category = form.d.category
             e.note = form.d.note
             e.date = parsers.date(form.d.date)
-            web.ctx.orm.add(e)
+            if attachment != '':
+                e.attachment = url
+
+            # Bulk add
+            web.ctx.orm.add_all([deleted, e])
 
         if attachment != '':
             form.fill(

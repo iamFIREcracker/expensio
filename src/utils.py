@@ -18,9 +18,11 @@ from config import EPOCH
 from models import engine
 from models import AlchemyEncoder # XXX WTF?
 from models import User
+from upload import UploadManager
 
 
 def applicationinitializer(application):
+    working_dir = os.path.dirname(__file__)
     #db = web.database(dbn='sqlite', db='sessions.db')
     #session = web.session.Session(
             #application, web.session.DBStore(db, 'session'))
@@ -50,11 +52,15 @@ def applicationinitializer(application):
     application.add_processor(load_sqla)
 
     def load_render():
-        working_dir = os.path.dirname(__file__)
         render = render_jinja(os.path.join(working_dir, 'templates'),
                 encoding='utf-8', extensions=['jinja2.ext.do'])
         web.ctx.render = render;
     application.add_processor(web.loadhook(load_render))
+
+    def load_uploadmanager():
+        uploadman = UploadManager(os.path.join(working_dir))
+        web.ctx.uploadman = uploadman
+    application.add_processor(web.loadhook(load_uploadmanager))
 
 
 def jsonify(*args, **kwargs):

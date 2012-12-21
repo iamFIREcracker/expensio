@@ -5,3 +5,4 @@ syntax: glob
 cscope*
 tags
 sessions/*
+static/uploads/*
