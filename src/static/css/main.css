@@ -108,6 +108,7 @@ h1 {
 }
 
 .exp_attach {
+    width: 16px;
     display: inline-block;
 }
 

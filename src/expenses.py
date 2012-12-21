@@ -42,7 +42,7 @@ class ExpenseWrapper(object):
             'amount': lambda o: formatters.amount(o.e.amount),
             'currency': lambda o: o.currency,
             'note': lambda o: o.e.note,
-            'attachment': lambda o: 'http://scrineum.unipv.it/rivista/nicolaj/scontrino.jpg',
+            'attachment': lambda o: o.e.attachment,
             'deleted': lambda o: bool(o.e.deleted),
             }
 
@@ -95,7 +95,8 @@ class ExpensesAddHandler(BaseHandler):
             e = Expense(user_id=self.current_user().id,
                     amount=parsers.amount(form.d.amount),
                     category=form.d.category, note=form.d.note,
-                    date=parsers.date(form.d.date))
+                    date=parsers.date(form.d.date),
+                    attachment='http://scrineum.unipv.it/rivista/nicolaj/scontrino.jpg')
             web.ctx.orm.add(e)
         return web.ctx.render.expenses_add(expenses_add=form)
 
@@ -116,6 +117,7 @@ class ExpensesEditHandler(BaseHandler):
     @owner(Expense)
     @active
     def POST(self, id):
+        attachment = web.input(attachment={}).attachment
         form = expenses_edit()
         if form.validates():
             e = self.current_item()
@@ -133,6 +135,13 @@ class ExpensesEditHandler(BaseHandler):
             e.note = form.d.note
             e.date = parsers.date(form.d.date)
             web.ctx.orm.add(e)
+
+        if attachment != '':
+            form.fill(
+                    id=form.d.id, amount=form.d.amount,
+                    category=form.d.category, note=form.d.note,
+                    date=form.d.note, attachment=attachment.filename)
+        web.debug(form.d.attachment)
         return web.ctx.render.expenses_edit(expenses_edit=form)
 
 

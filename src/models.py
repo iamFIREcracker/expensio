@@ -80,6 +80,7 @@ class Expense(Base):
     amount = Column(Float, nullable=False)
     note = Column(String)
     deleted = Column(Boolean, default=False, nullable=False)
+    attachment = Column(String)
 
 
 

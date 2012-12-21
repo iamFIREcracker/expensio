@@ -123,6 +123,21 @@ var ExpensesUI = (function() {
 
 var Expense = function(ui, palette, formatter) {
     return function(id, amount, currency, category, note, date, attachment) {
+        var addAttachment = function(attachment, note) {
+            console.log(attachment, note);
+            if (attachment == null)
+                return '' +
+'<span class="exp_attach">' +
+'</span>';
+            else
+                return '' +
+'<span class="exp_attach">' +
+    '<a href="' + attachment + '" rel="lightbox" title="' + note + '">' +
+        '<img src="/static/images/attachment.png" alt="Attachment icon" />' +
+    '</a>' +
+'</span>';
+        };
+
         return {
             id: id,
             amount: amount,
@@ -133,11 +148,7 @@ var Expense = function(ui, palette, formatter) {
             attachment: attachment,
             $elem: $('' +
 '<div class="exp">' +
-    '<span class="exp_attach">' +
-        '<a href="http://scrineum.unipv.it/rivista/nicolaj/scontrino.jpg" rel="lightbox" title="' + note + '">' +
-            '<img src="/static/images/attachment.png" />' +
-        '</a>' +
-    '</span>' +
+    addAttachment(attachment, note) +
     '<span class="exp_amount">' + formatter.amount(amount, currency) + '</span>' +
     '<span class="exp_inner">' +
         '<span class="exp_category palette" ' +
@@ -149,8 +160,13 @@ var Expense = function(ui, palette, formatter) {
     '</span>' +
     '<span class="exp_date">' + formatter.date(date) + '</span>' +
     '<span class="exp_edit">' +
-        '<a href="/expenses/' + id + '/edit">' +
-            '<img src="/static/images/edit.png" />' +
+        '<a href="/expenses/' + id + '/edit" title="Edit expense">' +
+            '<img src="/static/images/edit.png" alt="Edit expense icon"/>' +
+        '</a>' +
+    '</span>' +
+    '<span class="exp_delete">' +
+        '<a href="/expenses/' + id + '/delete">' +
+            '<img src="/static/images/delete.png" alt="Delete expense icon"/>' +
         '</a>' +
     '</span>' +
 '</div>'
