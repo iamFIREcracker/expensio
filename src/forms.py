@@ -5,6 +5,26 @@ from web import form
 
 import parsers
 
+class Image(form.Input):
+    """Image.
+    
+    >>> Image("foo").render()
+    u'<img id="foo" name="foo" />'
+    >>> Image("foo", src="bar", alt="baz").render()
+    u'<img src="bar" alt="baz" id="foo" name="foo" />'
+    """
+    def __init__(self, name, *validators, **attrs):
+        super(Image, self).__init__(name, *validators, **attrs)
+
+    def render(self):
+        attrs = self.attrs.copy()
+        attrs['name'] = self.name
+        if self.value is not None:
+            attrs['src'] = self.value
+        if self.value is not None:
+            attrs['value'] = self.value
+        return '<img %s />' % (attrs, )
+
 
 validcurrency = form.Validator('€, $ ..', parsers.currency)
 validamount = form.Validator('1000.00', parsers.amount)
@@ -33,6 +53,7 @@ expenses_add = form.Form(
             id='category'),
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdate, description='Date'),
+        form.File('attachment', description='Attachment'),
         form.Button('Add', type='submit'),
     )
 
@@ -44,6 +65,7 @@ expenses_edit = form.Form(
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdate, description='Date'),
         form.File('attachment', description='Attachment'),
+        Image('oldattachment', description='Old Attachment'),
         form.Button('Edit', type='submit'),
     )
 
@@ -55,3 +77,8 @@ expenses_import = form.Form(
             onclick='ExpensesManager.onImportSubmit(this.form);'),
         validators=[validimportdata]
     )
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

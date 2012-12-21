@@ -90,13 +90,21 @@ class ExpensesHandler(BaseHandler):
 class ExpensesAddHandler(BaseHandler):
     @protected
     def POST(self):
+        attachment = web.input(attachment={}).attachment
         form = expenses_add()
         if form.validates():
+            url = '' if attachment == '' else web.ctx.uploadman.add(attachment)
+
             e = Expense(user_id=self.current_user().id,
                     amount=parsers.amount(form.d.amount),
                     category=form.d.category, note=form.d.note,
-                    date=parsers.date(form.d.date))
+                    date=parsers.date(form.d.date), attachment=url)
             web.ctx.orm.add(e)
+
+        if attachment != '':
+            form.fill(
+                    amount=form.d.amount, category=form.d.category,
+                    note=form.d.note, date=form.d.date)
         return web.ctx.render.expenses_add(expenses_add=form)
 
 
@@ -109,7 +117,7 @@ class ExpensesEditHandler(BaseHandler):
         item = self.current_item()
         form.fill(id=item.id, amount=formatters.amount(item.amount),
                 category=item.category, note=item.note,
-                date=formatters.date(item.date))
+                date=formatters.date(item.date), oldattachment=item.attachment)
         return web.ctx.render.expenses_edit_complete(expenses_edit=form)
 
     @protected
@@ -144,7 +152,7 @@ class ExpensesEditHandler(BaseHandler):
             form.fill(
                     id=form.d.id, amount=form.d.amount,
                     category=form.d.category, note=form.d.note,
-                    date=form.d.note, attachment=attachment.filename)
+                    date=form.d.date)
         web.debug(form.d.attachment)
         return web.ctx.render.expenses_edit(expenses_edit=form)
 
