@@ -72,6 +72,10 @@ h1 {
     background: #f58686;
 }
 
+.loading {
+    margin-top: 30px;
+    text-align: center;
+}
 
 .connect {
     display: block;

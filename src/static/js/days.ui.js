@@ -9,7 +9,7 @@ var DaysUI = (function() {
     var latest = null;
 
     var init = function() {
-        $days.empty();
+        $days.html('<div class="loading"><img src="/static/images/loading.gif" /></div>')
         chart = null;
         days = Object();
         latest = '';

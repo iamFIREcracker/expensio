@@ -8,6 +8,7 @@ var CategoriesUI = (function() {
 
     var init = function() {
         $categories.empty();
+        $categories.html('<div class="loading"><img src="/static/images/loading.gif" /></div>')
         chart = null;
         categories = Object();
         latest = '';

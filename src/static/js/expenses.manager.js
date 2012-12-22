@@ -45,7 +45,7 @@ var ExpensesManager = (function() {
         if ($data.find('.wrong').length == 0) {
             logger.success('Expense tracked successfully!');
 
-            this.onUpdate();
+            update();
 
             $.each(addsubmitlisteners, function(index, func) {
                 func();
