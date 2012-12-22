@@ -40,7 +40,7 @@ var DaysUI = (function() {
                     rotation: -45,
                     align: 'right',
                     style: {
-                        fontSize: '9px',
+                        fontSize: '10px',
                     },
                 },
             },
