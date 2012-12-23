@@ -1,25 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="grid grid-pad">
+<div class="container-fluid">
+    <div class="row-fluid">
         {% block pre_row1 %}{% endblock %}
 
-        <div class="col-1-2">
+        <div class="span6">
             {% block row1_col1 %}{% endblock %}
         </div>
-        <div class="col-1-2">
+        <div class="span6">
             {% block row1_col2 %}{% endblock %}
         </div>
     </div>
-    <div class="grid grid-pad">
+    <div class="row-fluid">
         {% block pre_row2 %}{% endblock %}
 
-        <div class="col-1-2">
+        <div class="span6">
             {% block row2_col1 %}{% endblock %}
         </div>
-        <div class="col-1-2">
+        <div class="span6">
             {% block row2_col2 %}{% endblock %}
         </div>
     </div>
+</div>
 {% endblock %}
 

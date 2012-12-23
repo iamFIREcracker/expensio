@@ -13,15 +13,6 @@ h1 {
 }
 
 
-.grid {
-    padding-top: 0px !important;
-}
-
-.grid-pad {
-    padding: 20px 0 20px 0;
-}
-
-
 .title {
     text-align: center;
     text-shadow: 2px 2px #ccc;
@@ -153,6 +144,7 @@ h1 {
 }
 
 .exp_delete {
+    margin-bottom: 0px;
     margin-left: 2%;
     display: inline-block;
 }
