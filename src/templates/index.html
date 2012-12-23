@@ -51,8 +51,8 @@ ExpensesManager.addSubmit(function() {
     DaysManager.onUpdate();
     CategoriesManager.onUpdate();
 })
-ExpensesUI.addExpense(function($exp) {
-    ExpensesManager.onAddExpense($exp);
+ExpensesUI.addExpense(function(exp) {
+    ExpensesManager.onAddExpense(exp);
 })
 Manager.onUpdate(0);
 {% endblock %}

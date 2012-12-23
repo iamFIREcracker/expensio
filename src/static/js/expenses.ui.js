@@ -80,7 +80,7 @@ var ExpensesUI = (function() {
          */
         newexp.flash();
         $.each(addexpenselisteners, function(index, func) {
-            func(newexp.$elem);
+            func(newexp);
         })
     };
 
@@ -117,6 +117,13 @@ var ExpensesUI = (function() {
             updateTitle();
         },
 
+        confirmDelete: function(exp) {
+            var msg = sprintf(
+                    'You are about to delete an expense (Amount: %s, Category: %s, Date: %s)',
+                    formatter.amount(exp.amount, exp.currency),
+                    exp.category, formatter.date(exp.date));
+            return window.confirm(msg);
+        },
 
         addExpense: function(func) {
             addexpenselisteners.push(func)
