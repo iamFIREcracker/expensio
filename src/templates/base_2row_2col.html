@@ -3,25 +3,26 @@
 {% block content %}
 <div class="navbar navbar-inverse navbar-static-top">
     <div class="navbar-inner">
-        <a class="brand" href="/" title="Home">Expenses</a>
+        <div class="container">
+            <a class="brand" href="/" title="Home">Expenses</a>
 
-        <ul class="nav pull-right">
-            <li class="dropdown">
-                <a href="#"
-                    class="dropdown-toggle"
-                    data-toggle="dropdown">
-                    {{ user.name }}
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="/users/{{ user.id }}/edit" alt="Settings">Settings</a></li>
-                    <li><a href="/expenses/import" alt="Imoport">Import</a></li>
-                    <li><a href="/logout" alt="Logout">Logout</a></li>
-                </ul>
-            </li>
-        </ul>
+            <ul class="nav pull-right">
+                <li class="dropdown">
+                    <a href="#"
+                        class="dropdown-toggle"
+                        data-toggle="dropdown">
+                        {{ user.name }}
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/users/{{ user.id }}/edit" alt="Settings">Settings</a></li>
+                        <li><a href="/expenses/import" alt="Imoport">Import</a></li>
+                        <li><a href="/logout" alt="Logout">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
 <div class="container">
     <div class="row">
         {% block pre_row1 %}{% endblock %}
