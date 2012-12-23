@@ -68,10 +68,12 @@ Manager.onUpdate(0);
 {% endblock %}
 
 {% block pre_row2 %}
-{% include 'expenses_more.html' %}
-<h2 class="title mid"><span id="current_month"></span></h2>
-<div class="title mid"><span id="current_month_overall"></span></div>
-<br style="clear: both" />
+<div class="span12">
+    {% include 'expenses_more.html' %}
+    <h2 class="title mid"><span id="current_month"></span></h2>
+    <div class="title mid"><span id="current_month_overall"></span></div>
+    <br style="clear: both" />
+</div>
 {% endblock %}
 
 {% block row1_col2 %}
