@@ -26,7 +26,8 @@ class UsersEditHandler(BaseHandler):
         form = users_edit()
         user = self.current_user()
         form.fill(id=user.id, name=user.name, currency=user.currency)
-        return web.ctx.render.users_edit_complete(users_edit=form)
+        return web.ctx.render.users_edit_complete(user=self.current_user(),
+                users_edit=form)
 
     @protected
     @me

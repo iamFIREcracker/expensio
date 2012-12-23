@@ -117,7 +117,8 @@ class ExpensesEditHandler(BaseHandler):
         form.fill(id=item.id, amount=formatters.amount(item.amount),
                 category=item.category, note=item.note,
                 date=formatters.date(item.date), oldattachment=item.attachment)
-        return web.ctx.render.expenses_edit_complete(expenses_edit=form)
+        return web.ctx.render.expenses_edit_complete(user=self.current_user(),
+                expenses_edit=form)
 
     @protected
     @owner(Expense)
