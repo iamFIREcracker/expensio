@@ -57,11 +57,6 @@ ExpensesUI.addExpense(function(exp) {
 Manager.onUpdate(0);
 {% endblock %}
 
-{% block pre_row1 %}
-    {% include 'elements/logo_small.html' %}
-    {% include 'greetings.html' %}
-{% endblock %}
-
 {% block row1_col1 %}
     <h3 class="title mid">Track New</h3>
     {% include 'expenses_add.html' %}

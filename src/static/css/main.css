@@ -1,5 +1,4 @@
 body {
-    font-family: arial, sans-serif;
     color: #111;
 }
 
@@ -74,6 +73,14 @@ h1 {
     text-align: center;
 }
 
+.row {
+    margin-top: 30px;
+}
+
+#exp_add table {
+    margin: auto;
+}
+
 #current_month_overall {
     color: #888;
     text-shadow: none;
@@ -86,7 +93,6 @@ h1 {
 #categories {
     height: 300px;
 }
-
 
 .palette {
     padding-left: 4px !important;
