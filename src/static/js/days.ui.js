@@ -1,4 +1,4 @@
-var DaysUI = (function() {
+﻿var DaysUI = (function() {
     var __daysnumber = 30;
 
     var formatter = null;

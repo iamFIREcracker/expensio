@@ -1,4 +1,4 @@
-var CategoriesUI = (function() {
+﻿var CategoriesUI = (function() {
     var formatter = null;
     var palette = null;
     var $categories = null;
