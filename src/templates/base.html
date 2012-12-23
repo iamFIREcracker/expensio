@@ -3,9 +3,15 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <title>Expenses</title>
     <link rel="stylesheet" href="/static/css/simplegrid.css" type="text/css" />
     <link rel="stylesheet" href="/static/css/main.css" type="text/css" />
     {% block css %}{% endblock %}
+</head>
+
+<body>
+    <div id="message" style="display:none"></div>
+    {% block content %}{% endblock %}
     <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
     <!--<script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>-->
     <script src="/static/js/sprintf.js"></script>
@@ -19,10 +25,5 @@
         {% block jsready %}{% endblock %}
     });
     </script>
-</head>
-
-<body>
-    <div id="message" style="display:none"></div>
-    {% block content %}{% endblock %}
 </body>
 </html>
