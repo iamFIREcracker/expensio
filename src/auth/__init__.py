@@ -7,7 +7,11 @@ from facebook import LoginFacebookHandler
 from facebook import LoginFacebookAuthorizedHandler
 from twitter import LoginTwitterHandler
 from twitter import LoginTwitterAuthorizedHandler
+from fake import LoginFakeHandler
+from fake import LoginFakeAuthorizedHandler
 
 __all__ = [LoginGoogleHandler, LoginGoogleAuthorizedHandler,
         LoginFacebookHandler, LoginFacebookAuthorizedHandler,
-        LoginTwitterHandler, LoginTwitterAuthorizedHandler]
+        LoginTwitterHandler, LoginTwitterAuthorizedHandler,
+        LoginFakeHandler, LoginFakeAuthorizedHandler,
+        ]

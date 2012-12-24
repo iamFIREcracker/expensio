@@ -11,6 +11,8 @@ from auth import LoginFacebookHandler
 from auth import LoginFacebookAuthorizedHandler
 from auth import LoginTwitterHandler
 from auth import LoginTwitterAuthorizedHandler
+from auth import LoginFakeHandler
+from auth import LoginFakeAuthorizedHandler
 from categories import CategoriesHandler
 from days import DaysHandler
 from expenses import ExpensesHandler
@@ -34,6 +36,8 @@ urls = (
     '/login/facebook/authorized', 'LoginFacebookAuthorizedHandler',
     '/login/twitter', 'LoginTwitterHandler',
     '/login/twitter/authorized', 'LoginTwitterAuthorizedHandler',
+    '/login/fake', 'LoginFakeHandler',
+    '/login/fake/authorized', 'LoginFakeAuthorizedHandler',
     '/logout', 'LogoutHandler',
 
     '/users/(.+)/edit', 'UsersEditHandler',
