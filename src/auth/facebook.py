@@ -9,6 +9,7 @@ import urlparse
 import oauth2
 import web
 
+from config import COOKIE_EXPIRATION
 from models import User
 from utils import BaseHandler
 
@@ -42,7 +43,7 @@ class LoginFacebookAuthorizedHandler(BaseHandler):
         user = web.ctx.orm.merge(user)
 
         web.setcookie(
-                'user', user.id, expires=time.time() + 7 * 86400)
+                'user', user.id, time.time() + COOKIE_EXPIRATION)
         web.seeother('/')
 
 
