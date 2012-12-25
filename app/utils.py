@@ -23,11 +23,11 @@ from upload import UploadManager
 
 def applicationinitializer(application):
     working_dir = os.path.dirname(__file__)
-    #db = web.database(dbn='sqlite', db='sessions.db')
-    #session = web.session.Session(
-            #application, web.session.DBStore(db, 'session'))
+    db = web.database(dbn='sqlite', db='sessions.db')
     session = web.session.Session(
-            application, web.session.DiskStore('sessions'))
+            application, web.session.DBStore(db, 'session'))
+    #session = web.session.Session(
+            #application, web.session.DiskStore('sessions'))
 
     def load_session():
         web.ctx.session = session;
