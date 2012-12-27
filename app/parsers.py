@@ -13,7 +13,7 @@ def amount(value):
     return float(value)
 
 def currency(value):
-    if value not in utils.CURRENCIES:
+    if value not in utils.currencies():
         raise ValueError()
     else:
         return value

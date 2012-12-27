@@ -21,8 +21,12 @@ from models import User
 from upload import UploadManager
 
 
-"""Return a list of all the currencies available"""
-CURRENCIES = [u'€', u'$']
+"""List of all the currencies available"""
+_CURRENCIES = [u'€', u'$']
+
+def currencies():
+    """Return a list of all the supported currencies."""
+    return _CURRENCIES
 
 
 def applicationinitializer(application):

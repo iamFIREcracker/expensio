@@ -39,7 +39,7 @@ validimportdata = form.Validator(
 users_edit = form.Form(
         form.Hidden('id'),
         form.Textbox('name', form.notnull, description='Name'),
-        form.Dropdown('currency', zip(utils.CURRENCIES, utils.CURRENCIES),
+        form.Dropdown('currency', zip(utils.currencies(), utils.currencies()),
             description='Currency'),
         #form.Button('google_connect', html='Google Connect'),
         #form.Button('facebook_connect', html='Facebook Connect'),
