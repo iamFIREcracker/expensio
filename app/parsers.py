@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-
 from datetime import datetime as datetime_
 
 from config import DATE_FORMAT
@@ -14,7 +12,7 @@ def amount(value):
     return float(value)
 
 def currency(value):
-    if value not in ['€', '$']:
+    if value not in [u'€', u'$']:
         raise ValueError()
     else:
         return value
