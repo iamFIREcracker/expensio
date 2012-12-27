@@ -3,10 +3,8 @@
 
 from datetime import datetime as datetime_
 
+import config
 import utils
-from config import DATE_FORMAT
-from config import DATETIME_FORMAT
-from config import PERIOD_FORMAT
 
 
 def amount(value):
@@ -30,10 +28,10 @@ def expenses(period, data):
     return expenses
 
 def date(value):
-    return datetime_.strptime(value, DATETIME_FORMAT)
+    return datetime_.strptime(value, config.DATETIME_FORMAT)
 
 def datetime(value):
-    return datetime_.strptime(value, DATE_FORMAT)
+    return datetime_.strptime(value, config.DATE_FORMAT)
 
 def period(value):
-    return datetime_.strptime(value, PERIOD_FORMAT)
+    return datetime_.strptime(value, config.PERIOD_FORMAT)
