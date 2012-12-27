@@ -3,6 +3,7 @@
 
 from datetime import datetime as datetime_
 
+import utils
 from config import DATE_FORMAT
 from config import DATETIME_FORMAT
 from config import PERIOD_FORMAT
@@ -12,7 +13,7 @@ def amount(value):
     return float(value)
 
 def currency(value):
-    if value not in [u'€', u'$']:
+    if value not in utils.CURRENCIES:
         raise ValueError()
     else:
         return value

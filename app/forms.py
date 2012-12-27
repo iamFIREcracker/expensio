@@ -4,6 +4,7 @@
 from web import form
 
 import parsers
+import utils
 
 class Image(form.Input):
     """Image.
@@ -38,10 +39,11 @@ validimportdata = form.Validator(
 users_edit = form.Form(
         form.Hidden('id'),
         form.Textbox('name', form.notnull, description='Name'),
-        form.Textbox('currency', validcurrency, description='Currency'),
-        form.Button('google_connect', html='Google Connect'),
-        form.Button('facebook_connect', html='Facebook Connect'),
-        form.Button('twitter_connect', html='Twitter Connect'),
+        form.Dropdown('currency', zip(utils.CURRENCIES, utils.CURRENCIES),
+            description='Currency'),
+        #form.Button('google_connect', html='Google Connect'),
+        #form.Button('facebook_connect', html='Facebook Connect'),
+        #form.Button('twitter_connect', html='Twitter Connect'),
         form.Button('Edit', type='submit',
             onclick='UsersManager.onEditSubmit(this.form);'),
     )

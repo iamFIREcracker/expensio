@@ -21,6 +21,10 @@ from models import User
 from upload import UploadManager
 
 
+"""Return a list of all the currencies available"""
+CURRENCIES = [u'€', u'$']
+
+
 def applicationinitializer(application):
     working_dir = os.path.dirname(__file__)
     db = web.database(dbn='sqlite', db='sessions.db')
