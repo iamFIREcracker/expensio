@@ -26,40 +26,6 @@ from utils import applicationinitializer
 from utils import BaseHandler
 
 
-
-urls = (
-    '/', 'MainHandler',
-
-    '/login/google', 'LoginGoogleHandler',
-    '/login/google/authorized', 'LoginGoogleAuthorizedHandler',
-    '/login/facebook', 'LoginFacebookHandler',
-    '/login/facebook/authorized', 'LoginFacebookAuthorizedHandler',
-    '/login/twitter', 'LoginTwitterHandler',
-    '/login/twitter/authorized', 'LoginTwitterAuthorizedHandler',
-    '/login/fake', 'LoginFakeHandler',
-    '/login/fake/authorized', 'LoginFakeAuthorizedHandler',
-    '/logout', 'LogoutHandler',
-
-    '/users/(.+)/edit', 'UsersEditHandler',
-
-    '/days.json', 'DaysHandler',
-
-    '/categories.json', 'CategoriesHandler',
-
-    '/expenses.json', 'ExpensesHandler',
-    '/expenses/add', 'ExpensesAddHandler',
-    '/expenses/(.+)/edit', 'ExpensesEditHandler',
-    '/expenses/(.+)/delete', 'ExpensesDeleteHandler',
-    '/expenses/import', 'ExpensesImportHandler',
-)
-
-
-
-application = web.application(urls, globals())
-applicationinitializer(application)
-wsgiapplication = application.wsgifunc()
-
-
 class MainHandler(BaseHandler):
     def GET(self):
         if not self.current_user():
@@ -71,7 +37,6 @@ class MainHandler(BaseHandler):
                     expenses_add=form)
 
 
-
 class LogoutHandler():
     def GET(self):
         web.setcookie('user', '', expires=time.time() - 86400)
@@ -79,6 +44,37 @@ class LogoutHandler():
 
 
 
+urls = (
+    '/', MainHandler,
+
+    '/login/google', LoginGoogleHandler,
+    '/login/google/authorized', LoginGoogleAuthorizedHandler,
+    '/login/facebook', LoginFacebookHandler,
+    '/login/facebook/authorized', LoginFacebookAuthorizedHandler,
+    '/login/twitter', LoginTwitterHandler,
+    '/login/twitter/authorized', LoginTwitterAuthorizedHandler,
+    '/login/fake', LoginFakeHandler,
+    '/login/fake/authorized', LoginFakeAuthorizedHandler,
+    '/logout', LogoutHandler,
+
+    '/users/(.+)/edit', UsersEditHandler,
+
+    '/days.json', DaysHandler,
+
+    '/categories.json', CategoriesHandler,
+
+    '/expenses.json', ExpensesHandler,
+    '/expenses/add', ExpensesAddHandler,
+    '/expenses/(.+)/edit', ExpensesEditHandler,
+    '/expenses/(.+)/delete', ExpensesDeleteHandler,
+    '/expenses/import', ExpensesImportHandler,
+)
+
+
+
+app = web.application(urls, globals())
+applicationinitializer(app)
+
 
 if __name__ == '__main__':
-    application.run()
+    app.run()
