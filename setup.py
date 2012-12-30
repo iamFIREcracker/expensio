@@ -20,4 +20,4 @@ params = dict(
     install_requires=INSTALL_REQUIRES,
 )
 
-setup(**params)
+setup(**params)i

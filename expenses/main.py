@@ -57,6 +57,7 @@ urls = (
 
 application = web.application(urls, globals())
 applicationinitializer(application)
+wsgiapplication = application.wsgifunc()
 
 
 class MainHandler(BaseHandler):
