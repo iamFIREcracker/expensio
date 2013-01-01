@@ -5,6 +5,7 @@ from fabric.decorators import task
 
 from .app import clone, update
 from .config import *
+from .puppet import *
 from .utils import *
 from .virtualenv import create
 
