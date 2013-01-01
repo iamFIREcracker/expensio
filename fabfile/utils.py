@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 
 import sys
 
@@ -10,43 +12,45 @@ from fabric.api import require
 from fabric.api import settings
 from fabric.api import sudo
 from fabric.colors import cyan
-
-from status import _happy, _sad
-
-
-def vagrant():
-    """ Use virtual machine settings. """
-    def vagrant_key():
-        result = local('vagrant ssh-config | grep IdentityFile', capture=True)
-        return result.split()[1]
-
-    env.hosts = ['vagrant@127.0.0.1:2222']
-    env.key_filename = vagrant_key()
-
-    env.site_path = '/vagrant'
-    env.venv_path = '~/.virtualenvs/expenses'
-    env.site_url  = 'http://expenses.matteolandi.net:9090'
-    env.env_name  = 'vagrant'
+from fabric.colors import green
+from fabric.colors import red
+from fabric.decorators import task
 
 
-def dev():
-    """ Use development server settings."""
-    vagrant();
+def _happy():
+    print(green('\nLooks good from here!\n'))
+
+def _sad():
+    print(red(r'''
+          ___           ___
+         /  /\         /__/\
+        /  /::\        \  \:\
+       /  /:/\:\        \__\:\
+      /  /:/  \:\   ___ /  /::\
+     /__/:/ \__\:\ /__/\  /:/\:\
+     \  \:\ /  /:/ \  \:\/:/__\/
+      \  \:\  /:/   \  \::/
+       \  \:\/:/     \  \:\
+        \  \::/       \  \:\
+         \__\/         \__\/
+          ___           ___           ___           ___
+         /__/\         /  /\         /  /\         /  /\     ___
+         \  \:\       /  /::\       /  /:/_       /  /:/_   /__/\
+          \  \:\     /  /:/\:\     /  /:/ /\     /  /:/ /\  \  \:\
+      _____\__\:\   /  /:/  \:\   /  /:/ /:/_   /  /:/ /::\  \  \:\
+     /__/::::::::\ /__/:/ \__\:\ /__/:/ /:/ /\ /__/:/ /:/\:\  \  \:\
+     \  \:\~~\~~\/ \  \:\ /  /:/ \  \:\/:/ /:/ \  \:\/:/~/:/   \  \:\
+      \  \:\  ~~~   \  \:\  /:/   \  \::/ /:/   \  \::/ /:/     \__\/
+       \  \:\        \  \:\/:/     \  \:\/:/     \__\/ /:/          __
+        \  \:\        \  \::/       \  \::/        /__/:/          /__/\
+         \__\/         \__\/         \__\/         \__\/           \__\/
+
+         Something seems to have gone wrong!
+         You should probably take a look at that.
+    '''))
 
 
-def stag():
-    env.hosts = ['expenses.matteolandi.net']
-
-    env.site_path = '/vagrant'
-    env.venv_path = '~/.virtualenvs/expenses'
-    env.site_url  = 'http://expenses.matteolandi.net'
-    env.env_name  = 'vagrant'
-
-
-def prod():
-    pass
-
-
+@task
 def cmd(cmd=""):
     '''Run a command in the site directory.  Usable from other commands or the CLI.'''
     require('site_path')
@@ -60,6 +64,7 @@ def cmd(cmd=""):
             run(cmd)
 
 
+@task
 def sdo(cmd=""):
     '''Sudo a command in the site directory.  Usable from other commands or the CLI.'''
     require('site_path')
@@ -72,6 +77,8 @@ def sdo(cmd=""):
         with cd(env.site_path):
             sudo(cmd)
 
+
+@task
 def vcmd(cmd=""):
     '''Run a virtualenv-based command in the site directory.  Usable from other commands or the CLI.'''
     require('site_path')
@@ -85,6 +92,7 @@ def vcmd(cmd=""):
         with cd(env.site_path):
             run(env.venv_path.rstrip('/') + '/bin/' + cmd)
 
+@task
 def vsdo(cmd=""):
     '''Sudo a virtualenv-based command in the site directory.  Usable from other commands or the CLI.'''
     require('site_path')
@@ -98,6 +106,7 @@ def vsdo(cmd=""):
         with cd(env.site_path):
             sudo(env.venv_path.rstrip('/') + '/bin/' + cmd)
 
+@task
 def check():
     '''Check that the home page of the site returns an HTTP 200.'''
     require('site_url')
@@ -111,6 +120,7 @@ def check():
     else:
         _happy()
 
+@task
 def retag():
     '''Check which revision the site is at and update the local tag.
 
@@ -124,3 +134,5 @@ def retag():
         current = run('hg id --rev . --quiet').strip(' \n+')
 
     local('hg tag --local --force %s --rev %s' % (env.env_name, current))
+
+
