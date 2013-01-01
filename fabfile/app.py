@@ -20,6 +20,4 @@ def clone():
 @task
 def update():
     ''' Update the repository '''
-    require('site_path')
-
-    cmd('hg update')
+    cmd('hg pull -u')
