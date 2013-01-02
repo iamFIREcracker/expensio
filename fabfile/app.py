@@ -6,7 +6,7 @@ from fabric.api import require
 from fabric.api import run
 from fabric.decorators import task
 
-from .utils import cmd
+from .utils import sdo
 
 
 @task
@@ -15,9 +15,9 @@ def clone():
     require('repo_url')
     require('site_path')
 
-    run('hg clone %s %s' % (env.repo_url, env.site_path))
+    run('sudo hg clone %s %s' % (env.repo_url, env.site_path))
 
 @task
 def update():
     ''' Update the repository '''
-    cmd('hg pull -u')
+    sdo('hg pull -u')

@@ -7,12 +7,16 @@ from .app import clone, update
 from .config import *
 from .puppet import *
 from .utils import *
-from .virtualenv import create
+from .virtualenv import create as vcreate
 
 
 @task
 def bootstrap():
     ''' Configure the current server '''
+    print(cyan("Running puppet..."))
+    apply()
+
+
     print(cyan("Cloning repo..."))
     clone()
 

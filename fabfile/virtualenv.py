@@ -3,18 +3,18 @@
 
 from fabric.decorators import task
 
-from .utils import cmd
-from .utils import vcmd
+from .utils import sdo
+from .utils import vsdo
 
 
 @task
 def create():
     ''' Create app virtualenv '''
-    cmd('virtualenv venv --distribute')
+    sdo('virtualenv venv --no-site-packages --distribute')
 
-    vcmd('python setup.py install')
+    vsdo('python setup.py install')
 
 @task
 def update():
     ''' Update app virtualenv '''
-    vcmd('python setup.py install')
+    vsdo('python setup.py install')
