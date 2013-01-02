@@ -8,9 +8,9 @@ import urllib
 import oauth2
 import web
 
-from config import COOKIE_EXPIRATION
-from models import User
-from utils import BaseHandler
+from expenses.config import COOKIE_EXPIRATION
+from expenses.models import User
+from expenses.utils import BaseHandler
 
 
 GOOGLE_APP_ID = "694024250403.apps.googleusercontent.com"
