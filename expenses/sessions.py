@@ -3,17 +3,16 @@
 from datetime import datetime
 
 from sqlalchemy import create_engine
-from sqlalchemy import Boolean
 from sqlalchemy import Column
-from sqlalchemy import ForeignKey
-from sqlalchemy import Float
 from sqlalchemy import String
 from sqlalchemy import Text
 from sqlalchemy import Time
 from sqlalchemy.ext.declarative import declarative_base
 
+from config import DATABASE_SESSION_ENGINE
 
-engine = create_engine('sqlite:///sessions.db', echo=True)
+
+engine = create_engine(DATABASE_SESSION_ENGINE, echo=True)
 
 
 

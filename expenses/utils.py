@@ -15,10 +15,12 @@ from web.contrib.template import render_jinja
 import formatters
 import parsers
 from config import EPOCH
+from config import DATABASE_SESSION_ENGINE
 from models import engine
 from models import AlchemyEncoder # XXX WTF?
 from models import User
 from upload import UploadManager
+
 
 
 """List of all the currencies available"""
@@ -31,11 +33,10 @@ def currencies():
 
 def applicationinitializer(application):
     working_dir = os.path.dirname(__file__)
-    db = web.database(dbn='sqlite', db='sessions.db')
+    db = web.database(dbn='sqlite', db=DATABASE_SESSION_ENGINE.replace(
+            'sqlite:///', ''))
     session = web.session.Session(
             application, web.session.DBStore(db, 'session'))
-    #session = web.session.Session(
-            #application, web.session.DiskStore('sessions'))
 
     def load_session():
         web.ctx.session = session;
