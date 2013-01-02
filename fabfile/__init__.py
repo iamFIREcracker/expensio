@@ -13,12 +13,11 @@ from .virtualenv import create as vcreate
 @task
 def bootstrap():
     ''' Configure the current server '''
-    print(cyan("Running puppet..."))
-    apply()
-
-
     print(cyan("Cloning repo..."))
     clone()
+
+    print(cyan("Running puppet..."))
+    apply()
 
     print(cyan('\nUpdating venv, installing packages...'))
     vcreate()

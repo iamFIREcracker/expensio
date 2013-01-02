@@ -3,10 +3,10 @@
 
 from fabric.decorators import task
 
-from .utils import cmd
+from .utils import sdo
 
 
 @task
 def apply():
     ''' Apply Puppet manifest. '''
-    cmd('sudo puppet apply --modulepath=puppet/modules/ puppet/base.pp')
+    sdo('puppet apply --modulepath=puppet/modules/ puppet/base.pp')
