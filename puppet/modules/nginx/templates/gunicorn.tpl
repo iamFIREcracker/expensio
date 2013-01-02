@@ -8,17 +8,12 @@ server {
     listen 80 default;
     server_name _;
 
-    keepalive_timeout 5;
-
-    # path for static files
-    root /srv/www/app/static;
-
-    location / {
-        # Serve static files first, otherwise proxy to gunicorn
-        try_files $uri @proxy_to_app;
+    location /static/ {
+        alias /srv/www/expenses/expenses/static/;
+        expires 30d;
     }
 
-    location @proxy_to_app {
+    location / {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $http_host;
         proxy_redirect off;
