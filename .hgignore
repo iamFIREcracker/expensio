@@ -1,8 +1,14 @@
 syntax: glob
 
+.vagrant
+.ropeproject
 *pyc
 *db
 cscope*
 tags
+fontconfig/*
+build/*
+dist/*
+expenses.egg*
 sessions/*
 static/uploads/*
