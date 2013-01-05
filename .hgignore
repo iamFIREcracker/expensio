@@ -1,14 +1,15 @@
 syntax: glob
 
-.vagrant
-.ropeproject
-*pyc
 *db
-cscope*
-tags
-fontconfig/*
+*pyc
+.ropeproject
+.vagrant
+app/static/uploads/*
 build/*
+cscope*
 dist/*
 expenses.egg*
+fontconfig/*
 sessions/*
-static/uploads/*
+tags
+venv/*
