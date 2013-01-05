@@ -10,6 +10,7 @@ cscope*
 dist/*
 expenses.egg*
 fontconfig/*
+gunicorn.log
 sessions/*
 tags
 venv/*
