@@ -26,6 +26,5 @@ def dev():
     env.site_path = '/srv/www/expenses'
     env.venv_path = '/srv/www/expenses/venv'
     env.site_url  = 'http://expenses.matteolandi.net:9090'
-    env.env_name  = 'vagrant'
 
     env.skip_clone = True
