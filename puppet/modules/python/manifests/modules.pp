@@ -2,7 +2,7 @@ class python::modules {
   package { [ 'python-dev', ]:
     ensure => 'installed',
   }
-  package { [ 'virtualenv', 'virtualenvwrapper' ]:
+  package { [ 'virtualenv', ]:
     ensure => 'installed',
     provider => 'pip',
   }

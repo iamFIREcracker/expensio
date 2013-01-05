@@ -4,7 +4,6 @@ import uuid
 import json
 from datetime import datetime
 
-import web
 from sqlalchemy import create_engine
 from sqlalchemy import Boolean
 from sqlalchemy import Column
@@ -14,12 +13,10 @@ from sqlalchemy import Float
 from sqlalchemy import String
 from sqlalchemy.ext.declarative import declarative_base
 
+from config import DATABASE_ENGINE
 
 
-if web.config.debug:
-    engine = create_engine('sqlite:///mytestdatabase.db', echo=True)
-else:
-    engine = create_engine('sqlite:///mydatabase.db', echo=True)
+engine = create_engine(DATABASE_ENGINE, echo=True)
 
 
 

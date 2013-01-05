@@ -8,9 +8,9 @@ import urlparse
 import oauth2
 import web
 
-from config import COOKIE_EXPIRATION
-from models import User
-from utils import BaseHandler
+from app.config import COOKIE_EXPIRATION
+from app.models import User
+from app.utils import BaseHandler
 
 
 TWITTER_APP_ID = "QSg3YnYAa6ha6msWlRzBFA"
