@@ -1,23 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from fabric.colors import cyan
 from fabric.decorators import task
 
-from .app import clone, update
-from .config import *
-from .puppet import *
-from .utils import *
-from .virtualenv import create as vcreate
+from . import app
+from .config import dev
+from . import puppet
+from . import virtualenv as venv
+
 
 
 @task
 def bootstrap():
     ''' Configure the current server '''
+
     print(cyan("Cloning repo..."))
-    clone()
+    app.clone()
 
     print(cyan("Running puppet..."))
-    apply()
+    puppet.apply()
 
     print(cyan('\nUpdating venv, installing packages...'))
-    vcreate()
+    venv.create()

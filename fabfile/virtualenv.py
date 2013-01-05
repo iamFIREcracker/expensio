@@ -1,20 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from fabric.api import env
+from fabric.api import require
+from fabric.api import run
 from fabric.decorators import task
 
-from .utils import sdo
-from .utils import vsdo
+from .utils import vcmd
 
 
 @task
 def create():
     ''' Create app virtualenv '''
-    sdo('virtualenv venv --no-site-packages --distribute')
+    require('venv_path')
 
-    vsdo('python setup.py install')
+    run('mkdir -p %s' % env.venv_path)
+    run('virtualenv %s --no-site-packages --distribute' % env.venv_path)
+
+    vcmd('python setup.py install')
 
 @task
 def update():
     ''' Update app virtualenv '''
-    vsdo('python setup.py install')
+    vcmd('python setup.py install')
