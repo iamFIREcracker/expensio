@@ -23,7 +23,7 @@ env.repo_url = 'https://iamFIREcracker@bitbucket.org/iamFIREcracker/expenses'
 
 def vagrant_key():
     ''' Get the ssh key to access the virtual box machine. '''
-    with settings(hide('stdout', 'stderr')):
+    with settings(hide('running')):
         result = local('vagrant ssh-config | grep IdentityFile', capture=True)
     return result.split()[1]
 
