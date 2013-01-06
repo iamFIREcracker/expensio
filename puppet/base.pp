@@ -17,4 +17,5 @@ nginx::site {'gunicorn':
 
 supervisor::app {'gunicorn':
   config => 'gunicorn',
+  user => $user,
 }

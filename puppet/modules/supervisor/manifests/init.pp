@@ -7,7 +7,7 @@ class supervisor {
   }
 }
 
-define supervisor::app( $config = $name ) {
+define supervisor::app( $config, $user ) {
   file { "/etc/supervisor/conf.d/${config}.conf":
     ensure  => present,
     owner   => root,
