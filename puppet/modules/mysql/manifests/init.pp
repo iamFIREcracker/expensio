@@ -1,5 +1,5 @@
 class mysql {
-  package { 'mysql-server':
+  package { [ 'mysql-server', 'libmysqlclient-dev' ]:
     ensure => 'installed',
   }
   service { 'mysql':
