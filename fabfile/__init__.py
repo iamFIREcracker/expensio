@@ -10,11 +10,9 @@ from . import puppet
 from . import virtualenv as venv
 
 
-
 @task
 def bootstrap():
     ''' Configure the current server '''
-
     print(cyan("Cloning repo..."))
     app.clone()
 
