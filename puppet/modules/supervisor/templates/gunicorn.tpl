@@ -1,6 +1,6 @@
-[program:expenses]
-command=/srv/www/expenses/venv/bin/gunicorn -c /srv/www/expenses/gunicorn.conf.py app:app
-directory=/srv/www/expenses
+[program:<%= @appname %>]
+command=/srv/www/<%= @appname %>/venv/bin/gunicorn -c /srv/www/<%= @appname %>/gunicorn.conf.py app:app
+directory=/srv/www/<%= @appname %>
 user=<%= @user %>
 group=<%= @user %>
 autostart=true

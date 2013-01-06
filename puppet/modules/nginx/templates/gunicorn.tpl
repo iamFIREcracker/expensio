@@ -9,7 +9,7 @@ server {
     server_name _;
 
     location /static/ {
-        alias /srv/www/expenses/app/static/;
+        alias /srv/www/<%= @appname %>/app/static/;
         expires 30d;
     }
 

@@ -13,9 +13,11 @@ exec { "add_${user}_to_group_www-data":
 
 nginx::site {'gunicorn':
   config => 'gunicorn',
+  appname => $appname,
 }
 
 supervisor::app {'gunicorn':
   config => 'gunicorn',
+  appname => $appname,
   user => $user,
 }

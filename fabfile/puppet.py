@@ -13,4 +13,4 @@ def apply():
     ''' Apply Puppet manifest. '''
     require('user')
 
-    sdo('FACTER_USER=%s puppet apply --modulepath=puppet/modules/ puppet/base.pp' % env.user)
+    sdo('FACTER_APPNAME=expenses FACTER_USER=%s puppet apply --modulepath=puppet/modules/ puppet/base.pp' % env.user)
