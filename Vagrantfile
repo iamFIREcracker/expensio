@@ -71,7 +71,7 @@ Vagrant::Config.run do |config|
     puppet.manifests_path = "puppet"
     puppet.module_path = "puppet/modules"
     puppet.manifest_file  = "base.pp"
-    puppet.facter = { "username" => "vagrant" }
+    puppet.facter = { "user" => "vagrant" }
   end
 
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
