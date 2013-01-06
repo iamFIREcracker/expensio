@@ -16,7 +16,7 @@ INSTALL_REQUIRES = open(requirements).read().split()
 params = dict(
     name=NAME,
     version=VERSION,
-    package_dir={NAME: 'app'},
+    packages=find_packages(exclude=['fabfile']),
     install_requires=INSTALL_REQUIRES,
 )
 
