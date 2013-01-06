@@ -4,26 +4,16 @@
 from itertools import groupby
 from operator import attrgetter
 
-import web
-
 import formatters
 from expenses import LatestExpensesInBetween
 from expenses import ExpensesInBetween
 from models import Expense
-from utils import applicationinitializer
 from utils import protected
 from utils import jsonify
 from utils import parsedateparams
 from utils import BaseHandler
 
 
-
-urls = (
-    '/categories.json', 'CategoriesHandler',
-)
-
-application = web.application(urls, globals())
-applicationinitializer(application)
 
 class CategoryWrapper(object):
     __serializable__ = {
@@ -95,7 +85,3 @@ class CategoriesHandler(BaseHandler):
         return jsonify(
                 categories=[CategoryWrapper(c, self.current_user().currency)
                         for c in categories])
-
-
-if __name__ == '__main__':
-    application.run()

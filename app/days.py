@@ -4,28 +4,17 @@
 from datetime import datetime
 from itertools import groupby
 
-import web
 from sqlalchemy.sql import extract
 
 import formatters
 from expenses import ExpensesInBetween
 from expenses import LatestExpensesInBetween
 from models import Expense
-from utils import applicationinitializer
 from utils import parsedateparams
 from utils import protected
 from utils import jsonify
 from utils import BaseHandler
 
-
-
-urls = (
-    '/days.json', 'DaysHandler',
-)
-
-
-application = web.application(urls, globals())
-applicationinitializer(application)
 
 
 class DayWrapper(object):
@@ -116,7 +105,3 @@ class DaysHandler(BaseHandler):
         return jsonify(
                 days=[DayWrapper(d, self.current_user().currency)
                     for d in days])
-
-
-if __name__ == '__main__':
-    application.run()

@@ -10,7 +10,6 @@ from forms import expenses_edit
 from forms import expenses_import
 from models import Expense
 from upload import UploadedFile
-from utils import applicationinitializer
 from utils import active
 from utils import owner
 from utils import protected
@@ -18,19 +17,6 @@ from utils import jsonify
 from utils import parsedateparams
 from utils import BaseHandler
 
-
-
-urls = (
-    '/expenses.json', 'ExpensesHandler',
-    '/expenses/add', 'ExpensesAddHandler',
-    '/expenses/(.+)/edit', 'ExpensesEditHandler',
-    '/expenses/(.+)/delete', 'ExpensesDeleteHandler',
-    '/expenses/import', 'ExpensesImportHandler',
-)
-
-
-application = web.application(urls, globals())
-applicationinitializer(application)
 
 
 class ExpenseWrapper(object):
@@ -184,7 +170,3 @@ class ExpensesImportHandler(BaseHandler):
                             in parsers.expenses(form.d.period, form.d.data))
         return web.ctx.render.expenses_import(
                 user=self.current_user(), expenses_import=form)
-
-
-if __name__ == '__main__':
-    application.run()

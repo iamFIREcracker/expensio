@@ -4,19 +4,9 @@
 import web
 
 from forms import users_edit
-from utils import applicationinitializer
 from utils import me
 from utils import protected
 from utils import BaseHandler
-
-
-urls = (
-    '/users/(.+)/edit', 'UsersEditHandler',
-)
-
-application = web.application(urls, globals())
-applicationinitializer(application)
-
 
 
 class UsersEditHandler(BaseHandler):
@@ -39,7 +29,3 @@ class UsersEditHandler(BaseHandler):
             u.currency = form.d.currency
             web.ctx.orm.add(u)
         return web.ctx.render.users_edit(users_edit=form)
-
-
-if __name__ == '__main__':
-    application.run()
