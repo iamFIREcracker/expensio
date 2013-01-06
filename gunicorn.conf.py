@@ -19,9 +19,12 @@ import os
 #       Must be a positive integer. Generally set in the 64-2048
 #       range.
 #
+#   preload - Load application code before the worker processes are forked.
+#
 
 bind = '127.0.0.1:8000'
 backlog = 2048
+preload = True
 
 #
 # Worker processes
@@ -80,7 +83,6 @@ def get_workers():
 
 workers = get_workers()
 worker_class = 'egg:gunicorn#sync'
-worker_connections = 1000
 timeout = 30
 keepalive = 2
 
@@ -144,26 +146,30 @@ spew = False
 
 daemon = False
 pidfile = None
-umask = 0
 user = None
 group = None
+umask = 0
 tmp_upload_dir = None
 
 #
 #   Logging
 #
-#   logfile - The path to a log file to write to.
-#   
-#       A path string. "-" means log to stdout.
-#
 #   loglevel - The granularity of log output
 #
 #       A string of "debug", "info", "warning", "error", "critical"
 #
+#   accesslog - The path to a log file to write accesses to.
+#   
+#       A path string. "-" means log to stdout.
+#
+#   errorlog - The path to a log file to write errors to.
+#   
+#       A path string. "-" means log to stdout.
+#
 
-logfile = 'gunicorn.conf'
 loglevel = 'info'
 accesslog = '-'
+errorlog = 'gunicorn.log'
 
 #
 # Process naming
