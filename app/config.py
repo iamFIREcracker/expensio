@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 
-import os
 
-
-DATABASE_ENGINE = 'sqlite:///' + os.path.join(
-    os.path.dirname(__file__), 'mytestdatabase.db')
-
-DATABASE_SESSION_ENGINE = 'sqlite:///' + os.path.join(
-    os.path.dirname(__file__), 'sessions.db')
+DATABASE_URL = 'sqlite:////tmp/expenses.db'
 
 PERIOD_FORMAT = '%Y-%m'
 DATETIME_FORMAT = '%Y-%m-%d'

@@ -4,23 +4,14 @@ import uuid
 import json
 from datetime import datetime
 
-from sqlalchemy import create_engine
 from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
-from sqlalchemy import ForeignKey
 from sqlalchemy import Float
+from sqlalchemy import ForeignKey
 from sqlalchemy import String
-from sqlalchemy.ext.declarative import declarative_base
 
-from config import DATABASE_ENGINE
-
-
-engine = create_engine(DATABASE_ENGINE, echo=True)
-
-
-
-Base = declarative_base()
+from app.database import Base
 
 
 class AlchemyEncoder(json.JSONEncoder):
@@ -59,6 +50,8 @@ class User(Base):
     facebook_id = Column(String)
     twitter_id = Column(String)
 
+    def __repr__(self):
+        return '<User %r>' % (self.name)
 
 def expenseid(context):
     return context.current_parameters['id']
@@ -79,10 +72,5 @@ class Expense(Base):
     deleted = Column(Boolean, default=False, nullable=False)
     attachment = Column(String)
 
-
-
-metadata = Base.metadata
-
-
-if __name__ == "__main__":
-    metadata.create_all(engine)
+    def __repr__(self):
+        return '<Expense %r, %f>' % (self.category, self.amount)

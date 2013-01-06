@@ -8,15 +8,12 @@ from datetime import date
 from datetime import datetime
 
 import web
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import sessionmaker
 from web.contrib.template import render_jinja
 
 import formatters
 import parsers
-from config import EPOCH
-from config import DATABASE_SESSION_ENGINE
-from models import engine
+from app import config
+from app.database import db_session
 from models import AlchemyEncoder # XXX WTF?
 from models import User
 from upload import UploadManager
@@ -33,10 +30,10 @@ def currencies():
 
 def applicationinitializer(application):
     working_dir = os.path.dirname(__file__)
-    db = web.database(dbn='sqlite', db=DATABASE_SESSION_ENGINE.replace(
-            'sqlite:///', ''))
-    session = web.session.Session(
-            application, web.session.DBStore(db, 'session'))
+    dbpath = config.DATABASE_URL.replace('sqlite:///', '')
+    db = web.database(dbn='sqlite', db=dbpath)
+    session = web.session.Session(application,
+                                  web.session.DBStore(db, 'session'))
 
     def load_session():
         web.ctx.session = session;
@@ -47,7 +44,8 @@ def applicationinitializer(application):
     application.add_processor(web.loadhook(load_path_url))
 
     def load_sqla(handler):
-        web.ctx.orm = scoped_session(sessionmaker(bind=engine))
+        web.ctx.orm = db_session
+
         try:
             return handler()
         except web.HTTPError:
@@ -58,6 +56,7 @@ def applicationinitializer(application):
             raise
         finally:
             web.ctx.orm.commit()
+            #web.ctx.orm.remove()
     application.add_processor(load_sqla)
 
     def load_render():
@@ -87,7 +86,7 @@ def parsedateparams():
     data = web.input(
             since=formatters.date(startofmonth),
             to=formatters.date(endsofmonth),
-            latest=EPOCH)
+            latest=config.EPOCH)
     since = parsers.date(data.since)
     to = parsers.date(data.to)
     latest = parsers.datetime(data.latest)
