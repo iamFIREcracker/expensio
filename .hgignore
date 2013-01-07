@@ -4,7 +4,6 @@ syntax: glob
 *pyc
 .ropeproject
 .vagrant
-app/static/uploads/*
 build/*
 cscope*
 dist/*
@@ -12,5 +11,6 @@ expenses.egg*
 fontconfig/*
 gunicorn.log
 sessions/*
+static/uploads/*
 tags
 venv/*
