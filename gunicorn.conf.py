@@ -203,10 +203,14 @@ proc_name = None
 #
 #       A callable that takes a server instance as the sole argument.
 #
-# 
+#
 # def post_fork(server, worker):
-#     pass
-# 
+#     import monitor
+#     import local_settings
+#     if local_settings.DEBUG:
+#         server.log.info("Starting change monitor.")
+#         monitor.start(interval=3.0)
+#
 # def pre_fork(server, worker):
 #     pass
 # 
