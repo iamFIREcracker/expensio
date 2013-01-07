@@ -79,8 +79,7 @@ urls = (
 
 
 
-working_dir = os.path.dirname(__file__)
-
+working_dir = os.getcwd()
 app = web.application(urls, globals())
 dbpath = config.DATABASE_URL.replace('sqlite:///', '')
 db = web.database(dbn='sqlite', db=dbpath)
