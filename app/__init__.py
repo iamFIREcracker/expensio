@@ -6,7 +6,6 @@ import time
 
 import web
 from web.contrib.template import render_jinja
-from werkzeug.debug import DebuggedApplication
 
 from app import config
 from app import models
@@ -107,7 +106,7 @@ def load_sqla(handler):
         raise
     finally:
         web.ctx.orm.commit()
-        #web.ctx.orm.remove()
+        web.ctx.orm.remove()
 app.add_processor(load_sqla)
 
 def load_render():
