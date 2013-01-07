@@ -6,6 +6,7 @@ import time
 
 import web
 from web.contrib.template import render_jinja
+from werkzeug.debug import DebuggedApplication
 
 from app import config
 from app import models
@@ -120,5 +121,3 @@ def load_uploadmanager():
     uploadman = UploadManager(os.path.join(working_dir))
     web.ctx.uploadman = uploadman
 app.add_processor(web.loadhook(load_uploadmanager))
-
-app = app.wsgifunc()
