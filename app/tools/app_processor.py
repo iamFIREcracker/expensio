@@ -6,9 +6,6 @@ import os
 import web
 from web.contrib.template import render_jinja
 
-from app import config
-
-
 
 
 def header_html():
