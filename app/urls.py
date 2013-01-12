@@ -1,24 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .auth import LoginGoogleHandler
-from .auth import LoginGoogleAuthorizedHandler
-from .auth import LoginFacebookHandler
-from .auth import LoginFacebookAuthorizedHandler
-from .auth import LoginTwitterHandler
-from .auth import LoginTwitterAuthorizedHandler
-from .auth import LoginFakeHandler
-from .auth import LoginFakeAuthorizedHandler
+from .controllers.auth import LoginGoogleHandler
+from .controllers.auth import LoginGoogleAuthorizedHandler
+from .controllers.auth import LoginFacebookHandler
+from .controllers.auth import LoginFacebookAuthorizedHandler
+from .controllers.auth import LoginTwitterHandler
+from .controllers.auth import LoginTwitterAuthorizedHandler
+from .controllers.auth import LoginFakeHandler
+from .controllers.auth import LoginFakeAuthorizedHandler
+from .controllers.categories import CategoriesHandler
+from .controllers.days import DaysHandler
+from .controllers.expenses import ExpensesHandler
+from .controllers.expenses import ExpensesAddHandler
+from .controllers.expenses import ExpensesEditHandler
+from .controllers.expenses import ExpensesDeleteHandler
+from .controllers.expenses import ExpensesImportHandler
 from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
-from .categories import CategoriesHandler
-from .days import DaysHandler
-from .expenses import ExpensesHandler
-from .expenses import ExpensesAddHandler
-from .expenses import ExpensesEditHandler
-from .expenses import ExpensesDeleteHandler
-from .expenses import ExpensesImportHandler
-from .users import UsersEditHandler
+from .controllers.users import UsersEditHandler
 
 
 URLS = (

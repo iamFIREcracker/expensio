@@ -3,10 +3,10 @@
 
 import web
 
-from forms import users_edit
-from utils import me
-from utils import protected
-from utils import BaseHandler
+from app.forms import users_edit
+from app.utils import me
+from app.utils import protected
+from app.utils import BaseHandler
 
 
 class UsersEditHandler(BaseHandler):

@@ -3,19 +3,19 @@
 
 import web
 
-import formatters
-import parsers
-from forms import expenses_add
-from forms import expenses_edit
-from forms import expenses_import
-from models import Expense
-from upload import UploadedFile
-from utils import active
-from utils import owner
-from utils import protected
-from utils import jsonify
-from utils import parsedateparams
-from utils import BaseHandler
+import app.formatters as formatters
+import app.parsers as parsers
+from app.forms import expenses_add
+from app.forms import expenses_edit
+from app.forms import expenses_import
+from app.models import Expense
+from app.upload import UploadedFile
+from app.utils import active
+from app.utils import owner
+from app.utils import protected
+from app.utils import jsonify
+from app.utils import parsedateparams
+from app.utils import BaseHandler
 
 
 
