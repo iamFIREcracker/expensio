@@ -73,8 +73,7 @@ expenses_edit = form.Form(
 
 expenses_import = form.Form(
         form.Textbox('period', validperiod, description='Period'),
-        form.Textarea('data', form.notnull, description='Data', cols=80,
-            rows=24),
+        form.Textarea('data', form.notnull, description='Data', rows=24),
         form.Button('Import', type='sumbit',
             onclick='ExpensesManager.onImportSubmit(this.form);'),
         validators=[validimportdata]
