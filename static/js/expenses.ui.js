@@ -12,7 +12,7 @@ var ExpensesUI = (function() {
 
 
     var init = function() {
-        $title.empty();
+        $title.html("&nbsp");
         $expenses.empty();
         expenses = Object();
         latest = '';
