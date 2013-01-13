@@ -24,7 +24,7 @@ var DateManager = (function() {
     };
 
     return {
-        onReady: function($title_) {
+        onReady: function($title_, year, month) {
             var date = new Date();
 
             $title = $title_;

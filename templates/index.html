@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block jsready %}
-DateManager.onReady($('#current_month'));
+DateManager.onReady($('#current_month', null, null));
 PaletteManager.onReady();
 UsersManager.onReady(Logger);
 DaysUI.onReady(Formatter, PaletteManager, $('#days'));
