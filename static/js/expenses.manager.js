@@ -67,7 +67,7 @@ var ExpensesManager = (function() {
             logger.success(
                     'Expense edited successfully!', function() {
                         setTimeout(function() {
-                            parent.history.back();
+                            window.location = "/";
                         }, 2000);
                     });
         }
@@ -164,7 +164,7 @@ var ExpensesManager = (function() {
                 logger.success(
                         'Expenses imported successfully!', function() {
                             setTimeout(function() {
-                                parent.history.back();
+                                window.location = "/";
                             }, 2000);
                         });
             }
