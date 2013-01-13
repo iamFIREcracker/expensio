@@ -146,7 +146,7 @@
         },
 
         onNewData: function(data) {
-            if ($categories.find('.loading')) {
+            if ($categories.find('.loading').length) {
                 $categories.empty();
             }
             if (data.categories.length) {

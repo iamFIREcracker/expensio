@@ -151,7 +151,7 @@
         },
 
         onNewData: function(data) {
-            if ($days.find('.loading')) {
+            if ($days.find('.loading').length) {
                 $days.empty();
             }
             if (data.days.length) {

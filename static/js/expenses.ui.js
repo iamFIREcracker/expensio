@@ -111,7 +111,7 @@ var ExpensesUI = (function() {
         },
 
         onNewData: function(data) {
-            if ($expenses.find('.loading')) {
+            if ($expenses.find('.loading').length) {
                 $expenses.empty();
             }
             $.each(data.expenses, EachCallbackWrapper(function(i, value, _this) {
