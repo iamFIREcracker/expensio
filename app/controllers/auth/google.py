@@ -45,7 +45,7 @@ class LoginGoogleAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
-        web.seeother('/')
+        web.seeother('/users/%s/edit' % user.id)
 
 
 class LoginGoogleHandler():
