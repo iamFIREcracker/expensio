@@ -40,7 +40,6 @@ def eurocurrency():
 
 class User(Base):
     __tablename__ = 'user'
-    __table_args__ = {'useexisting': True}
 
     id = Column(String, default=_uuid, primary_key=True)
     created = Column(DateTime, default=datetime.now)
@@ -60,7 +59,6 @@ def expenseid(context):
 
 class Expense(Base):
     __tablename__ = 'expense'
-    __table_args__ = {'useexisting': True}
 
     id = Column(String, default=_uuid, primary_key=True)
     original_id = Column(String, ForeignKey('expense.id'), default=expenseid)
