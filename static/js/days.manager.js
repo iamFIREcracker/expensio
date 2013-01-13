@@ -22,7 +22,7 @@ var DaysManager = (function() {
         onUpdate: function() {
             var latest = ui.getLatest();
             var data = {
-                since: date.ndaysback(ui.getN()),
+                since: date.ndaysback(ui.getN() - 1),
                 to: date.today(),
             }
 

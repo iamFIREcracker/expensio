@@ -111,7 +111,8 @@
     }
 
     var updateDay = function(obj) {
-        var i = obj.delta + __daysnumber;
+        var i = obj.delta + __daysnumber - 1;
+        console.log(obj.date, obj.delta, i);
         var prev = days[i];
 
         /*
