@@ -32,8 +32,8 @@ h1 {
 #message {
     position: fixed;
     top: 0px;
-    color: #aaa;
-    background-color: #333;
+    color: #333;
+    background-color: #E9A964;
     text-align: center;
     width: 100%;
     font-size: 300%;
