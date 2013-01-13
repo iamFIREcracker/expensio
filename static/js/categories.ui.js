@@ -7,7 +7,6 @@
     var latest = null;
 
     var init = function() {
-        $categories.empty();
         $categories.html('<div class="loading"><img src="/static/images/loading.gif" /></div>')
         chart = null;
         categories = Object();
@@ -147,6 +146,9 @@
         },
 
         onNewData: function(data) {
+            if ($categories.find('.loading')) {
+                $categories.empty();
+            }
             if (data.categories.length) {
                 $.each(data.categories, EachCallbackWrapper(function(i, value, _this) {
                     updateCategory(value);

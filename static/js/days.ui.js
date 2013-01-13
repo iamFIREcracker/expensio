@@ -151,6 +151,9 @@
         },
 
         onNewData: function(data) {
+            if ($days.find('.loading')) {
+                $days.empty();
+            }
             if (data.days.length) {
                 $.each(data.days, EachCallbackWrapper(function(i, value, _this) {
                     updateDay(value);

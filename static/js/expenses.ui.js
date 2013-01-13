@@ -13,7 +13,7 @@ var ExpensesUI = (function() {
 
     var init = function() {
         $title.html("&nbsp");
-        $expenses.empty();
+        $expenses.html('<div class="loading"><img src="/static/images/loading.gif" /></div>')
         expenses = Object();
         latest = '';
     };
@@ -111,6 +111,9 @@ var ExpensesUI = (function() {
         },
 
         onNewData: function(data) {
+            if ($expenses.find('.loading')) {
+                $expenses.empty();
+            }
             $.each(data.expenses, EachCallbackWrapper(function(i, value, _this) {
                 updateExpense(value);
             }, this));
