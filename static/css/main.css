@@ -38,6 +38,8 @@ h1 {
     width: 100%;
     font-size: 300%;
     padding: 1%;
+    padding-top: 30px;
+    padding-bottom: 30px;
     z-index: 100;
 }
 
@@ -79,6 +81,10 @@ h1 {
 
 #exp_add table, #user_edit table {
     margin: auto;
+}
+
+#exp_import table, #exp_import textarea {
+    width: 100%;
 }
 
 #current_month_overall {
