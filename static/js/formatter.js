@@ -2,7 +2,7 @@ var Formatter = (function() {
 
     return {
         amount: function(amount, currency) {
-            return sprintf("%.2f %s", amount, currency);
+            return sprintf("%.2f %s", amount, currency == null ? "" : currency);
         },
 
         date: function(datestring) {
