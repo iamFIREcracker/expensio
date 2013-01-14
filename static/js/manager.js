@@ -17,7 +17,7 @@ var Manager = (function() {
             refreshtimeout = refreshtimeout_;
 
             curyear = date.getYear() + 1900; // Fix relative to 1900
-            curmonth = date.getMonth(); // 0-indexed months
+            curmonth = date.getMonth() + 1; // 1-indexed months
 
             $('#prev_month').click(function(_this) {
                 return function() {
@@ -73,8 +73,8 @@ var Manager = (function() {
 
         onPrevMonth: function() {
             curmonth -= 1;
-            if (curmonth < 0) {
-                curmonth = 11;
+            if (curmonth == 0) {
+                curmonth = 12;
                 curyear -= 1;
             }
 
@@ -83,8 +83,8 @@ var Manager = (function() {
 
         onNextMonth: function() {
             curmonth += 1;
-            if (curmonth == 12) {
-                curmonth = 0;
+            if (curmonth == 13) {
+                curmonth = 1;
                 curyear += 1;
             }
 

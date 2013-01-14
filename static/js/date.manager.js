@@ -30,7 +30,7 @@ var DateManager = (function() {
             $title = $title_;
             today = date;
             curyear = year
-            curmonth = month - 1; // 0-indexed months
+            curmonth = month;
 
             _init();
         },
@@ -49,21 +49,21 @@ var DateManager = (function() {
         },
 
         ndaysback: function(n) {
-            var date = new Date(year(today), month(today), day(today) - n);
+            var date = new Date(year(today), month(today) + 1, day(today) - n);
 
             return sprintf(
                     "%d-%d-%d", year(date), month(date) + 1, day(date));
         },
 
         startofcurrentmonth: function() {
-            return sprintf('%d-%d-01', curyear, curmonth + 1)
+            return sprintf('%d-%d-01', curyear, curmonth)
         },
 
         endofcurrentmonth: function() {
-            var lastofmonth = new Date(curyear, curmonth + 1, 0);
+            var lastofmonth = new Date(curyear, curmonth, 0);
 
             return sprintf(
-                    "%d-%d-%d", curyear, curmonth + 1, day(lastofmonth));
+                    "%d-%d-%d", curyear, curmonth, day(lastofmonth));
         },
     };
 

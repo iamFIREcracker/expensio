@@ -41,8 +41,8 @@ Manager.update(function() {
     CategoriesManager.onUpdate();
 });
 Manager.monthChange(function(year, month) {
-    history.pushState(null, sprintf('%d-%02d', year, month + 1),
-                      sprintf('/%d/%02d', year, month + 1));
+    history.pushState(null, sprintf('%d-%02d', year, month),
+                      sprintf('/%d/%02d', year, month));
     DateManager.onMonthChange(year, month);
     PaletteManager.onMonthChange(year, month);
     ExpensesManager.onMonthChange(year, month);
