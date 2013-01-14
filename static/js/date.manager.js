@@ -31,7 +31,6 @@ var DateManager = (function() {
             today = date;
             curyear = year
             curmonth = month - 1; // 0-indexed months
-            console.log(curyear, curmonth);
 
             _init();
         },
