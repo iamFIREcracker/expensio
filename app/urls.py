@@ -23,6 +23,7 @@ from .controllers.users import UsersEditHandler
 
 URLS = (
     '/', MainHandler,
+    '/(.+)/(.+)', MainHandler,
 
     '/login/google', LoginGoogleHandler,
     '/login/google/authorized', LoginGoogleAuthorizedHandler,

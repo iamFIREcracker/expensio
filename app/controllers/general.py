@@ -2,21 +2,30 @@
 # -*- coding: utf-8 -*-
 
 import time
+from datetime import datetime
 
 import web
 
+import app.parsers as parsers
 from app.utils import BaseHandler
 from app.forms import expenses_add
 
 class MainHandler(BaseHandler):
-    def GET(self):
+    def GET(self, year=None, month=None):
         if not self.current_user():
             return web.ctx.render.info()
         else:
+            # Validate `year` and `month`, if specified
+            today = datetime.today()
+            year = year if year is not None else today.year
+            month = month if month is not None else today.month
+            parsers.period('%s-%s' % (year, month))
+
             form = expenses_add()
 
             return web.ctx.render.index(user=self.current_user(),
-                    expenses_add=form)
+                                        year=year, month=month,
+                                        expenses_add=form)
 
 
 class LogoutHandler():

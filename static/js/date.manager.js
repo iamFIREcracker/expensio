@@ -29,8 +29,9 @@ var DateManager = (function() {
 
             $title = $title_;
             today = date;
-            curyear = year(date);
-            curmonth = month(date); // 0-indexed months
+            curyear = year
+            curmonth = month - 1; // 0-indexed months
+            console.log(curyear, curmonth);
 
             _init();
         },
