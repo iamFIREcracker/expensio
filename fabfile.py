@@ -106,20 +106,6 @@ def sdo(cmd=""):
 
 
 @task
-def dbupdate():
-    '''Update the database schema.'''
-    vcmd('alembic upgrade head')
-
-
-@task
-def papply():
-    '''Apply Puppet manifest. Usable from other commands or the CLI.'''
-    require('user')
-
-    sdo('FACTER_APPNAME=expenses FACTER_USER=%s puppet apply --modulepath=puppet/modules/ puppet/base.pp' % env.user)
-
-
-@task
 def vcmd(cmd=""):
     '''Run a virtualenv-based command in the site directory.  Usable from other commands or the CLI.'''
     require('site_path')
@@ -147,6 +133,20 @@ def vsdo(cmd=""):
     if cmd:
         with cd(env.site_path):
             sudo(env.venv_path.rstrip('/') + '/bin/' + cmd)
+
+
+@task
+def dbupdate():
+    '''Update the database schema.'''
+    vcmd('alembic upgrade head')
+
+
+@task
+def papply():
+    '''Apply Puppet manifest. Usable from other commands or the CLI.'''
+    require('user')
+
+    sdo('FACTER_APPNAME=expenses FACTER_USER=%s puppet apply --modulepath=puppet/modules/ puppet/base.pp' % env.user)
 
 
 @task
