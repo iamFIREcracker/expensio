@@ -226,7 +226,7 @@ def bootstrap():
     print(cyan("Applying puppet manifest..."))
     papply()
 
-    print(cyan('\nCreating venv...'))
+    print(cyan('Creating venv...'))
     vcreate()
 
     print(cyan('Initialize database...'))
@@ -243,7 +243,7 @@ def update():
     print(cyan("Applying puppet manifest..."))
     papply()
 
-    print(cyan('\nUpdating venv...'))
+    print(cyan('Updating venv...'))
     vupdate()
 
     print(cyan('Updating database...'))
