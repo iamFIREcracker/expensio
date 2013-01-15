@@ -106,6 +106,12 @@ def sdo(cmd=""):
 
 
 @task
+def dbupdate():
+    '''Update the database schema.'''
+    vcmd('alembic upgrade head')
+
+
+@task
 def papply():
     '''Apply Puppet manifest. Usable from other commands or the CLI.'''
     require('user')
@@ -223,6 +229,9 @@ def bootstrap():
     print(cyan('\nCreating venv...'))
     vcreate()
 
+    print(cyan('Initialize database...'))
+    dbupdate()
+
 
 @task
 def update():
@@ -236,6 +245,9 @@ def update():
 
     print(cyan('\nUpdating venv...'))
     vupdate()
+
+    print(cyan('Updating database...'))
+    dbupdate()
 
     restart()
 
