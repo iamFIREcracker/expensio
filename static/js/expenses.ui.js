@@ -1,6 +1,7 @@
 var ExpensesUI = (function() {
     var __beforeanimatetimeout = 200;
     var __animationtimeout = 200; // milliseconds
+    var __help = 'This section bla bla bla...';
 
     var formatter = null;
     var palette = null;
@@ -9,6 +10,7 @@ var ExpensesUI = (function() {
     var expenses = null;
     var latest = null;
     var addexpenselisteners = Array();
+    var first = null;
 
 
     var init = function() {
@@ -16,6 +18,7 @@ var ExpensesUI = (function() {
         $expenses.html('<div class="loading"><img src="/static/images/loading.gif" /></div>')
         expenses = Object();
         latest = '';
+        first = true;
     };
 
     var updateExpense = function(obj) {
@@ -96,6 +99,10 @@ var ExpensesUI = (function() {
         $title.text(sprintf("Total: %s", formatter.amount(overall, currency)));
     };
 
+    var showHelp = function() {
+        $expenses.html('<div class="help loading"><p>' + __help + '</p></div>');
+    }
+
     return {
         onReady: function(formatter_, palette_, $title_, $expenses_) {
             formatter = formatter_;
@@ -111,13 +118,17 @@ var ExpensesUI = (function() {
         },
 
         onNewData: function(data) {
-            if ($expenses.find('.loading').length) {
-                $expenses.empty();
-            }
+            var hidehelp = false;
+
             $.each(data.expenses, EachCallbackWrapper(function(i, value, _this) {
                 updateExpense(value);
             }, this));
             updateTitle();
+
+            if (!hidehelp && first) {
+                first = false;
+                showHelp();
+            }
         },
 
         confirmDelete: function(exp) {
