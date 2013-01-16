@@ -49,7 +49,7 @@ var DateManager = (function() {
         },
 
         ndaysback: function(n) {
-            var date = new Date(year(today), month(today) + 1, day(today) - n);
+            var date = new Date(year(today), month(today), day(today) - n);
 
             return sprintf(
                     "%d-%d-%d", year(date), month(date) + 1, day(date));
