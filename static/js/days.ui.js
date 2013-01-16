@@ -154,13 +154,12 @@
             if ($days.find('.loading').length) {
                 $days.empty();
             }
-            if (data.days.length) {
-                $.each(data.days, EachCallbackWrapper(function(i, value, _this) {
-                    updateDay(value);
-                }, this));
 
-                updateChart();
-            }
+            $.each(data.days, EachCallbackWrapper(function(i, value, _this) {
+                updateDay(value);
+            }, this));
+
+            updateChart();
         },
 
 

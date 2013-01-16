@@ -149,13 +149,12 @@
             if ($categories.find('.loading').length) {
                 $categories.empty();
             }
-            if (data.categories.length) {
-                $.each(data.categories, EachCallbackWrapper(function(i, value, _this) {
-                    updateCategory(value);
-                }, this));
 
-                updateChart();
-            }
+            $.each(data.categories, EachCallbackWrapper(function(i, value, _this) {
+                updateCategory(value);
+            }, this));
+
+            updateChart();
         },
 
 
