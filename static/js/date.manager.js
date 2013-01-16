@@ -8,7 +8,7 @@ var DateManager = (function() {
     var curmonth = null;
 
     var _init = function() {
-        $title.text(sprintf("%s %d", __months[curmonth], curyear));
+        $title.text(sprintf("%s %d", __months[curmonth - 1], curyear));
     };
 
     var year = function(date) {
