@@ -37,6 +37,7 @@ def dev():
 
     env.site_path = '/srv/www/expenses'
     env.venv_path = '/srv/www/expenses/venv'
+    env.uploads_path = '/srv/www/expenses/static/uploads'
     env.site_url  = 'http://expenses.matteolandi.net:9090'
 
     env.skip_repo = True
@@ -257,3 +258,20 @@ def restart():
     ''' Restart the app.  Usable from other commands or from the CLI.'''
     print(cyan("Restarting gunicorn..."))
     cmd("sudo supervisorctl restart expenses")
+
+
+@task
+def pull_uploads():
+    '''Copy the uploads from the site to your local machine.'''
+    require('uploads_path')
+
+    sudo('chmod -R a+r "%s"' % env.uploads_path)
+
+    rsync_command = r"""rsync -av -e 'ssh -p %s' %s@%s:%s %s""" % (
+        env.port,
+        env.user, env.host,
+        env.uploads_path.rstrip('/') + '/',
+        'static/uploads'
+    )
+    print local(rsync_command, capture=False)
+
