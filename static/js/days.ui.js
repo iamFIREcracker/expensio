@@ -1,5 +1,6 @@
 ﻿var DaysUI = (function() {
     var __daysnumber = 30;
+    var __help = 'This section bla bla bla...';
 
     var formatter = null;
     var palette = null;
@@ -112,7 +113,6 @@
 
     var updateDay = function(obj) {
         var i = obj.delta + __daysnumber - 1;
-        console.log(obj.date, obj.delta, i);
         var prev = days[i];
 
         /*
@@ -139,7 +139,13 @@
         }
 
         days[i] = obj;
+
+        return true;
     };
+
+    var showHelp = function() {
+        $days.html('<div class="help loading"><p>' + __help + '</p></div>');
+    }
 
     return {
         onReady: function(formatter_, palette_, $days_) {
@@ -151,15 +157,16 @@
         },
 
         onNewData: function(data) {
-            if ($days.find('.loading').length) {
-                $days.empty();
-            }
+            var hidehelp = false;
 
             $.each(data.days, EachCallbackWrapper(function(i, value, _this) {
-                updateDay(value);
+                hidehelp = hidehelp || updateDay(value);
             }, this));
 
-            updateChart();
+            if (!hidehelp && chart == null)
+                showHelp();
+            else
+                updateChart();
         },
 
 
