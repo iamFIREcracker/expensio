@@ -1,4 +1,6 @@
 ﻿var CategoriesUI = (function() {
+    var __help = 'This section bla bla bla...';
+
     var formatter = null;
     var palette = null;
     var $categories = null;
@@ -122,14 +124,20 @@
          */
         if (obj.amount == 0.0) {
             if (prev === undefined) {
-                return;
+                return false;
             } else {
                 delete categories[obj.name];
-                return;
+                return true;
             }
         }
 
         categories[obj.name] = obj;
+
+        return true;
+    };
+
+    var showHelp = function() {
+        $categories.html('<div class="help loading"><p>' + __help + '</p></div>');
     };
 
     return {
@@ -146,15 +154,16 @@
         },
 
         onNewData: function(data) {
-            if ($categories.find('.loading').length) {
-                $categories.empty();
-            }
+            var hidehelp = false;
 
             $.each(data.categories, EachCallbackWrapper(function(i, value, _this) {
-                updateCategory(value);
+                hidehelp = hidehelp || updateCategory(value);
             }, this));
 
-            updateChart();
+            if (!hidehelp && chart == null)
+                showHelp();
+            else
+                updateChart();
         },
 
 
