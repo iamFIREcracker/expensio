@@ -144,7 +144,7 @@
     };
 
     var showHelp = function() {
-        $days.html('<div class="help loading"><p>' + __help + '</p></div>');
+        $days.html('<div class="help"><p>' + __help + '</p></div>');
     }
 
     return {
