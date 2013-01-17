@@ -1,5 +1,6 @@
 var ExpensesUI = (function() {
-    var __help = 'This section bla bla bla...';
+    var __help = 'All the tracked expenses for the current month will be listed here, '
+               + 'one above the other, sorted by date.';
     var __beforeanimatetimeout = 200;
     var __animationtimeout = 200; // milliseconds
 

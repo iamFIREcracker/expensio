@@ -1,6 +1,8 @@
 ﻿var DaysUI = (function() {
+    var __help = 'As soon as you start adding expenses, this space will be replaced ' 
+               + 'with a chart showing how much you have spent, on a day by day basis, ' 
+               + 'in the last 30 days';
     var __daysnumber = 30;
-    var __help = 'This section bla bla bla...';
 
     var formatter = null;
     var palette = null;

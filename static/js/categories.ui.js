@@ -1,5 +1,7 @@
 ﻿var CategoriesUI = (function() {
-    var __help = 'This section bla bla bla...';
+    var __help = 'Want to know how much did you spent in the current month for each '
+               + 'expense category?  You are looking in the right place!  See the '
+               + 'chart populating as as soon as you track expenses...';
 
     var formatter = null;
     var palette = null;
