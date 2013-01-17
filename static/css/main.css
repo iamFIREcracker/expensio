@@ -72,8 +72,9 @@ h1 {
 .help {
     background-color: #7BD52B;
     color: #333;
-    padding: 30px;
     font-size: 120%;
+    line-height: 170%;
+    padding: 30px;
     text-align: center;
 }
 

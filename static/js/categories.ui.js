@@ -139,7 +139,7 @@
     };
 
     var showHelp = function() {
-        $categories.html('<div class="help"><p>' + __help + '</p></div>');
+        $categories.html('<div><p class="help">' + __help + '</p></div>');
     };
 
     return {

@@ -103,7 +103,7 @@ var ExpensesUI = (function() {
     };
 
     var showHelp = function() {
-        $expenses.html('<div class="help"><p>' + __help + '</p></div>');
+        $expenses.html('<div><p class="help">' + __help + '</p></div>');
     }
 
     return {
