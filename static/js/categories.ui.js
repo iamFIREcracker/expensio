@@ -2,6 +2,7 @@
     var __help = 'Want to know how much did you spent in the current month for each '
                + 'expense category?  You are looking in the right place!  See the '
                + 'chart populating as as soon as you track expenses...';
+    var __animationtimeout = 200; // milliseconds
 
     var formatter = null;
     var palette = null;
@@ -139,7 +140,9 @@
     };
 
     var showHelp = function() {
+        $categories.hide();
         $categories.html('<div><p class="help">' + __help + '</p></div>');
+        $categories.fadeIn(__animationtimeout);
     };
 
     return {

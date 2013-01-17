@@ -103,7 +103,10 @@ var ExpensesUI = (function() {
     };
 
     var showHelp = function() {
-        $expenses.html('<div><p class="help">' + __help + '</p></div>');
+        $expenses.hide();
+        $expenses.html(
+                '<div><p class="help">' + __help + '</p></div>');
+        $expenses.fadeIn(__animationtimeout);
     }
 
     return {

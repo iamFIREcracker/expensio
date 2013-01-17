@@ -2,6 +2,7 @@
     var __help = 'As soon as you start adding expenses, this space will be replaced ' 
                + 'with a chart showing how much you have spent, on a day by day basis, ' 
                + 'in the last 30 days';
+    var __animationtimeout = 200; // milliseconds
     var __daysnumber = 30;
 
     var formatter = null;
@@ -146,7 +147,9 @@
     };
 
     var showHelp = function() {
+        $days.hide();
         $days.html('<div><p class="help">' + __help + '</p></div>');
+        $days.fadeIn(__animationtimeout);
     }
 
     return {
