@@ -1,7 +1,7 @@
 var ExpensesUI = (function() {
+    var __help = 'This section bla bla bla...';
     var __beforeanimatetimeout = 200;
     var __animationtimeout = 200; // milliseconds
-    var __help = 'This section bla bla bla...';
 
     var formatter = null;
     var palette = null;
@@ -40,11 +40,11 @@ var ExpensesUI = (function() {
          */
         if (obj.deleted === true) {
             if (prev === undefined) {
-                return;
+                return false;
             } else {
                 prev.gracefulRemove();
                 delete expenses[obj.id];
-                return;
+                return true;
             }
         }
 
@@ -85,6 +85,8 @@ var ExpensesUI = (function() {
         $.each(addexpenselisteners, function(index, func) {
             func(newexp);
         })
+
+        return true;
     };
 
     var updateTitle = function() {
@@ -100,7 +102,7 @@ var ExpensesUI = (function() {
     };
 
     var showHelp = function() {
-        $expenses.html('<div class="help loading"><p>' + __help + '</p></div>');
+        $expenses.html('<div class="help"><p>' + __help + '</p></div>');
     }
 
     return {
@@ -120,15 +122,20 @@ var ExpensesUI = (function() {
         onNewData: function(data) {
             var hidehelp = false;
 
+            if ($expenses.find('.loading').length) {
+                $expenses.empty();
+            }
+
             $.each(data.expenses, EachCallbackWrapper(function(i, value, _this) {
-                updateExpense(value);
+                hidehelp = hidehelp || updateExpense(value);
             }, this));
             updateTitle();
 
+            console.log(hidehelp, first);
             if (!hidehelp && first) {
-                first = false;
                 showHelp();
             }
+            first = false;
         },
 
         confirmDelete: function(exp) {
