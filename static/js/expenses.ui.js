@@ -131,7 +131,6 @@ var ExpensesUI = (function() {
             }, this));
             updateTitle();
 
-            console.log(hidehelp, first);
             if (!hidehelp && first) {
                 showHelp();
             }
