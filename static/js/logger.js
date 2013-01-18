@@ -17,7 +17,7 @@ var Logger = (function() {
         },
 
         error: function(msg) {
-            this._$data.html(msg).hide().fadeIn()
+            this._$data.hide().html(msg).fadeIn()
                     .delay(this._fadeouttimeout).fadeOut('slow');
         }
     }
