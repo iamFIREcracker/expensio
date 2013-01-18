@@ -135,16 +135,15 @@
          * remove, otherwise return.
          */
         if (obj.amount == 0.0) {
-            if (prev === undefined) {
-                return;
+            if (prev === null) {
+                return false;
             } else {
                 days[i] = null;
-                return
+                return true;
             }
         }
 
         days[i] = obj;
-
         return true;
     };
 
