@@ -48,6 +48,11 @@ var DateManager = (function() {
                     '%d-%d-%d', year(today), month(today) + 1, day(today));
         },
 
+        period: function() {
+            return sprintf(
+                    '%d-%d', year(today), month(today) + 1);
+        },
+
         ndaysback: function(n) {
             var date = new Date(year(today), month(today), day(today) - n);
 
