@@ -8,8 +8,10 @@ var HistoryManager = (function() {
         },
 
         onMonthChange: function(year, month) {
-            history.pushState(null, sprintf('%d-%02d', year, month),
-                            sprintf('/%d/%02d', year, month));
+            var period = datemanager.period();
+            var curperiod = sprintf('%d-%02d', year, month)
+            var url = period == curperiod ? '/' : sprintf('/%d/%02d', year, month);
+            history.pushState(null, curperiod, url);
         },
     };
 
