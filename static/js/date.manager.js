@@ -45,30 +45,30 @@ var DateManager = (function() {
 
         today: function() {
             return sprintf(
-                    '%d-%d-%d', year(today), month(today) + 1, day(today));
+                    '%d-%02d-%02d', year(today), month(today) + 1, day(today));
         },
 
         period: function() {
             return sprintf(
-                    '%d-%d', year(today), month(today) + 1);
+                    '%d-%02d', year(today), month(today) + 1);
         },
 
         ndaysback: function(n) {
             var date = new Date(year(today), month(today), day(today) - n);
 
             return sprintf(
-                    "%d-%d-%d", year(date), month(date) + 1, day(date));
+                    "%d-%02d-%02d", year(date), month(date) + 1, day(date));
         },
 
         startofcurrentmonth: function() {
-            return sprintf('%d-%d-01', curyear, curmonth)
+            return sprintf('%d-%02d-01', curyear, curmonth)
         },
 
         endofcurrentmonth: function() {
             var lastofmonth = new Date(curyear, curmonth, 0);
 
             return sprintf(
-                    "%d-%d-%d", curyear, curmonth, day(lastofmonth));
+                    "%d-%02d-%02d", curyear, curmonth, day(lastofmonth));
         },
     };
 
