@@ -10,12 +10,14 @@
     var chart = null;
     var categories = null;
     var latest = null;
+    var first = null;
 
     var init = function() {
         $categories.html('<div class="loading"><img src="/static/images/loading.gif" /></div>')
         chart = null;
         categories = Object();
         latest = '';
+        first = true;
     };
 
     var initChart = function() {
@@ -165,10 +167,13 @@
                 hidehelp = hidehelp || updateCategory(value);
             }, this));
 
-            if (!hidehelp && chart == null)
-                showHelp();
-            else
+            if (hidehelp) {
                 updateChart();
+            } else if (first) {
+                showHelp();
+            }
+
+            first = false;
         },
 
 

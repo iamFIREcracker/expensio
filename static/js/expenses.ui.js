@@ -58,6 +58,10 @@ var ExpensesUI = (function() {
             delete expenses[prev.id];
         }
 
+        if ($expenses.find('.help').length) {
+            $expenses.empty();
+        }
+
         /*
          * Add the expense to internal data structures 
          * XXX fix ordering!!!!

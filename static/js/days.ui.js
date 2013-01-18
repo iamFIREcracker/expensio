@@ -11,12 +11,14 @@
     var chart = null;
     var days = null;
     var latest = null;
+    var first = null;
 
     var init = function() {
         $days.html('<div class="loading"><img src="/static/images/loading.gif" /></div>')
         chart = null;
         days = Object();
         latest = '';
+        first = true;
 
         for (var i = 0; i < __daysnumber; i++) {
             days[i] = null;
@@ -168,10 +170,13 @@
                 hidehelp = hidehelp || updateDay(value);
             }, this));
 
-            if (!hidehelp && chart == null)
-                showHelp();
-            else
+            if (hidehelp) {
                 updateChart();
+            } else if (first) {
+                showHelp();
+            }
+
+            first = false;
         },
 
 
