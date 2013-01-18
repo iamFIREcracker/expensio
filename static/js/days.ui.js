@@ -166,7 +166,7 @@
             var hidehelp = false;
 
             $.each(data.days, EachCallbackWrapper(function(i, value, _this) {
-                hidehelp = hidehelp || updateDay(value);
+                hidehelp = updateDay(value) || hidehelp;
             }, this));
 
             if (hidehelp) {

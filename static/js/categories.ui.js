@@ -164,7 +164,7 @@
             var hidehelp = false;
 
             $.each(data.categories, EachCallbackWrapper(function(i, value, _this) {
-                hidehelp = hidehelp || updateCategory(value);
+                hidehelp = updateCategory(value) || hidehelp;
             }, this));
 
             if (hidehelp) {

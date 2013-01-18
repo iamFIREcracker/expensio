@@ -135,7 +135,7 @@ var ExpensesUI = (function() {
             }
 
             $.each(data.expenses, EachCallbackWrapper(function(i, value, _this) {
-                hidehelp = hidehelp || updateExpense(value);
+                hidehelp = updateExpense(value) || hidehelp;
             }, this));
             updateTitle();
 
