@@ -32,7 +32,7 @@ validamount = form.Validator('1000.00', parsers.amount)
 validdate = form.Validator('yyyy-mm-dd', parsers.date)
 validperiod = form.Validator('yyyy-mm', parsers.period)
 validimportdata = form.Validator(
-        '2012-11-12	dinner	25	Dinner with parents',
+        'Invalid format',
         lambda f: parsers.expenses(f.period, f.data))
 
 
@@ -44,7 +44,7 @@ users_edit = form.Form(
         #form.Button('google_connect', html='Google Connect'),
         #form.Button('facebook_connect', html='Facebook Connect'),
         #form.Button('twitter_connect', html='Twitter Connect'),
-        form.Button('Edit', type='submit',
+        form.Button('Done', type='submit',
             onclick='UsersManager.onEditSubmit(this.form);'),
     )
 
