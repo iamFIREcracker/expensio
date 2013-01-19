@@ -69,11 +69,16 @@ h1 {
     text-align: center;
 }
 
+.info {
+    font-size: 120%;
+    line-height: 170%;
+    text-align: center;
+}
+
 .help, .description {
     background-color: #D8D8D8;
     color: #333;
     line-height: 170%;
-    text-align: center;
     text-align: center;
 }
 
