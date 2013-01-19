@@ -65,12 +65,12 @@ expenses_edit = form.Form(
         form.Textbox('date', validdate, description='Date'),
         form.File('attachment', description='Attachment'),
         Image('oldattachment', description='Old Attachment', width="200px"),
-        form.Button('Edit', type='submit'),
+        form.Button('Done', type='submit', class_="btn btn-primary"),
     )
 
 expenses_import = form.Form(
         form.Textarea('data', validimportdata, description='', rows=24),
-        form.Button('Import', type='sumbit',
+        form.Button('Import', type='sumbit', class_="btn btn-primary",
             onclick='ExpensesManager.onImportSubmit(this.form);'),
     )
 
