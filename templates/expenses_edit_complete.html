@@ -4,12 +4,18 @@
     {% include 'elements/logo_small.html' %}
 {% endblock %}
 
+{% block css %}
+<link href="/static/bootstrap-datepicker/css/datepicker.css" rel="stylesheet" />
+{% endblock %}
+
 {% block js %}
 <script src="http://malsup.github.com/jquery.form.js"></script>
+<script src="/static/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
 <script src="/static/js/expenses.manager.js"></script>
 {% endblock %}
 
 {% block jsready %}
+$('#date').datepicker();
 ExpensesManager.onReady(Logger);
 {% endblock %}
 
