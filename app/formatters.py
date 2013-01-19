@@ -5,6 +5,7 @@ from datetime import datetime as datetime_
 
 from config import DATE_FORMAT
 from config import DATETIME_FORMAT
+from config import PERIOD_FORMAT
 
 
 def amount(value):
@@ -18,3 +19,7 @@ def date(value):
 
 def datetime(value):
     return datetime_.strftime(value, DATETIME_FORMAT)
+
+
+def period(value):
+    return datetime_.strftime(value, PERIOD_FORMAT)

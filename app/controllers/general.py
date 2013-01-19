@@ -6,6 +6,7 @@ from datetime import datetime
 
 import web
 
+import app.formatters as formatters
 import app.parsers as parsers
 from app.utils import BaseHandler
 from app.forms import expenses_add
@@ -19,7 +20,7 @@ class MainHandler(BaseHandler):
             today = datetime.today()
             year = year if year is not None else today.year
             month = month if month is not None else today.month
-            parsers.period('%s-%s' % (year, month))
+            parsers.period(formatters.period(datetime(year, month, 1)))
 
             form = expenses_add()
 
