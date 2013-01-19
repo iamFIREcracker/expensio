@@ -30,10 +30,7 @@ class Image(form.Input):
 validcurrency = form.Validator('€, $ ..', parsers.currency)
 validamount = form.Validator('1000.00', parsers.amount)
 validdate = form.Validator('mm-dd-yyyy', parsers.date_us)
-validperiod = form.Validator('mm-yyyy', parsers.period_us)
-validimportdata = form.Validator(
-        'Invalid format',
-        lambda f: parsers.expenses(f.period, f.data))
+validimportdata = form.Validator('Invalid format', parsers.expenses)
 
 
 users_edit = form.Form(
@@ -72,11 +69,9 @@ expenses_edit = form.Form(
     )
 
 expenses_import = form.Form(
-        form.Textbox('period', validperiod, description='Period'),
-        form.Textarea('data', form.notnull, description='Data', rows=24),
+        form.Textarea('data', validimportdata, description='', rows=24),
         form.Button('Import', type='sumbit',
             onclick='ExpensesManager.onImportSubmit(this.form);'),
-        validators=[validimportdata]
     )
 
 

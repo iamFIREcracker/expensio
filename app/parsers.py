@@ -3,6 +3,8 @@
 
 from datetime import datetime as datetime_
 
+import web
+
 import config
 import utils
 
@@ -16,15 +18,14 @@ def currency(value):
     else:
         return value
 
-def expenses(period, data):
+def expenses(data):
     expenses = []
 
     for line in data.split('\r\n'):
         (date_, category_, amount_, note_) = line.split('\t')
 
-        expenses.append((
-            date('-'.join([period, date_])),
-            category_, amount(amount_), note_,))
+        web.debug(date_, category_, amount_, note_)
+        expenses.append(( date_us(date_), category_, amount(amount_), note_,))
     return expenses
 
 def date(value):
@@ -38,6 +39,3 @@ def datetime(value):
 
 def period(value):
     return datetime_.strptime(value, config.PERIOD_FORMAT)
-
-def period_us(value):
-    return datetime_.strptime(value, config.PERIOD_US_FORMAT)

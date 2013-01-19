@@ -168,6 +168,6 @@ class ExpensesImportHandler(BaseHandler):
                 Expense(user_id=self.current_user().id, date=date,
                         category=category, amount=amount, note=note)
                     for (date, category, amount, note)
-                            in parsers.expenses(form.d.period, form.d.data))
+                            in parsers.expenses(form.d.data))
         return web.ctx.render.expenses_import(
                 user=self.current_user(), expenses_import=form)
