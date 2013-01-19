@@ -30,8 +30,14 @@ def expenses(period, data):
 def date(value):
     return datetime_.strptime(value, config.DATE_FORMAT)
 
+def date_us(value):
+    return datetime_.strptime(value, config.DATE_US_FORMAT)
+
 def datetime(value):
     return datetime_.strptime(value, config.DATETIME_FORMAT)
 
 def period(value):
     return datetime_.strptime(value, config.PERIOD_FORMAT)
+
+def period_us(value):
+    return datetime_.strptime(value, config.PERIOD_US_FORMAT)

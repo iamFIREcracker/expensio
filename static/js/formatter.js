@@ -27,7 +27,7 @@ var Formatter = (function() {
                 var month = date.getMonth() + 1;
                 var year = date.getYear() + 1900;
 
-                return sprintf("%s/%d/%d", day, month, year);
+                return sprintf("%d/%s/%d", month, day, year);
             }
         },
     };

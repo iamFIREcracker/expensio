@@ -29,8 +29,8 @@ class Image(form.Input):
 
 validcurrency = form.Validator('€, $ ..', parsers.currency)
 validamount = form.Validator('1000.00', parsers.amount)
-validdate = form.Validator('yyyy-mm-dd', parsers.date)
-validperiod = form.Validator('yyyy-mm', parsers.period)
+validdate = form.Validator('mm-dd-yyyy', parsers.date_us)
+validperiod = form.Validator('mm-yyyy', parsers.period_us)
 validimportdata = form.Validator(
         'Invalid format',
         lambda f: parsers.expenses(f.period, f.data))

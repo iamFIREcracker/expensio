@@ -85,7 +85,7 @@ class ExpensesAddHandler(BaseHandler):
             e = Expense(user_id=self.current_user().id,
                     amount=parsers.amount(form.d.amount),
                     category=form.d.category, note=form.d.note,
-                    date=parsers.date(form.d.date), attachment=url)
+                    date=parsers.date_us(form.d.date), attachment=url)
             web.ctx.orm.add(e)
             form = expenses_add()
 
@@ -102,7 +102,8 @@ class ExpensesEditHandler(BaseHandler):
         item = self.current_item()
         form.fill(id=item.id, amount=formatters.amount(item.amount),
                 category=item.category, note=item.note,
-                date=formatters.date(item.date), oldattachment=item.attachment)
+                date=formatters.date_us(item.date),
+                oldattachment=item.attachment)
         return web.ctx.render.expenses_edit_complete(user=self.current_user(),
                 expenses_edit=form)
 
@@ -127,7 +128,7 @@ class ExpensesEditHandler(BaseHandler):
             e.amount = parsers.amount(form.d.amount)
             e.category = form.d.category
             e.note = form.d.note
-            e.date = parsers.date(form.d.date)
+            e.date = parsers.date_us(form.d.date)
             if attachment:
                 e.attachment = url
             web.debug(e.attachment)

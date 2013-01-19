@@ -15,6 +15,10 @@ def date(value):
     return datetime_.strftime(value, config.DATE_FORMAT)
 
 
+def date_us(value):
+    return datetime_.strftime(value, config.DATE_US_FORMAT)
+
+
 def datetime(value):
     return datetime_.strftime(value, config.DATETIME_FORMAT)
 
