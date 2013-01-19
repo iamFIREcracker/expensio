@@ -3,9 +3,7 @@
 
 from datetime import datetime as datetime_
 
-from config import DATE_FORMAT
-from config import DATETIME_FORMAT
-from config import PERIOD_FORMAT
+import config
 
 
 def amount(value):
@@ -14,12 +12,12 @@ def amount(value):
 
 
 def date(value):
-    return datetime_.strftime(value, DATE_FORMAT)
+    return datetime_.strftime(value, config.DATE_FORMAT)
 
 
 def datetime(value):
-    return datetime_.strftime(value, DATETIME_FORMAT)
+    return datetime_.strftime(value, config.DATETIME_FORMAT)
 
 
 def period(value):
-    return datetime_.strftime(value, PERIOD_FORMAT)
+    return datetime_.strftime(value, config.PERIOD_FORMAT)
