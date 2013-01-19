@@ -41,7 +41,7 @@ users_edit = form.Form(
         #form.Button('google_connect', html='Google Connect'),
         #form.Button('facebook_connect', html='Facebook Connect'),
         #form.Button('twitter_connect', html='Twitter Connect'),
-        form.Button('Done', type='submit',
+        form.Button('Done', type='submit', class_="btn btn-primary",
             onclick='UsersManager.onEditSubmit(this.form);'),
     )
 
@@ -53,7 +53,7 @@ expenses_add = form.Form(
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdate, description='Date'),
         form.File('attachment', description='Attachment'),
-        form.Button('Add', type='submit'),
+        form.Button('Add', type='submit', class_="btn btn-primary"),
     )
 
 expenses_edit = form.Form(
