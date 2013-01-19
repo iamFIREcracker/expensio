@@ -221,7 +221,7 @@ def rtag():
 def prerequisites():
     ''' Prepare the server installing essential packages. '''
     run('sudo aptitude -q2 update')
-    run('sudo aptitude -q2 install mercurial')
+    run('sudo apt-get -y install mercurial')
 
 
 @task
