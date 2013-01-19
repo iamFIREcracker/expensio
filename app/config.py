@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-DATABASE_URL = 'sqlite:////tmp/expenses.db'
+DATABASE_URL = 'sqlite:///expenses.db'
 
 PERIOD_FORMAT = '%Y-%m'
 DATETIME_FORMAT = '%Y-%m-%d'
