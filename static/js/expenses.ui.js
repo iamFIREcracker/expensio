@@ -175,7 +175,7 @@ var Expense = function(ui, palette, formatter) {
                 return '' +
 '<span class="exp_attach">' +
     '<a href="' + attachment + '" rel="lightbox" title="' + note + '">' +
-        '<img src="/static/images/attachment.png" alt="Attachment icon" />' +
+        '<i class="icon-file"></i>' +
     '</a>' +
 '</span>';
         };
@@ -203,13 +203,13 @@ var Expense = function(ui, palette, formatter) {
     '<span class="exp_date">' + formatter.date(date) + '</span>' +
     '<span class="exp_edit">' +
         '<a href="/expenses/' + id + '/edit" title="Edit expense">' +
-            '<img src="/static/images/edit.png" alt="Edit expense icon"/>' +
+            '<i class="icon-pencil"></i>' +
         '</a>' +
     '</span>' +
     '<form class="exp_delete" method="post">' +
         '<input type="hidden" value="' + id + '" name="id" id="id"/>' +
         '<a href="/expenses/' + id + '/delete" title="Delete expense">' +
-            '<img src="/static/images/delete.png" alt="Delete expense icon"/>' +
+            '<i class="icon-remove"></i>' +
         '</a>' +
     '</form>' +
 '</div>'
