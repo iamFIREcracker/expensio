@@ -1,0 +1,4 @@
+[submodule "static/bootstrap-datepicker"]
+	path = static/bootstrap-datepicker
+	url = git://github.com/eternicode/bootstrap-datepicker.git
+
