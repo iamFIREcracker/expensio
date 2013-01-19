@@ -2,19 +2,11 @@
 
 {% block js %}
 <script src="/static/js/formatter.js"></script>
-<script src="/static/js/date.manager.js"></script>
-<script src="/static/js/palette.manager.js"></script>
-<script src="/static/js/expenses.ui.js"></script>
 <script src="/static/js/expenses.manager.js"></script>
 {% endblock %}
 
 {% block jsready %}
-DateManager.onReady($('#current_month'));
-PaletteManager.onReady();
-ExpensesUI.onReady(
-        Formatter, PaletteManager, $('#current_month_overall'),
-        $('#expenses'));
-ExpensesManager.onReady(Logger, DateManager, ExpensesUI);
+ExpensesManager.onReady(Logger);
 {% endblock %}
 
 {% block row1_col1 %}
