@@ -188,7 +188,8 @@ def rclone():
     require('repo_url')
     require('site_path')
 
-    run('mkdir -p %s' % env.site_path)
+    run('sudo mkdir -p %s' % env.site_path)
+    run('sudo chown %s:%s %s' % (env.user, env.user, env.site_path))
     run('hg clone %s %s' % (env.repo_url, env.site_path))
 
 
