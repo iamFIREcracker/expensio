@@ -26,6 +26,16 @@ class Image(form.Input):
             attrs['value'] = self.value
         return '<img %s />' % (attrs, )
 
+class FileBootstrap(form.File):
+    def render(self):
+        return """
+<div class="fileupload fileupload-new" data-provides="fileupload">
+    <span class="btn btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span>%s</span>
+    <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+    <div class="fileupload-new thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
+    <div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;"></div>
+</div>""" % super(FileBootstrap, self).render()
+
 
 validcurrency = form.Validator('€, $ ..', parsers.currency)
 validamount = form.Validator('1000.00', parsers.amount)
@@ -51,7 +61,7 @@ expenses_add = form.Form(
             id='category'),
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdate, description='Date'),
-        form.File('attachment', description='Attachment'),
+        FileBootstrap('attachment', description='Attachment'),
         form.Button('Add', type='submit', class_="btn btn-primary"),
     )
 
@@ -62,7 +72,7 @@ expenses_edit = form.Form(
             id='category'),
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdate, description='Date'),
-        form.File('attachment', description='Attachment'),
+        FileBootstrap('attachment', description='Attachment'),
         Image('oldattachment', description='Old Attachment', width="200px"),
         form.Button('Done', type='submit', class_="btn btn-primary"),
     )
