@@ -243,6 +243,9 @@ def bootstrap():
     print(cyan('Initialize database...'))
     dbupdate()
 
+    # While we applied the puppet manifest, the virtualenv was not initialized
+    # yet, consiquently gunicorn for sure failed to start.  Try again now.
+    restart()
 
 @task
 def update():
