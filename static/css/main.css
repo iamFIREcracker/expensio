@@ -69,13 +69,22 @@ h1 {
     text-align: center;
 }
 
-.help {
+.help, .description {
     background-color: #D8D8D8;
     color: #333;
-    font-size: 120%;
     line-height: 170%;
-    padding: 30px;
     text-align: center;
+    text-align: center;
+}
+
+.help {
+    font-size: 120%;
+    padding: 30px;
+}
+
+.description {
+    font-size: 95%;
+    padding: 15px;
 }
 
 .connect {
