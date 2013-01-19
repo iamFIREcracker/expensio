@@ -93,6 +93,26 @@ var ExpensesManager = (function() {
     };
 
 
+    var onImportSubmitSuccess = function(data) {
+        var $data = $(data).children();
+        var $form = $('#exp_import');
+
+        $form.children().replaceWith($data);
+        if ($data.find('.wrong').length == 0) {
+            logger.success(
+                    'Expenses imported successfully!', function() {
+                        setTimeout(function() {
+                            window.location = "/";
+                        }, 2000);
+                    });
+        }
+    };
+
+    var onImportSubmitError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+
     return {
         onReady: function(logger_, date_, ui_) {
             logger = logger_;
@@ -120,6 +140,19 @@ var ExpensesManager = (function() {
                     url: '/expenses/' + $form.find('#id').val() + '/edit',
                     success: onEditSubmitSuccess,
                     error: onEditSubmitError,
+                });
+
+                return false;
+            });
+
+            $('#exp_import').submit(function() {
+                var $form = $(this);
+
+                $form.ajaxSubmit({
+                    dataType: 'html',
+                    url: '/expenses/import',
+                    success: onImportSubmitSuccess,
+                    error: onImportSubmitError,
                 });
 
                 return false;
@@ -156,42 +189,5 @@ var ExpensesManager = (function() {
             addsubmitlisteners.push(func)
         },
 
-
-        _onImportSubmitSuccess: function(data) {
-            var $data = $(data);
-            $form.replaceWith($data);
-            if ($data.find('.wrong').length == 0) {
-                logger.success(
-                        'Expenses imported successfully!', function() {
-                            setTimeout(function() {
-                                window.location = "/";
-                            }, 2000);
-                        });
-            }
-        },
-
-        _onImportSubmitError: function(data) {
-            logger.error('Something went wrong while contacting the server');
-        },
-
-        onImportSubmit: function(form) {
-            $form = $(form);
-            $.ajax({
-                url: '/expenses/import',
-                type: 'POST',
-                dataType: 'html',
-                data: $form.serialize(),
-
-                success: AjaxCallbackWrapper(function(data, _this) {
-                    _this._onImportSubmitSuccess(data);
-                }, this),
-
-                error: AjaxCallbackWrapper(function(data, _this) {
-                    _this._onImportSubmitError(data);
-                }, this),
-            });
-
-            return false;
-        },
     }
 })();
