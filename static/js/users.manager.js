@@ -1,48 +1,43 @@
 var UsersManager = (function() {
     var logger = null;
 
+
+    var onEditSubmitSuccess = function(data) {
+        var $data = $(data).children();
+        var $form = $('#user_edit');
+
+        $form.children().replaceWith($data);
+        if ($data.find('.wrong').length == 0) {
+            logger.success(
+                    'User edited successfully!', function() {
+                        setTimeout(function() {
+                            window.location = '/';
+                        }, 2000);
+                    });
+        }
+    };
+
+    var onEditSubmitError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+
     return {
         onReady: function(logger_) {
             logger = logger_;
-        },
 
+            $('#user_edit').submit(function() {
+                var $form = $(this);
 
-        _onEditSubmitSuccess: function(data) {
-            $data = $(data);
-            $form.replaceWith($data);
-            if ($data.find('.wrong').length == 0) {
-                logger.success(
-                        'Users edited successfully!', function() {
-                            setTimeout(function() {
-                                window.location = '/';
-                            }, 2000);
-                        });
-            }
-        },
+                $form.ajaxSubmit({
+                    dataType: 'html',
+                    url: '/users/' + $form.find('#id').val() + '/edit',
+                    success: onEditSubmitSuccess,
+                    error: onEditSubmitError,
+                });
 
-        _onEditSubmitError: function(data) {
-            logger.error('Something went wrong while contacting the server');
-        },
-
-        onEditSubmit: function(form) {
-            $form = $(form);
-            $.ajax({
-                url: '/users/' + $form.find('#id').val() + '/edit',
-                type: 'POST',
-                dataType: 'html',
-                data: $form.serialize(),
-
-                success: AjaxCallbackWrapper(function(data, _this) {
-                    _this._onEditSubmitSuccess(data);
-                }, this),
-
-
-                error: AjaxCallbackWrapper(function(data, _this) {
-                    _this._onEditSubmitError(data);
-                }, this),
+                return false;
             });
-
-            return false;
         },
     }
 })();

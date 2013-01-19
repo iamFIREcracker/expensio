@@ -41,8 +41,7 @@ users_edit = form.Form(
         #form.Button('google_connect', html='Google Connect'),
         #form.Button('facebook_connect', html='Facebook Connect'),
         #form.Button('twitter_connect', html='Twitter Connect'),
-        form.Button('Done', type='submit', class_="btn btn-primary",
-            onclick='UsersManager.onEditSubmit(this.form);'),
+        form.Button('Done', type='submit', class_="btn btn-primary")
     )
 
 
