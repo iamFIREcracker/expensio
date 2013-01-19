@@ -4,9 +4,8 @@
 DATABASE_URL = 'sqlite:///expenses.db'
 
 PERIOD_FORMAT = '%Y-%m'
-PERIOD_US_FORMAT = '%m-%Y'
 DATE_FORMAT = '%Y-%m-%d'
-DATE_US_FORMAT = '%m-%d-%Y'
+DATE_US_FORMAT = '%m/%d/%Y'
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 
 UPLOAD_DIR = 'static/uploads'
