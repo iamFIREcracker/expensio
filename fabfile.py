@@ -217,10 +217,19 @@ def rtag():
 
 
 
+@task
+def prerequisites():
+    ''' Prepare the server installing essential packages. '''
+    run('sudo aptitude -q2 update')
+    run('sudo aptitude -q2 install mercurial')
+
 
 @task
 def bootstrap():
     ''' Configure the app '''
+    print(cyan("Prerequisites..."))
+    prerequisites()
+
     if 'skip_repo' not in env:
         print(cyan("Cloning repo..."))
         rclone()
