@@ -13,8 +13,8 @@ def amount(value):
 
 
 def date(value):
-    return datetime_.strftime(value, DATETIME_FORMAT)
+    return datetime_.strftime(value, DATE_FORMAT)
 
 
 def datetime(value):
-    return datetime_.strftime(value, DATE_FORMAT)
+    return datetime_.strftime(value, DATETIME_FORMAT)
