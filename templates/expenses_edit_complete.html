@@ -15,7 +15,9 @@
 {% endblock %}
 
 {% block jsready %}
-$('#date').datepicker();
+$('#date').datepicker({
+    autoclose: true,
+});
 ExpensesManager.onReady(Logger);
 {% endblock %}
 
