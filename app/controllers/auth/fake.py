@@ -14,10 +14,6 @@ from app.config import COOKIE_EXPIRATION
 
 class LoginFakeAuthorizedHandler(BaseHandler):
     def GET(self):
-        if 'fake_access_token' not in web.ctx.session:
-            web.seeother('/')
-            return
-
         user = self.current_user()
         if not user:
             user = User(name='Fake Name')
