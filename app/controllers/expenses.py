@@ -173,11 +173,18 @@ class ExpensesImportHandler(BaseHandler):
     @protected
     def POST(self):
         form = expenses_import()
-        if form.validates():
-            web.ctx.orm.add_all(
-                Expense(user_id=self.current_user().id, date=date,
+        if not form.validates():
+            return jsonify(success=False,
+                    errors=dict((i.name, i.note) for i in form.inputs
+                        if i.note is not None))
+        else:
+            expenses = [Expense(user_id=self.current_user().id, date=date,
                         category=category, amount=amount, note=note)
                     for (date, category, amount, note)
-                            in parsers.expenses(form.d.data))
-        return web.ctx.render.expenses_import(
-                user=self.current_user(), expenses_import=form)
+                            in parsers.expenses(form.d.data)]
+            web.ctx.orm.add_all(expenses)
+            expenses = [web.ctx.orm.merge(e) for e in expenses]
+
+            return jsonify(success=True,
+                    expenses=[ExpenseWrapper(e, self.current_user().currency)
+                            for e in expenses])

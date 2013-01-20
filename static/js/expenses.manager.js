@@ -111,18 +111,13 @@ var ExpensesManager = (function() {
 
 
     var onImportSubmitSuccess = function(data) {
-        var $data = $(data).children();
-        var $form = $('#exp_import');
-
-        $form.children().replaceWith($data);
-        if ($data.find('.wrong').length == 0) {
-            logger.success(
-                    'Expenses imported successfully!', function() {
-                        setTimeout(function() {
-                            window.location = "/";
-                        }, 2000);
-                    });
-        }
+        onSubmitSuccess($('#exp_import'), data, function() {
+            logger.success('Expenses imported successfully!', function() {
+                setTimeout(function() {
+                    window.location = "/";
+                }, 2000);
+            });
+        });
     };
 
     var onImportSubmitError = function(data) {
@@ -168,7 +163,7 @@ var ExpensesManager = (function() {
                 var $form = $(this);
 
                 $form.ajaxSubmit({
-                    dataType: 'html',
+                    dataType: 'json',
                     url: '/expenses/import',
                     success: onImportSubmitSuccess,
                     error: onImportSubmitError,
