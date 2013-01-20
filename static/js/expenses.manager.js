@@ -96,12 +96,12 @@ var ExpensesManager = (function() {
 
 
     var onDeleteSubmitSuccess = function(data) {
-        logger.success('Expense deleted successfully!');
+        logger.success('Expense deleted successfully!', function() {
+            update();
 
-        update();
-
-        $.each(addsubmitlisteners, function(index, func) {
-            func();
+            $.each(addsubmitlisteners, function(index, func) {
+                func();
+            });
         });
     };
 
