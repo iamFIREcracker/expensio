@@ -237,12 +237,11 @@ var Expense = function(ui, palette, formatter) {
             },
 
             _onGracefulRemove: function() {
-                this.$elem.addClass('removed')
-                    .fadeOut('slow', function(_this) {
-                        return function() {
-                            _this.remove();
-                        }
-                    }(this));
+                this.$elem.fadeOut('slow', function(_this) {
+                    return function() {
+                        _this.remove();
+                    }
+                }(this));
             },
 
             gracefulRemove: function() {
