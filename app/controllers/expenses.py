@@ -158,9 +158,10 @@ class ExpensesDeleteHandler(BaseHandler):
         e = self.current_item()
         e.deleted = True
         web.ctx.orm.add(e)
+        e = web.ctx.orm.merge(e)
 
-        form = expenses_edit()
-        return web.ctx.render.expenses_edit(expenses_edit=form)
+        return jsonify(success=True,
+                expense=ExpenseWrapper(e, self.current_user().currency))
 
 
 class ExpensesImportHandler(BaseHandler):

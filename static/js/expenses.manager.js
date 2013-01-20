@@ -194,7 +194,7 @@ var ExpensesManager = (function() {
 
                 $modal.find('a').click(function() {
                     $form.ajaxSubmit({
-                        dataType: 'html',
+                        dataType: 'json',
                         url: '/expenses/' + $form.find('#id').val() + '/delete',
                         success: onDeleteSubmitSuccess,
                         error: onDeleteSubmitError,
