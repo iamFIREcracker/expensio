@@ -6,9 +6,12 @@ var ExpensesManager = (function() {
 
 
     var initWidgets = function() {
-        $('#date').datepicker({
-            autoclose: true,
-        });
+        var $date = $('#date');
+        if ($date.length) {
+            $date.datepicker({
+                autoclose: true,
+            });   
+        }
     };
 
 
