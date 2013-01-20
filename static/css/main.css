@@ -12,6 +12,10 @@ h1 {
     font-size: 500%;
 }
 
+/* Bootstrap override */
+.input-append, .input-prepend {
+    margin-bottom: 9px;
+}
 
 .title {
     text-align: center;
