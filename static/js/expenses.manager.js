@@ -4,6 +4,14 @@ var ExpensesManager = (function() {
     var ui = null;
     var addsubmitlisteners = Array();
 
+
+    var initWidgets = function() {
+        $('#date').datepicker({
+            autoclose: true,
+        });
+    };
+
+
     var update = function() {
         var latest = ui.getLatest();
         var data = {
@@ -51,6 +59,8 @@ var ExpensesManager = (function() {
                 func();
             });
         }
+
+        initWidgets();
     };
 
     var onAddSubmitError = function(data) {
@@ -71,6 +81,8 @@ var ExpensesManager = (function() {
                         }, 2000);
                     });
         }
+
+        initWidgets();
     };
 
     var onEditSubmitError = function(data) {
@@ -118,6 +130,8 @@ var ExpensesManager = (function() {
             logger = logger_;
             date = date_;
             ui = ui_;
+
+            initWidgets();
 
             $('#exp_add').submit(function() {
                 var $form = $(this);

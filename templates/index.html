@@ -26,9 +26,6 @@
 {% endblock %}
 
 {% block jsready %}
-$('#date').datepicker({
-    autoclose: true,
-});
 DateManager.onReady($('#current_month'), {{ year }}, {{ month }});
 HistoryManager.onReady(DateManager);
 PaletteManager.onReady();
