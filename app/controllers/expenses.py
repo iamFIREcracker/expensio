@@ -89,7 +89,7 @@ class ExpensesAddHandler(BaseHandler):
             web.ctx.orm.add(e)
             form = expenses_add()
 
-        form.get('attachment').value = '';
+        form.get('attachment').value = None
         return web.ctx.render.expenses_add(expenses_add=form)
 
 
