@@ -27,7 +27,7 @@ var ExpensesManager = (function() {
         }
 
         $.ajax({
-            url: '/expenses.json',
+            url: '/expenses',
             type: 'GET',
             dataType: 'json',
             data: data,

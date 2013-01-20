@@ -41,7 +41,7 @@ URLS = (
 
     '/categories.json', CategoriesHandler,
 
-    '/expenses.json', ExpensesHandler,
+    '/expenses', ExpensesHandler,
     '/expenses/add', ExpensesAddHandler,
     '/expenses/(.+)/edit', ExpensesEditHandler,
     '/expenses/(.+)/delete', ExpensesDeleteHandler,
