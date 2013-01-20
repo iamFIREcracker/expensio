@@ -40,7 +40,7 @@ class MainHandler(BaseHandler):
 class LogoutHandler():
     def GET(self):
         web.setcookie('user', '', expires=time.time() - 86400)
-        web.seeother('/')
+        raise web.seeother('/')
 
 
 

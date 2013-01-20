@@ -24,8 +24,7 @@ ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
 class LoginTwitterAuthorizedHandler(BaseHandler):
     def GET(self):
         if 'twitter_access_token' not in web.ctx.session:
-            web.seeother('/')
-            return
+            raise web.seeother('/')
 
         access_token = web.ctx.session.pop('twitter_access_token')
         user = self.current_user()
@@ -44,14 +43,13 @@ class LoginTwitterAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
-        web.seeother('/users/%s/edit' % user.id)
+        raise web.seeother('/users/%s/edit' % user.id)
 
 
 class LoginTwitterHandler():
     def GET(self):
         if 'twitter_access_token' in web.ctx.session:
-            web.seeother(web.ctx.path_url + '/authorized')
-            return
+            raise web.seeother(web.ctx.path_url + '/authorized')
 
         consumer = oauth2.Consumer(TWITTER_APP_ID, TWITTER_APP_SECRET)
         data = web.input(denied=None, oauth_token=None)
@@ -62,8 +60,7 @@ class LoginTwitterHandler():
             if resp['status'] != '200':
                 # XXX flash some message here
                 web.debug(content)
-                web.seeother('/')
-                return
+                raise web.seeother('/')
 
             request_token = urlparse.parse_qs(content)
             web.ctx.session['twitter_request_token'] = request_token
@@ -72,13 +69,11 @@ class LoginTwitterHandler():
             # The client denied permissions to the app
             web.ctx.session.pop('twitter_request_token')
             # XXX flash some message here
-            web.seeother('/')
-            return
+            raise web.seeother('/')
 
         if data.oauth_token is None:
-            web.seeother(AUTHORIZE_URL + '?' + urllib.urlencode(
+            raise web.seeother(AUTHORIZE_URL + '?' + urllib.urlencode(
                     dict(oauth_token=request_token['oauth_token'][-1])))
-            return
 
         request_token = web.ctx.session.pop('twitter_request_token')
         token = oauth2.Token(request_token['oauth_token'][-1],
@@ -88,9 +83,8 @@ class LoginTwitterHandler():
         if resp['status'] != '200':
             # XXX flash some message here
             web.debug(content)
-            web.seeother('/')
-            return
+            raise web.seeother('/')
 
         access_token = urlparse.parse_qs(content)
         web.ctx.session['twitter_access_token'] = access_token
-        web.seeother(web.ctx.path_url + '/authorized')
+        raise web.seeother(web.ctx.path_url + '/authorized')

@@ -126,5 +126,5 @@ class UserUpdaterHandler(BaseHandler):
 
         #web.setcookie(
                 #'user', user.id, expires=time.time() + 7 * 86400)
-        #web.seeother('/')
+        #raise web.seeother('/')
         pass

@@ -45,29 +45,26 @@ class LoginGoogleAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
-        web.seeother('/users/%s/edit' % user.id)
+        raise web.seeother('/users/%s/edit' % user.id)
 
 
 class LoginGoogleHandler():
     def GET(self):
         if 'google_access_token' in web.ctx.session:
-            web.seeother(web.ctx.path_url + '/authorized')
-            return;
+            raise web.seeother(web.ctx.path_url + '/authorized')
 
         data = web.input(error=None, code=None)
 
         if data.error:
             # The client denied permissions to the app
             # XXX flash some message here
-            web.seeother('/')
-            return
+            raise web.seeother('/')
 
         if data.code is None:
-            web.seeother(AUTHORIZE_URL + '?' + urllib.urlencode(
+            raise web.seeother(AUTHORIZE_URL + '?' + urllib.urlencode(
                 dict(client_id=GOOGLE_APP_ID, redirect_uri=web.ctx.path_url,
                     response_type='code',
                     scope='https://www.googleapis.com/auth/userinfo.profile')))
-            return
 
         consumer = oauth2.Consumer(GOOGLE_APP_ID, GOOGLE_APP_SECRET)
         client = oauth2.Client(consumer)
@@ -79,9 +76,8 @@ class LoginGoogleHandler():
         if resp['status'] != '200':
             # XXX flash some message here
             web.debug(content)
-            web.seeother('/')
-            return
+            raise web.seeother('/')
 
         access_token = json.loads(content)
         web.ctx.session['google_access_token'] = access_token
-        web.seeother(web.ctx.path_url + '/authorized')
+        raise web.seeother(web.ctx.path_url + '/authorized')

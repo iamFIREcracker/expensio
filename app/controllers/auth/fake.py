@@ -25,15 +25,14 @@ class LoginFakeAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
-        web.seeother('/users/%s/edit' % user.id)
+        raise web.seeother('/users/%s/edit' % user.id)
 
 
 class LoginFakeHandler():
     def GET(self):
         if 'fake_access_token' in web.ctx.session:
-            web.seeother(web.ctx.path_url + '/authorized')
-            return
+            raise web.seeother(web.ctx.path_url + '/authorized')
 
         web.ctx.session['fake_access_token'] = hashlib.sha256(
                 str(datetime.now())).digest()
-        web.seeother(web.ctx.path_url + '/authorized')
+        raise web.seeother(web.ctx.path_url + '/authorized')
