@@ -49,21 +49,25 @@ var ExpensesManager = (function() {
 
 
     var onAddSubmitSuccess = function(data) {
-        var $data = $(data).children();
         var $form = $('#exp_add');
 
-        $form.children().replaceWith($data);
-        if ($data.find('.wrong').length == 0) {
-            logger.success('Expense tracked successfully!');
+        $form.find('.wrong').remove();
+        if (!data.success) {
+            for (name in data.errors) {
+                $form.find('#' + name).parent().append(
+                        '<strong class="wrong">' + data.errors[name] + '</strong>');
+            }
+        } else {
+            $form[0].reset();
 
             update();
 
             $.each(addsubmitlisteners, function(index, func) {
                 func();
             });
-        }
 
-        initWidgets();
+            logger.success('Expense tracked successfully!');
+        }
     };
 
     var onAddSubmitError = function(data) {
@@ -140,7 +144,7 @@ var ExpensesManager = (function() {
                 var $form = $(this);
 
                 $form.ajaxSubmit({
-                    dataType: 'html',
+                    dataType: 'json',
                     url: '/expenses/add',
                     success: onAddSubmitSuccess,
                     error: onAddSubmitError,

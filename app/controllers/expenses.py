@@ -79,7 +79,12 @@ class ExpensesAddHandler(BaseHandler):
     def POST(self):
         attachment = UploadedFile('attachment')
         form = expenses_add()
-        if form.validates():
+
+        if not form.validates():
+            return jsonify(success=False,
+                    errors=dict((i.name, i.note) for i in form.inputs
+                        if i.note is not None))
+        else:
             url = web.ctx.uploadman.add(attachment) if attachment else None
 
             e = Expense(user_id=self.current_user().id,
@@ -87,10 +92,10 @@ class ExpensesAddHandler(BaseHandler):
                     category=form.d.category, note=form.d.note,
                     date=parsers.date_us(form.d.date), attachment=url)
             web.ctx.orm.add(e)
-            form = expenses_add()
+            e = web.ctx.orm.merge(e)
 
-        form.get('attachment').value = None
-        return web.ctx.render.expenses_add(expenses_add=form)
+            return jsonify(success=True,
+                    expense=ExpenseWrapper(e, self.current_user().currency))
 
 
 class ExpensesEditHandler(BaseHandler):
