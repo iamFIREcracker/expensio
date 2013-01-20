@@ -73,7 +73,8 @@ expenses_edit = form.Form(
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdate, description='Date'),
         FileBootstrap('attachment', description='Attachment'),
-        Image('oldattachment', description='Old Attachment', width="200px"),
+        Image('oldattachment', description='Old Attachment',
+            width="200px", class_="img-polaroid"),
         form.Button('Done', type='submit', class_="btn btn-primary"),
     )
 
