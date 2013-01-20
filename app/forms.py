@@ -6,23 +6,19 @@ from web import form
 import parsers
 import utils
 
-class Image(form.Input):
-    """Image.
-    
-    >>> Image("foo").render()
-    u'<img id="foo" name="foo" />'
-    >>> Image("foo", src="bar", alt="baz").render()
-    u'<img src="bar" alt="baz" id="foo" name="foo" />'
-    """
-    def __init__(self, name, *validators, **attrs):
-        super(Image, self).__init__(name, *validators, **attrs)
 
+class ImageBootstrap(form.Input):
     def render(self):
         attrs = self.attrs.copy()
         attrs['name'] = self.name
+        attrs['src'] = "http://www.placehold.it/210x150/EFEFEF/AAAAAA&text=no+image"
+        attrs['class'] = "img-rounded img-polaroid"
+        attrs['width'] = 210
+        attrs['height'] = 150
         if self.value is not None:
             attrs['src'] = self.value
         return '<img %s />' % (attrs, )
+
 
 class FileBootstrap(form.File):
     def render(self):
@@ -33,6 +29,7 @@ class FileBootstrap(form.File):
   </div>
 </div>
 """ % super(FileBootstrap, self).render()
+
 
 
 validcurrency = form.Validator('€, $ ..', parsers.currency)
@@ -71,8 +68,7 @@ expenses_edit = form.Form(
         form.Textbox('note', description='Note'),
         form.Textbox('date', validdate, description='Date'),
         FileBootstrap('attachment', description='Attachment'),
-        Image('oldattachment', description='Old Attachment',
-            width="200px", class_="img-polaroid"),
+        ImageBootstrap('oldattachment', description='Old Attachment'),
         form.Button('Done', type='submit', class_="btn btn-primary"),
     )
 
