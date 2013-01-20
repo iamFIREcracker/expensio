@@ -109,7 +109,7 @@ var ExpensesUI = (function() {
     var showHelp = function() {
         $expenses.hide();
         $expenses.html(
-                '<div><p class="help">' + __help + '</p></div>');
+                '<div class="alert alert-info">' + __help + '</div>');
         $expenses.fadeIn(__animationtimeout);
     }
 
@@ -146,11 +146,26 @@ var ExpensesUI = (function() {
         },
 
         confirmDelete: function(exp) {
-            var msg = sprintf(
-                    'You are about to delete an expense (Amount: %s, Category: %s, Date: %s)',
-                    formatter.amount(exp.amount, exp.currency),
-                    exp.category, formatter.date(exp.date));
-            return window.confirm(msg);
+            return $('' +
+'<div class="modal hide fade">' +
+  '<div class="modal-header">' +
+    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+    '<h3>Delete expense</h3>' +
+  '</div>' +
+  '<div class="modal-body">' +
+    '<p>You are about to delete the following expense:</p>' +
+    '<ul>' +
+        '<li><strong>Amount</strong>: ' + formatter.amount(exp.amount, exp.currency) + '</li>' +
+        '<li><strong>Category</strong>: ' + exp.category + '</li>' +
+        '<li><strong>Amount</strong>: ' + formatter.date(exp.date) + '</li>' +
+        '<li><strong>Note</strong>: ' + exp.note + '</li>' +
+    '</ul>' +
+  '</div>' +
+  '<div class="modal-footer">' +
+    '<a href="#" class="btn btn-danger" data-dismiss="modal">Continue</a>' +
+  '</div>' +
+'</div>'
+            ).modal();
         },
 
         addExpense: function(func) {
