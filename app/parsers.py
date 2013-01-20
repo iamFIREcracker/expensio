@@ -21,7 +21,7 @@ def currency(value):
 def expenses(data):
     expenses = []
 
-    for line in data.split('\r\n'):
+    for line in data.split('\n'):
         (date_, category_, amount_, note_) = line.split('\t')
 
         web.debug(date_, category_, amount_, note_)
