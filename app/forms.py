@@ -25,7 +25,7 @@ class FileBootstrap(form.File):
         return """
 <div class="fileupload fileupload-new" data-provides="fileupload">
   <div class="input-append">
-    <div class="uneditable-input span3"><i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span></div><span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>%s</span>
+    <div class="uneditable-input"><i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span></div><span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>%s</span>
   </div>
 </div>
 """ % super(FileBootstrap, self).render()
