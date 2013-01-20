@@ -25,7 +25,8 @@ class LoginFakeAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
-        raise web.seeother('/users/%s/edit' % user.id)
+        raise web.seeother(
+                '/users/%s/edit' % user.id if not self.current_user() else '/')
 
 
 class LoginFakeHandler():
