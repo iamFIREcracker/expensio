@@ -48,9 +48,7 @@ var ExpensesManager = (function() {
     };
 
 
-    var onAddSubmitSuccess = function(data) {
-        var $form = $('#exp_add');
-
+    var onSubmitSuccess = function($form, data, onSuccessCallback) {
         $form.find('.wrong').remove();
         if (!data.success) {
             for (name in data.errors) {
@@ -58,16 +56,23 @@ var ExpensesManager = (function() {
                         '<strong class="wrong">' + data.errors[name] + '</strong>');
             }
         } else {
-            $form[0].reset();
+            $form.clearForm();
 
-            update();
-
-            $.each(addsubmitlisteners, function(index, func) {
-                func();
-            });
-
-            logger.success('Expense tracked successfully!');
+            onSuccessCallback();
         }
+    }
+
+
+    var onAddSubmitSuccess = function(data) {
+        onSubmitSuccess($('#exp_add'), data, function() {
+            logger.success('Expense tracked successfully!', function() {
+                update();
+
+                $.each(addsubmitlisteners, function(index, func) {
+                    func();
+                });
+            });
+        });
     };
 
     var onAddSubmitError = function(data) {
@@ -76,20 +81,13 @@ var ExpensesManager = (function() {
 
 
     var onEditSubmitSuccess = function(data) {
-        var $data = $(data).children();
-        var $form = $('#exp_edit');
-
-        $form.children().replaceWith($data);
-        if ($data.find('.wrong').length == 0) {
-            logger.success(
-                    'Expense edited successfully!', function() {
-                        setTimeout(function() {
-                            window.location = "/";
-                        }, 2000);
-                    });
-        }
-
-        initWidgets();
+        onSubmitSuccess($('#exp_edit'), data, function() {
+            logger.success('Expense edited successfully!', function() {
+                setTimeout(function() {
+                    window.location = "/";
+                }, 2000);
+            });
+        });
     };
 
     var onEditSubmitError = function(data) {
@@ -157,7 +155,7 @@ var ExpensesManager = (function() {
                 var $form = $(this);
 
                 $form.ajaxSubmit({
-                    dataType: 'html',
+                    dataType: 'json',
                     url: '/expenses/' + $form.find('#id').val() + '/edit',
                     success: onEditSubmitSuccess,
                     error: onEditSubmitError,

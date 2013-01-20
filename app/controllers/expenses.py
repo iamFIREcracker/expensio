@@ -118,7 +118,12 @@ class ExpensesEditHandler(BaseHandler):
     def POST(self, id):
         attachment = UploadedFile('attachment')
         form = expenses_edit()
-        if form.validates():
+
+        if not form.validates():
+            return jsonify(success=False,
+                    errors=dict((i.name, i.note) for i in form.inputs
+                        if i.note is not None))
+        else:
             url = web.ctx.uploadman.add(attachment) if attachment else None
 
             e = self.current_item()
@@ -136,14 +141,13 @@ class ExpensesEditHandler(BaseHandler):
             e.date = parsers.date_us(form.d.date)
             if attachment:
                 e.attachment = url
-            web.debug(e.attachment)
 
             # Bulk add
             web.ctx.orm.add_all([deleted, e])
+            e = web.ctx.orm.merge(e)
 
-        form.get('attachment').value = None
-        form.get('oldattachment').value = self.current_item().attachment
-        return web.ctx.render.expenses_edit(expenses_edit=form)
+            return jsonify(success=True,
+                    expense=ExpenseWrapper(e, self.current_user().currency))
 
 
 class ExpensesDeleteHandler(BaseHandler):
