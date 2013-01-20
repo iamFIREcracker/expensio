@@ -22,19 +22,17 @@ class Image(form.Input):
         attrs['name'] = self.name
         if self.value is not None:
             attrs['src'] = self.value
-        if self.value is not None:
-            attrs['value'] = self.value
         return '<img %s />' % (attrs, )
 
 class FileBootstrap(form.File):
     def render(self):
         return """
 <div class="fileupload fileupload-new" data-provides="fileupload">
-    <span class="btn btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span>%s</span>
-    <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
-    <div class="fileupload-new thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
-    <div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;"></div>
-</div>""" % super(FileBootstrap, self).render()
+  <div class="input-append">
+    <div class="uneditable-input span3"><i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span></div><span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>%s</span>
+  </div>
+</div>
+""" % super(FileBootstrap, self).render()
 
 
 validcurrency = form.Validator('€, $ ..', parsers.currency)
