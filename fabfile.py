@@ -29,6 +29,21 @@ def vagrant_key():
 
 
 @task
+def vagrant():
+    ''' Use virtual machine settings. '''
+    env.user = 'vagrant'
+    env.hosts = ['127.0.0.1:2222']
+    env.key_filename = vagrant_key()
+
+    env.site_path = '/srv/www/expenses'
+    env.venv_path = '/srv/www/expenses/venv'
+    env.uploads_path = '/srv/www/expenses/static/uploads'
+    env.site_url  = 'http://expenses.matteolandi.net:8080'
+
+    env.skip_repo = True
+
+
+@task
 def dev():
     ''' Use virtual machine settings. '''
     env.user = 'vagrant'
@@ -38,9 +53,7 @@ def dev():
     env.site_path = '/srv/www/expenses'
     env.venv_path = '/srv/www/expenses/venv'
     env.uploads_path = '/srv/www/expenses/static/uploads'
-    env.site_url  = 'http://expenses.matteolandi.net:9090'
-
-    env.skip_repo = True
+    env.site_url  = 'http://expenses.matteolandi.net:8080'
 
 
 
