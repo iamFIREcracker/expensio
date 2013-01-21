@@ -45,9 +45,6 @@
                 labels: {
                     rotation: -45,
                     align: 'right',
-                    style: {
-                        fontSize: '10px',
-                    },
                 },
             },
             yAxis: {
