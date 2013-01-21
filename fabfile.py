@@ -18,7 +18,7 @@ from fabric.colors import red
 from fabric.decorators import task
 
 
-env.repo_url = 'https://iamFIREcracker@bitbucket.org/iamFIREcracker/expenses'
+env.repo_url = 'ssh://hg@bitbucket.org/iamFIREcracker/expenses'
 
 
 def vagrant_key():
