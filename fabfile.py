@@ -221,7 +221,7 @@ def rtag():
 def prerequisites():
     ''' Prepare the server installing essential packages. '''
     run('sudo aptitude -q2 update')
-    run('sudo apt-get -y install mercurial')
+    run('sudo apt-get -y install git mercurial')
 
 
 @task
@@ -251,7 +251,7 @@ def bootstrap():
 def update():
     ''' Update everything related to the app. '''
     if 'skip_repo' not in env:
-        print(cyan("Cloning repo..."))
+        print(cyan("Updating repo..."))
         rupdate()
 
     print(cyan("Applying puppet manifest..."))
