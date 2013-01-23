@@ -161,11 +161,9 @@
             }, this));
 
             if (_.any(days) == false) {
-                console.log("show-help");
                 $chart.hide();
                 $help.show();
             } else {
-                console.log("show-chart");
                 $help.hide();
                 $chart.show();
                 updateChart();
