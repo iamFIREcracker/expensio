@@ -11,15 +11,12 @@
     var latest = null;
 
     var init = function() {
-        $chart.empty();
+        $chart.empty().hide();
         $categories.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
         $help.hide();
         chart = null;
         categories = Object();
         latest = '';
-
-        initChart();
-        $chart.hide(); // It is important to hide the chart here!!!
     };
 
     var initChart = function() {
@@ -85,6 +82,11 @@
         var sortable = Array();
         var catnames = Array();
         var catamounts = Array();
+
+        // Lazy initialization
+        if (chart == null) {
+            initChart(); // Call this when the container is *visible*!
+        }
 
         for (var name in categories)
             sortable.push(name);

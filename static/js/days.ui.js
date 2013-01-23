@@ -11,7 +11,7 @@
     var latest = null;
 
     var init = function() {
-        $chart.empty();
+        $chart.empty().hide();
         $days.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
         $help.hide();
         chart = null;
@@ -21,9 +21,6 @@
         for (var i = 0; i < __daysnumber; i++) {
             days[i] = null;
         }
-
-        initChart();
-        $chart.hide(); // It is important to hide the chart here!!!
     };
 
     var initChart = function() {
@@ -90,6 +87,11 @@
     var updateChart = function() {
         var daynames = Array();
         var dayamounts = Array();
+
+        // Lazy initialization
+        if (chart == null) {
+            initChart(); // Call this when the container is *visible*!
+        }
 
         for (var i in days) {
             var d = days[i];
