@@ -115,11 +115,11 @@ h1 {
     text-shadow: none;
 }
 
-#days {
+#days-chart {
     height: 200px;
 }
 
-#categories {
+#categories-chart {
     height: 300px;
 }
 
@@ -189,7 +189,7 @@ h1 {
 }
 
 
-.exp:first-child {
+.exp:nth-child(1) {
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }

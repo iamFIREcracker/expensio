@@ -1,29 +1,31 @@
 ﻿var CategoriesUI = (function() {
-    var __help = 'Want to know how much did you spent in the current month for each '
-               + 'expense category?  You are looking in the right place!  See the '
-               + 'chart populating as as soon as you track expenses...';
     var __animationtimeout = 200; // milliseconds
 
     var formatter = null;
     var palette = null;
     var $categories = null;
+    var $chart = null;
+    var $help = null;
     var chart = null;
     var categories = null;
     var latest = null;
-    var first = null;
 
     var init = function() {
-        $categories.html('<div class="loading"><img src="/static/images/loading.gif" /></div>')
+        $chart.empty();
+        $categories.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
+        $help.hide();
         chart = null;
         categories = Object();
         latest = '';
-        first = true;
+
+        initChart();
+        $chart.hide(); // It is important to hide the chart here!!!
     };
 
     var initChart = function() {
         chart = new Highcharts.Chart({
             chart: {
-                renderTo: $categories[0].id,
+                renderTo: $chart[0].id,
                 type: 'bar',
                 animation: false,
             },
@@ -80,13 +82,6 @@
     };
 
     var updateChart = function() {
-        /*
-         * Chart lazy initialization.
-         */
-        if (chart == null) {
-            initChart();
-        }
-
         var sortable = Array();
         var catnames = Array();
         var catamounts = Array();
@@ -141,17 +136,13 @@
         return true;
     };
 
-    var showHelp = function() {
-        $categories.hide();
-        $categories.html('<div><p class="help">' + __help + '</p></div>');
-        $categories.fadeIn(__animationtimeout);
-    };
-
     return {
         onReady: function(formatter_, palette_, $categories_) {
             formatter = formatter_;
             palette = palette_;
             $categories = $categories_;
+            $chart = $categories.find('#categories-chart');
+            $help = $categories.find('.alert');
 
             init();
         },
@@ -161,19 +152,24 @@
         },
 
         onNewData: function(data) {
-            var hidehelp = false;
+            var $loading = $categories.find('.loading');
 
-            $.each(data.categories, EachCallbackWrapper(function(i, value, _this) {
-                hidehelp = updateCategory(value) || hidehelp;
-            }, this));
-
-            if (hidehelp) {
-                updateChart();
-            } else if (first) {
-                showHelp();
+            if ($loading.length) {
+                $loading.remove();
             }
 
-            first = false;
+            $.each(data.categories, EachCallbackWrapper(function(i, value, _this) {
+                updateCategory(value);
+            }, this));
+
+            if (_.any(categories) == false) {
+                $chart.hide();
+                $help.show();
+            } else {
+                $help.hide();
+                $chart.show();
+                updateChart();
+            }
         },
 
 

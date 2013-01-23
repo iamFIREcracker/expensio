@@ -80,15 +80,35 @@ Manager.onUpdate(0);
 
 {% block row1_col2 %}
     <h3 class="title mid">Last 30 Days</h3>
-    <div id="days"></div>
+    <div id="days">
+        <div class="alert alert-info" style="display: none">
+            As soon as you start adding expenses, this space will be replaced
+            with a chart showing how much you have spent, on a day by day basis
+            in the last 30 days
+        </div>
+        <div id="days-chart"></div>
+    </div>
 {% endblock %}
 
 {% block row2_col1 %}
     <h3 class="title mid">By Date</h3>
-    <div id="expenses"></div>
+    <div id="expenses">
+        <div class="alert alert-info" style="display: none">
+            All the tracked expenses for the current month will be listed here,
+            one above the other, sorted by date.
+        </div>
+        <div id="expenses-inner"></div>
+    </div>
 {% endblock %}
 
 {% block row2_col2 %}
     <h3 class="title mid">Summary</h3>
-    <div id="categories"></div>
+    <div id="categories">
+        <div class="alert alert-info" style="display: none">
+            Want to know how much did you spent in the current month for each
+            expense category?  You are looking in the right place!  See the
+            chart populating as as soon as you track expenses...
+        </div>
+        <div id="categories-chart"></div>
+    </div>
 {% endblock %}

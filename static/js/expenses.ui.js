@@ -1,25 +1,25 @@
 var ExpensesUI = (function() {
-    var __help = 'All the tracked expenses for the current month will be listed here, '
-               + 'one above the other, sorted by date.';
     var __beforeanimatetimeout = 200;
     var __animationtimeout = 200; // milliseconds
 
     var formatter = null;
     var palette = null;
     var $title = null;
+    var $help = null;
     var $expenses = null;
+    var $inner = null;
     var expenses = null;
     var latest = null;
     var addexpenselisteners = Array();
-    var first = null;
 
 
     var init = function() {
         $title.html("&nbsp");
-        $expenses.html('<div class="loading"><img src="/static/images/loading.gif" /></div>')
+        $inner.empty();
+        $expenses.append('<div class="loading"><img src="/static/images/loading.gif" /></div>')
+        $help.hide();
         expenses = Object();
         latest = '';
-        first = true;
     };
 
     var updateExpense = function(obj) {
@@ -59,7 +59,7 @@ var ExpensesUI = (function() {
         }
 
         if ($expenses.find('.help').length) {
-            $expenses.empty();
+            $inner.empty();
         }
 
         /*
@@ -79,7 +79,7 @@ var ExpensesUI = (function() {
             }
         }
         if (!(newexp.id in expenses)) {
-            $expenses.append(newexp.$elem);
+            $inner.append(newexp.$elem);
             expenses[newexp.id] = newexp;
         }
 
@@ -106,19 +106,14 @@ var ExpensesUI = (function() {
         $title.text(sprintf("Total: %s", formatter.amount(overall, currency)));
     };
 
-    var showHelp = function() {
-        $expenses.hide();
-        $expenses.html(
-                '<div class="alert alert-info">' + __help + '</div>');
-        $expenses.fadeIn(__animationtimeout);
-    }
-
     return {
         onReady: function(formatter_, palette_, $title_, $expenses_) {
             formatter = formatter_;
             palette = palette_;
             $title = $title_;
             $expenses = $expenses_;
+            $inner = $expenses.find('#expenses-inner');
+            $help = $expenses.find('.alert');
 
             init();
         },
@@ -128,21 +123,24 @@ var ExpensesUI = (function() {
         },
 
         onNewData: function(data) {
-            var hidehelp = false;
+            var $loading = $expenses.find('.loading');
 
-            if ($expenses.find('.loading').length) {
-                $expenses.empty();
+            if ($loading.length) {
+                $loading.remove();
             }
 
             $.each(data.expenses, EachCallbackWrapper(function(i, value, _this) {
-                hidehelp = updateExpense(value) || hidehelp;
+                updateExpense(value);
             }, this));
             updateTitle();
 
-            if (!hidehelp && first) {
-                showHelp();
+            if (_.any(expenses) == false) {
+                $inner.hide();
+                $help.show();
+            } else {
+                $help.hide();
+                $inner.show();
             }
-            first = false;
         },
 
         confirmDelete: function(exp) {

@@ -1,34 +1,35 @@
 ﻿var DaysUI = (function() {
-    var __help = 'As soon as you start adding expenses, this space will be replaced ' 
-               + 'with a chart showing how much you have spent, on a day by day basis, ' 
-               + 'in the last 30 days';
     var __animationtimeout = 200; // milliseconds
     var __daysnumber = 30;
 
     var formatter = null;
     var palette = null;
     var $days = null;
+    var $chart = null;
     var chart = null;
     var days = null;
     var latest = null;
-    var first = null;
 
     var init = function() {
-        $days.html('<div class="loading"><img src="/static/images/loading.gif" /></div>')
+        $chart.empty();
+        $days.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
+        $help.hide();
         chart = null;
         days = Object();
         latest = '';
-        first = true;
 
         for (var i = 0; i < __daysnumber; i++) {
             days[i] = null;
         }
+
+        initChart();
+        $chart.hide(); // It is important to hide the chart here!!!
     };
 
     var initChart = function() {
         chart = new Highcharts.Chart({
             chart: {
-                renderTo: $days[0].id,
+                renderTo: $chart[0].id,
                 type: 'column',
                 animation: false,
             },
@@ -87,13 +88,6 @@
     };
 
     var updateChart = function() {
-        /*
-         * Chart lazy initialization.
-         */
-        if (chart == null) {
-            initChart();
-        }
-
         var daynames = Array();
         var dayamounts = Array();
 
@@ -144,35 +138,38 @@
         return true;
     };
 
-    var showHelp = function() {
-        $days.hide();
-        $days.html('<div><p class="help">' + __help + '</p></div>');
-        $days.fadeIn(__animationtimeout);
-    }
-
     return {
         onReady: function(formatter_, palette_, $days_) {
             formatter = formatter_;
             palette = palette_;
             $days = $days_;
+            $chart = $days.find('#days-chart');
+            $help = $days.find('.alert');
 
             init();
         },
 
         onNewData: function(data) {
-            var hidehelp = false;
+            var $loading = $days.find('.loading');
 
-            $.each(data.days, EachCallbackWrapper(function(i, value, _this) {
-                hidehelp = updateDay(value) || hidehelp;
-            }, this));
-
-            if (hidehelp) {
-                updateChart();
-            } else if (first) {
-                showHelp();
+            if ($loading.length) {
+                $loading.remove();
             }
 
-            first = false;
+            $.each(data.days, EachCallbackWrapper(function(i, value, _this) {
+                updateDay(value);
+            }, this));
+
+            if (_.any(days) == false) {
+                console.log("show-help");
+                $chart.hide();
+                $help.show();
+            } else {
+                console.log("show-chart");
+                $help.hide();
+                $chart.show();
+                updateChart();
+            }
         },
 
 
