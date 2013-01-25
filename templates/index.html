@@ -64,7 +64,7 @@ Manager.onUpdate(0);
 {% endblock %}
 
 {% block row1_col1 %}
-    <h3 class="title mid">Track New</h3>
+    <h3 class="center">Track New</h3>
     {% include 'expenses_add.html' %}
 {% endblock %}
 
@@ -72,14 +72,14 @@ Manager.onUpdate(0);
 <div class="span12">
     <button type="button" class="btn btn-link left" id="prev_month">&laquo; Previous Month</button>
     <button type="button" class="btn btn-link right" id="next_month">Next Month &raquo;</button>
-    <h2 class="title mid"><span id="current_month"></span></h2>
-    <div class="title mid"><span id="current_month_overall"></span></div>
+    <h2 class="center"><span id="current_month"></span></h2>
+    <div class="center"><span id="current_month_overall"></span></div>
     <br style="clear: both" />
 </div>
 {% endblock %}
 
 {% block row1_col2 %}
-    <h3 class="title mid">Last 30 Days</h3>
+    <h3 class="center">Last 30 Days</h3>
     <div id="days">
         <div class="alert alert-info" style="display: none">
             As soon as you start adding expenses, this space will be replaced
@@ -91,7 +91,7 @@ Manager.onUpdate(0);
 {% endblock %}
 
 {% block row2_col1 %}
-    <h3 class="title mid">By Date</h3>
+    <h3 class="center">By Date</h3>
     <div id="expenses">
         <div class="alert alert-info" style="display: none">
             All the tracked expenses for the current month will be listed here,
@@ -102,7 +102,7 @@ Manager.onUpdate(0);
 {% endblock %}
 
 {% block row2_col2 %}
-    <h3 class="title mid">Summary</h3>
+    <h3 class="center">Summary</h3>
     <div id="categories">
         <div class="alert alert-info" style="display: none">
             Want to know how much did you spent in the current month for each
