@@ -24,6 +24,7 @@
     };
 
     var initChart = function() {
+        var fontFamily = $('body').css('fontFamily');
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: $chart[0].id,
@@ -43,6 +44,9 @@
                 labels: {
                     rotation: -45,
                     align: 'right',
+                    style: {
+                        fontFamily: fontFamily,
+                    },
                 },
             },
             yAxis: {
@@ -51,7 +55,7 @@
                     text: null,
                 },
                 labels: {
-                    overflow: 'justify'
+                    overflow: 'justify',
                 }
             },
             tooltip: {
@@ -62,7 +66,10 @@
                     var d = this.point.obj;
                     return sprintf(
                         "Amount: %s", formatter.amount(d.amount, d.currency))
-                }
+                },
+                style: {
+                    fontFamily: fontFamily,
+                },
             },
             plotOptions: {
                 bar: {
