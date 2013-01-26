@@ -10,14 +10,12 @@ var Manager = (function() {
     var curmonth = null;
 
     return {
-        onReady: function(logger_, refreshtimeout_) {
-            var date = new Date();
-
+        onReady: function(logger_, date_, refreshtimeout_) {
             logger = logger_;
             refreshtimeout = refreshtimeout_;
 
-            curyear = date.getYear() + 1900; // Fix relative to 1900
-            curmonth = date.getMonth() + 1; // 1-indexed months
+            curyear = date_.year();
+            curmonth = date_.month();
 
             $('#prev_month').click(function(_this) {
                 return function() {
