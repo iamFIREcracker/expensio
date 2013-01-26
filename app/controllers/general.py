@@ -18,8 +18,8 @@ class MainHandler(BaseHandler):
         else:
             # Validate `year` and `month`, if specified
             today = datetime.today()
-            year = year if year is not None else today.year
-            month = month if month is not None else today.month
+            year = int(year) if year is not None else today.year
+            month = int(month) if month is not None else today.month
             parsers.period(formatters.period(datetime(year, month, 1)))
 
             form = expenses_add()
