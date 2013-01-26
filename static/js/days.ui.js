@@ -18,9 +18,7 @@
         days = Object();
         latest = '';
 
-        for (var i = 0; i < __daysnumber; i++) {
-            days[i] = null;
-        }
+        _.map(_.range(__daysnumber), function(i) { days[i] = null; });
     };
 
     var initChart = function() {
@@ -91,29 +89,32 @@
         });
     };
 
-    var updateChart = function() {
-        var daynames = Array();
-        var dayamounts = Array();
+    var preparePoint = function(day) {
+        if (day == null)
+            return 0.0;
+        else
+            return {
+                y: day.amount,
+                color: palette.chart(),
+                obj: day
+            };
+    }
 
+    var prepareLabel = function(day) {
+        if (day == null)
+            return "";
+        else
+            return formatter.date(day.date);
+    }
+
+    var updateChart = function() {
         // Lazy initialization
         if (chart == null) {
             initChart(); // Call this when the container is *visible*!
         }
 
-        for (var i in days) {
-            var d = days[i];
-
-            if (d == null) {
-                daynames.push("");
-                dayamounts.push(0.0);
-            } else {
-                daynames.push(formatter.date(d.date));
-                dayamounts.push({y: d.amount, color: palette.chart(), obj: d});
-            }
-        }
-
-        chart.series[0].setData(dayamounts);
-        chart.xAxis[0].setCategories(daynames);
+        chart.series[0].setData(_.map(days, preparePoint));
+        chart.xAxis[0].setCategories(_.map(days, prepareLabel));
     }
 
     var updateDay = function(obj) {
@@ -165,9 +166,7 @@
                 $loading.remove();
             }
 
-            $.each(data.days, EachCallbackWrapper(function(i, value, _this) {
-                updateDay(value);
-            }, this));
+            _.map(data.days, updateDay);
 
             if (_.any(days) == false) {
                 $chart.hide();
