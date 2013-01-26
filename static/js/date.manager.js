@@ -48,6 +48,14 @@ var DateManager = (function() {
                     '%d-%02d-%02d', year(today), month(today) + 1, day(today));
         },
 
+        year: function() {
+            return curyear;
+        },
+
+        month: function() {
+            return curmonth;
+        },
+
         period: function() {
             return sprintf(
                     '%d-%02d', year(today), month(today) + 1);
