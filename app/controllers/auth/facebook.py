@@ -44,24 +44,24 @@ class LoginFacebookAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
-        raise web.seeother(
+        raise web.found(
                 '/users/%s/edit' % user.id if not self.current_user() else '/')
 
 
 class LoginFacebookHandler():
     def GET(self):
         if 'facebook_access_token' in web.ctx.session:
-            raise web.seeother(web.ctx.path_url + '/authorized')
+            raise web.found(web.ctx.path_url + '/authorized')
 
         data = web.input(error=None, code=None)
 
         if data.error:
             # The client denied permissions to the app
             # XXX flash some message here
-            raise web.seeother('/')
+            raise web.found('/')
 
         if data.code is None:
-            raise web.seeother(AUTHORIZE_URL + '?' + urllib.urlencode(
+            raise web.found(AUTHORIZE_URL + '?' + urllib.urlencode(
                 dict(client_id=FACEBOOK_APP_ID, redirect_uri=web.ctx.path_url,
                     response_type='code', scope='')))
 
@@ -75,8 +75,8 @@ class LoginFacebookHandler():
         if resp['status'] != '200':
             # XXX flash some message here
             web.debug(content)
-            raise web.seeother('/')
+            raise web.found('/')
 
         access_token = urlparse.parse_qs(content)
         web.ctx.session['facebook_access_token'] = access_token
-        raise web.seeother(web.ctx.path_url + '/authorized')
+        raise web.found(web.ctx.path_url + '/authorized')
