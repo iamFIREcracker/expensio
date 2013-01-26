@@ -23,8 +23,9 @@
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: $chart[0].id,
-                type: 'bar',
-                animation: false,
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
             },
             title: {
                 text: null,
@@ -32,79 +33,53 @@
             subtitle: {
                 text: null,
             },
-            xAxis: {
-                title: {
-                    text: null
+            tooltip: {
+                formatter: function() {
+                    var c = this.point.obj;
+                    return sprintf(
+                        "%s", formatter.amount(c.amount, c.currency))
                 },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: null,
-                },
-                labels: {
-                    overflow: 'justify'
-                },
-            },
-            tooltip: {
-                enabled: false,
-            },
+            },
             plotOptions: {
-                bar: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
                     dataLabels: {
-                        enabled: true,
-                        formatter: function() {
-                            var c = this.point.obj;
-                            return sprintf(
-                                "%s", formatter.amount(c.amount, c.currency))
-                        }
-
-                    }
+                        enabled: false,
+                    },
+                    showInLegend: true,
                 },
-                series: {
-                    pointWidth: 20,
-                },
-            },
-            legend: {
-                enabled: false
             },
             credits: {
-                enabled: false
+                enabled: false,
             },
             series: [{
-                name: 'Amount',
+                type: 'pie',
+                name: 'Amount spent',
                 data: [],
             }]
         });
     };
 
-    var updateChart = function() {
-        var sortable = Array();
-        var catnames = Array();
-        var catamounts = Array();
+    var preparePoint = function(category) {
+        return {
+            name: category.name,
+            y: category.amount,
+            color: palette.background(category.name),
+            obj: category,
+        };
+    }
 
+    var updateChart = function() {
         // Lazy initialization
         if (chart == null) {
             initChart(); // Call this when the container is *visible*!
         }
 
-        for (var name in categories)
-            sortable.push(name);
-
-        sortable.sort();
-        for (var i in sortable) {
-            var c = categories[sortable[i]]
-
-            catnames.push(c.name);
-            catamounts.push({
-                y: c.amount,
-                color: palette.background(c.name),
-                obj: c,
-            });
-        }
-
-        chart.series[0].setData(catamounts);
-        chart.xAxis[0].setCategories(catnames);
+        chart.series[0].setData(
+            _.sortBy(
+                _.map(categories, preparePoint),
+                function(e) { return -e.y; }));
     }
 
     var updateCategory = function(obj) {
