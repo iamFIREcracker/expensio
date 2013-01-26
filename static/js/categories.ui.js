@@ -135,9 +135,7 @@
                 $loading.remove();
             }
 
-            $.each(data.categories, EachCallbackWrapper(function(i, value, _this) {
-                updateCategory(value);
-            }, this));
+            _.map(data.categories, updateCategory);
 
             if (_.any(categories) == false) {
                 $chart.hide();
