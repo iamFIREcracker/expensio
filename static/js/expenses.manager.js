@@ -10,7 +10,11 @@ var ExpensesManager = (function() {
         if ($date.length) {
             $date.datepicker({
                 autoclose: true,
-            });   
+            }).on('show', function(ev) {
+                if (this.value == '') {
+                    $(this).datepicker('update', 'today');
+                }
+            });
         }
     };
 
