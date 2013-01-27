@@ -86,14 +86,16 @@ def load_sqla(dbsession):
         web.ctx.orm = dbsession
 
         try:
-            return handler()
+            res = handler()
         except web.HTTPError:
             web.ctx.orm.commit()
             raise
         except:
             web.ctx.orm.rollback()
             raise
-        finally:
+        else:
             web.ctx.orm.commit()
+            return res
+        finally:
             web.ctx.orm.remove()
     return inner
