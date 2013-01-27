@@ -8,8 +8,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from app import config
 
 engine = create_engine(config.DATABASE_URL, convert_unicode=True, echo=True)
-db_session = scoped_session(sessionmaker(#autocommit=Fale,
-                                         #autoflush=Fale,
+db_session = scoped_session(sessionmaker(#autocommit=False,
+                                         #autoflush=False,
                                          bind=engine))
 Base = declarative_base()
 Base.query = db_session.query_property()
