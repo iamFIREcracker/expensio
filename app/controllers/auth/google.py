@@ -23,6 +23,9 @@ ACCESS_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
 
 class LoginGoogleAuthorizedHandler(BaseHandler):
     def GET(self):
+        if 'google_access_token' not in web.ctx.session:
+            raise web.found('/')
+
         access_token = web.ctx.session.pop('google_access_token')
         profile = json.load(
                 urllib.urlopen(
@@ -30,11 +33,13 @@ class LoginGoogleAuthorizedHandler(BaseHandler):
                     urllib.urlencode(dict(
                         access_token=access_token['access_token']))))
 
+        newuser = False
         user = self.current_user()
         if not user:
             user = web.ctx.orm.query(User).filter_by(
                     google_id=profile['id']).first()
             if not user:
+                newuser = True
                 user = User(name=profile["name"])
         user.google_id = profile['id']
 
@@ -46,7 +51,7 @@ class LoginGoogleAuthorizedHandler(BaseHandler):
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
         raise web.found(
-                '/users/%s/edit' % user.id if not self.current_user() else '/')
+                '/users/%s/edit' % user.id if newuser else '/')
 
 
 class LoginGoogleHandler():

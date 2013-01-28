@@ -23,6 +23,9 @@ ACCESS_TOKEN_URL = 'https://graph.facebook.com/oauth/access_token'
 
 class LoginFacebookAuthorizedHandler(BaseHandler):
     def GET(self):
+        if 'facebook_access_token' not in web.ctx.session:
+            raise web.found('/')
+
         access_token = web.ctx.session.pop('facebook_access_token')
         profile = json.load(
                 urllib.urlopen(
@@ -30,10 +33,13 @@ class LoginFacebookAuthorizedHandler(BaseHandler):
                     urllib.urlencode(dict(
                         access_token=access_token['access_token'][-1]))))
 
+        newuser = False
         user = self.current_user()
         if not user:
-            user = web.ctx.orm.query(User).filter_by(facebook_id=profile['id']).first()
+            user = web.ctx.orm.query(User).filter_by(
+                    facebook_id=profile['id']).first()
             if not user:
+                newuser = True
                 user = User(name=profile["name"])
         user.facebook_id = profile['id']
 
@@ -45,7 +51,7 @@ class LoginFacebookAuthorizedHandler(BaseHandler):
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
         raise web.found(
-                '/users/%s/edit' % user.id if not self.current_user() else '/')
+                '/users/%s/edit' % user.id if newuser else '/')
 
 
 class LoginFacebookHandler():

@@ -27,12 +27,14 @@ class LoginTwitterAuthorizedHandler(BaseHandler):
             raise web.found('/')
 
         access_token = web.ctx.session.pop('twitter_access_token')
+
+        newuser = False
         user = self.current_user()
         if not user:
             user = web.ctx.orm.query(User).filter_by(
                     twitter_id=access_token['user_id'][-1]).first()
-
             if not user:
+                newuser = True
                 user = User(name=access_token['screen_name'][-1])
         user.twitter_id = access_token['user_id'][-1]
 
@@ -44,7 +46,7 @@ class LoginTwitterAuthorizedHandler(BaseHandler):
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
         raise web.found(
-                '/users/%s/edit' % user.id if not self.current_user() else '/')
+                '/users/%s/edit' % user.id if newuser else '/')
 
 
 class LoginTwitterHandler():
