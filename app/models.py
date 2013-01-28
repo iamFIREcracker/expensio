@@ -45,6 +45,7 @@ class User(Base):
     google_id = Column(String)
     facebook_id = Column(String)
     twitter_id = Column(String)
+    deleted = Column(Boolean, default=False, nullable=False)
 
     def __repr__(self):
         return '<User %r>' % (self.name)
