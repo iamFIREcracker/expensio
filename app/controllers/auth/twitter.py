@@ -32,7 +32,8 @@ class LoginTwitterAuthorizedHandler(BaseHandler):
         user = self.current_user()
         if not user:
             user = web.ctx.orm.query(User).filter_by(
-                    twitter_id=access_token['user_id'][-1]).first()
+                    twitter_id=access_token['user_id'][-1],
+                    deleted=False).first()
             if not user:
                 newuser = True
                 user = User(name=access_token['screen_name'][-1])

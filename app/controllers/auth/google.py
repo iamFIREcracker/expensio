@@ -37,7 +37,7 @@ class LoginGoogleAuthorizedHandler(BaseHandler):
         user = self.current_user()
         if not user:
             user = web.ctx.orm.query(User).filter_by(
-                    google_id=profile['id']).first()
+                    google_id=profile['id'], deleted=False).first()
             if not user:
                 newuser = True
                 user = User(name=profile["name"])
