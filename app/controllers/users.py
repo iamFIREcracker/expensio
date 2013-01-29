@@ -47,6 +47,8 @@ class UsersDeleteHandler(BaseHandler):
     @protected
     @me
     def POST(self, id):
-        web.ctx.orm.delete(self.current_user())
+        u = self.current_user()
+        u.deleted = True
+        web.ctx.orm.add(u)
         logout()
         return jsonify(success=True)
