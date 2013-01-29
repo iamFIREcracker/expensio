@@ -3,6 +3,7 @@
 
 import calendar
 import json
+import time
 from datetime import date
 from datetime import datetime
 
@@ -28,6 +29,10 @@ def jsonify(*args, **kwargs):
     web.header('Content-Type', 'application/json')
 
     return json.dumps(dict(*args, **kwargs), cls=AlchemyEncoder)
+
+
+def logout():
+    web.setcookie('user', '', expires=time.time() - 86400)
 
 
 def parsedateparams():

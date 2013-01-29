@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import time
 from datetime import datetime
 
 import web
 
 import app.formatters as formatters
 import app.parsers as parsers
+from app.utils import logout
 from app.utils import BaseHandler
 from app.forms import expenses_add
 
@@ -31,5 +31,5 @@ class MainHandler(BaseHandler):
 
 class LogoutHandler():
     def GET(self):
-        web.setcookie('user', '', expires=time.time() - 86400)
+        logout()
         raise web.found('/')
