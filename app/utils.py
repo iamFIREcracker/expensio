@@ -113,7 +113,7 @@ class BaseHandler(object):
             user_id = web.cookies().get('user')
             if user_id:
                 self._current_user = (web.ctx.orm.query(User)
-                        .filter_by(id=user_id).first())
+                        .filter_by(id=user_id, deleted=False).first())
 
         return self._current_user
 
