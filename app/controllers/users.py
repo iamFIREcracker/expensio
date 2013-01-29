@@ -4,6 +4,9 @@
 import web
 
 from app.forms import users_edit
+from app.forms import users_delete
+from app.utils import jsonify
+from app.utils import logout
 from app.utils import me
 from app.utils import protected
 from app.utils import BaseHandler
@@ -29,3 +32,21 @@ class UsersEditHandler(BaseHandler):
             u.currency = form.d.currency
             web.ctx.orm.add(u)
         return web.ctx.render.users_edit(users_edit=form)
+
+
+class UsersDeleteHandler(BaseHandler):
+    @protected
+    @me
+    def GET(self, id):
+        form = users_delete()
+        user = self.current_user()
+        form.fill(id=user.id)
+        return web.ctx.render.users_delete_complete(user=self.current_user(),
+                users_delete=form)
+
+    @protected
+    @me
+    def POST(self, id):
+        web.ctx.orm.delete(self.current_user())
+        logout()
+        return jsonify(success=True)

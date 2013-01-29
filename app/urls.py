@@ -19,6 +19,7 @@ from .controllers.expenses import ExpensesImportHandler
 from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
 from .controllers.users import UsersEditHandler
+from .controllers.users import UsersDeleteHandler
 
 
 URLS = (
@@ -36,6 +37,7 @@ URLS = (
     '/logout', LogoutHandler,
 
     '/users/(.+)/edit', UsersEditHandler,
+    '/users/(.+)/delete', UsersDeleteHandler,
 
     '/days.json', DaysHandler,
 
