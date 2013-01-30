@@ -10,7 +10,7 @@ from .controllers.auth import LoginTwitterAuthorizedHandler
 from .controllers.auth import LoginFakeHandler
 from .controllers.auth import LoginFakeAuthorizedHandler
 from .controllers.stats import StatsCategoriesHandler
-from .controllers.days import DaysHandler
+from .controllers.stats import StatsDaysHandler
 from .controllers.expenses import ExpensesHandler
 from .controllers.expenses import ExpensesAddHandler
 from .controllers.expenses import ExpensesEditHandler
@@ -39,8 +39,7 @@ URLS = (
     '/users/(.+)/edit', UsersEditHandler,
     '/users/(.+)/delete', UsersDeleteHandler,
 
-    '/days.json', DaysHandler,
-
+    '/stats/days', StatsDaysHandler,
     '/stats/categories', StatsCategoriesHandler,
 
     '/expenses', ExpensesHandler,

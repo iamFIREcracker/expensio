@@ -31,7 +31,7 @@ var DaysManager = (function() {
             }
 
             $.ajax({
-                url: '/days.json',
+                url: '/stats/days',
                 type: 'GET',
                 dataType: 'json',
                 data: data,
