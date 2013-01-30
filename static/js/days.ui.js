@@ -166,7 +166,7 @@
                 $loading.remove();
             }
 
-            _.map(data.days, updateDay);
+            _.map(data.stats.days, updateDay);
 
             if (_.any(days) == false) {
                 $chart.hide();

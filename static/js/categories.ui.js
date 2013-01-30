@@ -135,7 +135,7 @@
                 $loading.remove();
             }
 
-            _.map(data.categories, updateCategory);
+            _.map(data.stats.categories, updateCategory);
 
             if (_.any(categories) == false) {
                 $chart.hide();
