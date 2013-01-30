@@ -9,7 +9,7 @@ from .controllers.auth import LoginTwitterHandler
 from .controllers.auth import LoginTwitterAuthorizedHandler
 from .controllers.auth import LoginFakeHandler
 from .controllers.auth import LoginFakeAuthorizedHandler
-from .controllers.categories import CategoriesHandler
+from .controllers.stats import StatsCategoriesHandler
 from .controllers.days import DaysHandler
 from .controllers.expenses import ExpensesHandler
 from .controllers.expenses import ExpensesAddHandler
@@ -41,7 +41,7 @@ URLS = (
 
     '/days.json', DaysHandler,
 
-    '/categories.json', CategoriesHandler,
+    '/stats/categories', StatsCategoriesHandler,
 
     '/expenses', ExpensesHandler,
     '/expenses/add', ExpensesAddHandler,

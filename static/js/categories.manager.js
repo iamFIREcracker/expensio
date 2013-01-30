@@ -35,7 +35,7 @@ var CategoriesManager = (function() {
             }
 
             $.ajax({
-                url: '/categories.json',
+                url: '/stats/categories',
                 type: 'GET',
                 dataType: 'json',
                 data: data,
