@@ -1,0 +1,8 @@
+{% macro render_field(field) %}
+    <div class="control-group">
+        <label class="control-label" for="{{ field.id }}">{{ field.description }}</label>
+        <div class="controls">
+            {{ field.render() }}
+        </div>
+    </div>
+{% endmacro %}

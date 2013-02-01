@@ -33,8 +33,8 @@ class FileBootstrap(form.File):
 
 
 validcurrency = form.Validator('€, $ ..', parsers.currency)
-validamount = form.Validator('1000.00', parsers.amount)
-validdate = form.Validator('mm/dd/yyyy', parsers.date_us)
+validamount = form.Validator('Invalid (e.g. 1.00)', parsers.amount)
+validdate = form.Validator('Invalid (e.g. 1/22/2013)', parsers.date_us)
 validimportdata = form.Validator('Invalid format', parsers.expenses)
 
 
@@ -57,13 +57,11 @@ users_delete = form.Form(
 
 
 expenses_add = form.Form(
-        form.Textbox('amount', validamount, description='Amount'),
-        form.Textbox('category', form.notnull, description='Category',
-            id='category'),
-        form.Textbox('note', description='Note'),
-        form.Textbox('date', validdate, description='Date'),
+        form.Textbox('amount', validamount, description='Amount', placeholder='1.00'),
+        form.Textbox('category', form.notnull, description='Category', placeholder='bar'),
+        form.Textbox('note', description='Note', placeholder='coffe with mom'),
+        form.Textbox('date', validdate, description='Date', placeholder='1/22/2013'),
         FileBootstrap('attachment', description='Attachment'),
-        form.Button('Add', type='submit', class_="btn btn-primary"),
     )
 
 expenses_edit = form.Form(

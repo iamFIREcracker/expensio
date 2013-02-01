@@ -53,11 +53,14 @@ var ExpensesManager = (function() {
 
 
     var onSubmitSuccess = function($form, data, onSuccessCallback) {
-        $form.find('.wrong').remove();
+        $form.find('.error').removeClass('error');
+        $form.find('.help-inline').remove();
         if (!data.success) {
             for (name in data.errors) {
-                $form.find('#' + name).parent().append(
-                        '<strong class="wrong">' + data.errors[name] + '</strong>');
+                $field = $form.find('#' + name);
+                $field.parent().parent().addClass('error');
+                $field.parent().append(
+                        '<span class="help-inline">' + data.errors[name] + '</span>');
             }
         } else {
             $form.clearForm();
