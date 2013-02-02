@@ -1,20 +1,15 @@
 var UsersManager = (function() {
     var logger = null;
 
-
     var onEditSubmitSuccess = function(data) {
-        var $data = $(data).children();
-        var $form = $('#user_edit');
-
-        $form.children().replaceWith($data);
-        if ($data.find('.wrong').length == 0) {
+        OnSubmitSuccess($('#user_edit'), data, function() {
             logger.success(
                     'User edited successfully!', function() {
                         setTimeout(function() {
                             window.location = '/';
                         }, 2000);
                     });
-        }
+        });
     };
 
     var onEditSubmitError = function(data) {
@@ -44,7 +39,7 @@ var UsersManager = (function() {
                 var $form = $(this);
 
                 $form.ajaxSubmit({
-                    dataType: 'html',
+                    dataType: 'json',
                     url: '/users/' + $form.find('#id').val() + '/edit',
                     success: onEditSubmitSuccess,
                     error: onEditSubmitError,

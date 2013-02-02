@@ -40,13 +40,10 @@ validimportdata = form.Validator('Invalid format', parsers.expenses)
 
 users_edit = form.Form(
         form.Hidden('id'),
-        form.Textbox('name', form.notnull, description='Name'),
+        form.Textbox('name', form.notnull, description='Name',
+            placeholder="John Smith"),
         form.Dropdown('currency', zip(utils.currencies(), utils.currencies()),
-            description='Currency'),
-        #form.Button('google_connect', html='Google Connect'),
-        #form.Button('facebook_connect', html='Facebook Connect'),
-        #form.Button('twitter_connect', html='Twitter Connect'),
-        form.Button('Done', type='submit', class_="btn btn-primary"),
+            validcurrency, description='Currency', placeholder="€"),
     )
 
 
