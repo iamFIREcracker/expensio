@@ -1,3 +1,11 @@
-<form id="exp_edit" enctype="multipart/form-data" method="post">
-    {{ expenses_edit.render() }}
+{% from "_formhelpers.html" import render_field %}
+<form id="exp_edit" class="form-horizontal" enctype="multipart/form-data" method="post">
+    {% for input in expenses_edit.inputs %}
+        {{ render_field(input) }}
+    {% endfor %}
+    <div class="control-group">
+        <div class="controls">
+        <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </div>
 </form>

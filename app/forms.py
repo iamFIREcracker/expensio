@@ -12,8 +12,8 @@ class ImageBootstrap(form.Input):
         attrs = self.attrs.copy()
         attrs['name'] = self.name
         attrs['src'] = "http://www.placehold.it/210x150/EFEFEF/AAAAAA&text=no+image"
-        attrs['class'] = "img-rounded img-polaroid"
-        attrs['width'] = 210
+        attrs['class'] = "img-rounded"
+        attrs['width'] = 220
         attrs['height'] = 150
         if self.value is not None:
             attrs['src'] = self.value
@@ -73,7 +73,6 @@ expenses_edit = form.Form(
         form.Textbox('date', validdate, description='Date'),
         FileBootstrap('attachment', description='Attachment'),
         ImageBootstrap('oldattachment', description='Old Attachment'),
-        form.Button('Done', type='submit', class_="btn btn-primary"),
     )
 
 expenses_import = form.Form(
