@@ -2,14 +2,6 @@
     text-align: center;
 }
 
-.left {
-    float: left;
-}
-
-.right {
-    float: right;
-}
-
 .loading {
     margin-top: 30px;
     text-align: center;
