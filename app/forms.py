@@ -52,7 +52,6 @@ users_edit = form.Form(
 
 users_delete = form.Form(
         form.Hidden('id'),
-        form.Button('Continue', class_="btn btn-danger")
     )
 
 
