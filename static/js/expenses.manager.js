@@ -52,26 +52,8 @@ var ExpensesManager = (function() {
     };
 
 
-    var onSubmitSuccess = function($form, data, onSuccessCallback) {
-        $form.find('.error').removeClass('error');
-        $form.find('.help-inline').remove();
-        if (!data.success) {
-            for (name in data.errors) {
-                $field = $form.find('#' + name);
-                $field.parent().parent().addClass('error');
-                $field.parent().append(
-                        '<span class="help-inline">' + data.errors[name] + '</span>');
-            }
-        } else {
-            $form.clearForm();
-
-            onSuccessCallback();
-        }
-    }
-
-
     var onAddSubmitSuccess = function(data) {
-        onSubmitSuccess($('#exp_add'), data, function() {
+        OnSubmitSuccess($('#exp_add'), data, function() {
             logger.success('Expense tracked successfully!', function() {
                 update();
 
@@ -88,7 +70,7 @@ var ExpensesManager = (function() {
 
 
     var onEditSubmitSuccess = function(data) {
-        onSubmitSuccess($('#exp_edit'), data, function() {
+        OnSubmitSuccess($('#exp_edit'), data, function() {
             logger.success('Expense edited successfully!', function() {
                 setTimeout(function() {
                     window.location = "/";
@@ -118,7 +100,7 @@ var ExpensesManager = (function() {
 
 
     var onImportSubmitSuccess = function(data) {
-        onSubmitSuccess($('#exp_import'), data, function() {
+        OnSubmitSuccess($('#exp_import'), data, function() {
             logger.success('Expenses imported successfully!', function() {
                 setTimeout(function() {
                     window.location = "/";
