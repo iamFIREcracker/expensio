@@ -1,1 +1,2 @@
 static/bootstrap-datepicker = [git]git://github.com/eternicode/bootstrap-datepicker.git
+static/jquery-form = [git]git://github.com/malsup/form.git
