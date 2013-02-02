@@ -1,19 +1,5 @@
-body {
-    color: #111;
-}
-
-/* Bootstrap override */
-.input-append, .input-prepend {
-    margin-bottom: 9px;
-}
-
 .center {
     text-align: center;
-}
-
-.wrong {
-    color: #888;
-    font-size: 75%;
 }
 
 .left {
@@ -35,37 +21,34 @@ body {
     text-align: center;
 }
 
-.row {
-    margin-top: 30px;
-}
-
-#exp_add table, #user_edit table {
-    margin: auto;
-}
-
-#exp_import table, #exp_import textarea {
-    width: 100%;
-}
-
-#current_month_overall {
-    color: #888;
-    text-shadow: none;
-}
-
-#days-chart {
-    height: 200px;
-}
-
-#categories-chart {
-    height: 350px;
-}
-
 .palette {
     padding-left: 4px !important;
     padding-right: 4px !important;
 
     background-color: #ddd;
 }
+
+.row {
+    margin-top: 30px;
+}
+
+
+#current_month_overall {
+    color: #888;
+    text-shadow: none;
+}
+
+
+#days-chart {
+    height: 200px;
+}
+
+
+#categories-chart {
+    height: 350px;
+}
+
+
 
 .exp {
     width: 100%;
@@ -98,7 +81,7 @@ body {
 
 .exp_note {
     margin-left: 2%;
-    color: #555;
+    color: #888;
     display: inline-block;
 }
 
@@ -120,11 +103,6 @@ body {
     display: inline-block;
 }
 
-.exp img {
-    vertical-align: middle;
-}
-
-
 .exp:nth-child(1) {
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
@@ -132,11 +110,6 @@ body {
 
 .exp + .exp {
     border-bottom: 1px solid #ddd;
-}
-
-.exp a, .exp a:visited, .exp a:hover, .exp a:active {
-    color: #111;
-    text-decoration: none;
 }
 
 .exp:hover {

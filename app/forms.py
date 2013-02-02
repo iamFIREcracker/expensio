@@ -72,11 +72,7 @@ expenses_edit = form.Form(
     )
 
 expenses_import = form.Form(
-        form.Textarea('data', validimportdata, description='', rows=24),
-        form.Button('Import', type='sumbit', class_="btn btn-primary")
+        form.Textarea('data', validimportdata, description='',
+            class_="span6", rows=24,
+            placeholder="1/22/2013	bar	1.00	coffe with mom")
     )
-
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()

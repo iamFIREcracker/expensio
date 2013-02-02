@@ -1,3 +1,11 @@
-<form id="exp_import" method="POST" accept-charset='utf-8' onsubmit="return false;">
-    {{ expenses_import.render() }}
+{% from "_formhelpers.html" import render_field %}
+<form id="exp_import" class="form" enctype="multipart/form-data" method="post">
+    {% for input in expenses_import.inputs %}
+        {{ render_field(input) }}
+    {% endfor %}
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-primary pull-right">Import</button>
+        </div>
+    </div>
 </form>
