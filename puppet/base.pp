@@ -21,3 +21,8 @@ supervisor::app {'gunicorn':
   appname => $appname,
   user => $user,
 }
+
+supervisor::celery {'gunicorn':
+  appname => $appname,
+  user => $user,
+}
