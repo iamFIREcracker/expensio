@@ -202,13 +202,16 @@ class ExpensesExportHandler(BaseHandler):
 
     @protected
     def POST(self, format):
-        if 'tsv' not in format:
-            raise web.forbidden()
-
-        task_id = tasks.ExpensesExportTSVTask.delay(
-                web.ctx.exportman, self.current_user()).task_id
-        return jsonify(success=True,
-                goto='/expenses/export/tsv/status/%s' % task_id)
+        form = expenses_export()
+        if not form.validates():
+            return jsonify(success=False,
+                    errors=dict((i.name, i.note) for i in form.inputs
+                        if i.note is not None))
+        else:
+            task_id = tasks.ExpensesExportTSVTask.delay(
+                    web.ctx.exportman, self.current_user()).task_id
+            return jsonify(success=True,
+                    goto='/expenses/export/tsv/status/%s' % task_id)
 
 
 class ExpensesExportTSVStatusHandler(BaseHandler):
