@@ -71,6 +71,9 @@ expenses_edit = form.Form(
         ImageBootstrap('oldattachment', description='Old Attachment'),
     )
 
+expenses_export = form.Form(
+    )
+
 expenses_import = form.Form(
         form.Textarea('data', validimportdata, description='',
             class_="span6", rows=24,
