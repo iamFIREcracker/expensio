@@ -7,8 +7,8 @@ from celery import Celery
 
 
 celery = Celery('app.celery',
-                broker='sqla+sqlite:///celery.db',
-                backend='database',
+                broker='amqp://expenses:expenses@localhost:5672//',
+                backend='amqp',
                 include=('app.tasks',))
 
 celery.conf.update(
