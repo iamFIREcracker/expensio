@@ -13,9 +13,12 @@ ExpensesManager.onReady(Logger);
     <h3 class="center">Export expenses</h3>
     <div>
         <div class="alert alert-info">
-            While adding expenses, one per line, be careful to use
-            <em>tabular</em> separators and to specify, in the following order,
-            the date, amount, category and a note for the expense.
+            Choose in which format to download all the expenses tracked so
+            far.<br/>
+            
+            Note that the following operation could take up to several seconds
+            to complete and when done, the file will be downloaded
+            automatically.
         </div>
     </div>
     {% include 'expenses_export.html' %}
