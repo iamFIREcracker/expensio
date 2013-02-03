@@ -114,41 +114,36 @@ var ExpensesManager = (function() {
     };
 
 
-    var onExportCheckStatusSuccess = function($btn) {
-        return function(data) {
-            if (!data.success) {
-                setTimeout(function() {
-                    exportCheckStatus($btn, data.goto);
-                }, 1000);
-            } else {
-                $btn.parent().find('img').remove();
-                window.location.href = data.goto;
-            }
-        };
+    var onExportCheckStatusSuccess = function(data) {
+        if (!data.success) {
+            setTimeout(function() {
+                exportCheckStatus(data.goto);
+            }, 1000);
+        } else {
+            $('#exp_export').find('img').remove();
+            window.location.href = data.goto;
+        }
     };
 
     var onExportCheckStatusError = function(data) {
         logger.error('Something went wrong while contacting the server');
     };
 
-    var exportCheckStatus = function($btn, url) {
-        $img = $btn.parent().find('img');
-        if (!$img.length) {
-            $btn.parent().append('<img src="/static/images/loading.gif" />');
-        }
-
+    var exportCheckStatus = function(url) {
         $.ajax({
             dataType: 'json',
             url: url,
-            success: onExportCheckStatusSuccess($btn),
+            success: onExportCheckStatusSuccess,
             error: onExportCheckStatusError,
         });
     };
 
-    var onExportSubmitSuccess = function($btn) {
-        return function(data) {
-            exportCheckStatus($btn, data.goto);
-        };
+    var onExportSubmitSuccess = function(data) {
+        OnSubmitSuccess($('#exp_import'), data, function() {
+            logger.success('Waiting for the server to generate export file...', function() {
+                exportCheckStatus(data.goto);
+            });
+        });
     };
 
     var onExportSubmitError = function(data) {
@@ -203,14 +198,13 @@ var ExpensesManager = (function() {
                 return false;
             })
 
-            $('#exp_export button[name="tsv"]').click(function() {
-                var $btn = $(this);
-                var $form = $btn.parent().parent().parent(); // ugly as hell!!!
+            $('#exp_export').submit(function() {
+                var $form = $(this);
 
                 $form.ajaxSubmit({
                     dataType: 'json',
-                    url: '/expenses/export/tsv',
-                    success: onExportSubmitSuccess($btn),
+                    url: '/expenses/export/' + $form.find('select').val(),
+                    success: onExportSubmitSuccess,
                     error: onExportSubmitError,
                 });
 
