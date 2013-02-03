@@ -12,5 +12,6 @@ fontconfig/*
 gunicorn.log
 sessions/*
 static/uploads/*
+static/exports/*
 tags
 venv/*
