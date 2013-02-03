@@ -33,6 +33,7 @@ class FileBootstrap(form.File):
 
 
 validcurrency = form.Validator('€, $ ..', parsers.currency)
+validformat = form.Validator('tsv, csv ..', parsers.format)
 validamount = form.Validator('Invalid (e.g. 1.00)', parsers.amount)
 validdate = form.Validator('Invalid (e.g. 1/22/2013)', parsers.date_us)
 validimportdata = form.Validator('Invalid format', parsers.expenses)
@@ -43,7 +44,7 @@ users_edit = form.Form(
         form.Textbox('name', form.notnull, description='Name',
             placeholder="John Smith"),
         form.Dropdown('currency', zip(utils.currencies(), utils.currencies()),
-            validcurrency, description='Currency', placeholder="€"),
+            validcurrency, description='Currency'),
     )
 
 
@@ -72,6 +73,8 @@ expenses_edit = form.Form(
     )
 
 expenses_export = form.Form(
+        form.Dropdown('Format', zip(utils.formats(), utils.formats()),
+            validformat, description='Format'),
     )
 
 expenses_import = form.Form(
