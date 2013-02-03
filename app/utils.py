@@ -20,9 +20,17 @@ from models import User
 """List of all the currencies available"""
 _CURRENCIES = [u'€', u'$']
 
+_FORMATS = ['tsv']
+
+
 def currencies():
     """Return a list of all the supported currencies."""
     return _CURRENCIES
+
+
+def formats():
+    """Return a list of all the supported formats."""
+    return _FORMATS
 
 
 def jsonify(*args, **kwargs):
