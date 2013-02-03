@@ -2,6 +2,7 @@ include mercurial
 include mysql
 include nginx
 include python
+include rabbitmq
 include supervisor
 
 exec { "add_${user}_to_group_www-data":
