@@ -285,6 +285,8 @@ def restart():
     print(cyan("Restarting gunicorn..."))
     cmd("sudo supervisorctl restart expenses")
 
+    print(cyan("Restarting celery..."))
+    cmd("sudo supervisorctl restart celery")
 
 @task
 def pull_uploads():
