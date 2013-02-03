@@ -114,6 +114,43 @@ var ExpensesManager = (function() {
     };
 
 
+    var onExportCheckStatusSuccess = function(data) {
+        if (!data.success) {
+            setTimeout(function() {
+                exportCheckStatus(data.goto);
+            }, 1000);
+        } else {
+            $('#exp_export').find('img').remove();
+            window.location.href = data.goto;
+        }
+    };
+
+    var onExportCheckStatusError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+    var exportCheckStatus = function(url) {
+        $.ajax({
+            dataType: 'json',
+            url: url,
+            success: onExportCheckStatusSuccess,
+            error: onExportCheckStatusError,
+        });
+    };
+
+    var onExportSubmitSuccess = function(data) {
+        OnSubmitSuccess($('#exp_import'), data, function() {
+            logger.success('Waiting for the server to generate export file...', function() {
+                exportCheckStatus(data.goto);
+            });
+        });
+    };
+
+    var onExportSubmitError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+
     return {
         onReady: function(logger_, date_, ui_) {
             logger = logger_;
@@ -159,7 +196,21 @@ var ExpensesManager = (function() {
                 });
 
                 return false;
+            })
+
+            $('#exp_export').submit(function() {
+                var $form = $(this);
+
+                $form.ajaxSubmit({
+                    dataType: 'json',
+                    url: '/expenses/export',
+                    success: onExportSubmitSuccess,
+                    error: onExportSubmitError,
+                });
+
+                return false;
             });
+
         },
 
         onMonthChange: function(year, month) {

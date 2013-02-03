@@ -14,6 +14,8 @@ from .controllers.expenses import ExpensesAddHandler
 from .controllers.expenses import ExpensesDeleteHandler
 from .controllers.expenses import ExpensesEditHandler
 from .controllers.expenses import ExpensesHandler
+from .controllers.expenses import ExpensesExportHandler
+from .controllers.expenses import ExpensesExportTSVStatusHandler
 from .controllers.expenses import ExpensesImportHandler
 from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
@@ -48,6 +50,8 @@ URLS = (
     '/expenses/(.+)/edit', ExpensesEditHandler,
     '/expenses/(.+)/delete', ExpensesDeleteHandler,
     '/expenses/import', ExpensesImportHandler,
+    '/expenses/export', ExpensesExportHandler,
+    '/expenses/export/tsv/status/(.+)', ExpensesExportTSVStatusHandler,
 
     '/categories/names', CategoriesNamesHandler,
 )

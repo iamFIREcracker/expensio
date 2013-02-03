@@ -2,6 +2,7 @@ include mercurial
 include mysql
 include nginx
 include python
+include rabbitmq
 include supervisor
 
 exec { "add_${user}_to_group_www-data":
@@ -18,6 +19,11 @@ nginx::site {'gunicorn':
 
 supervisor::app {'gunicorn':
   config => 'gunicorn',
+  appname => $appname,
+  user => $user,
+}
+
+supervisor::celery {'gunicorn':
   appname => $appname,
   user => $user,
 }

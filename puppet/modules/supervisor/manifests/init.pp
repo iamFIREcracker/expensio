@@ -19,3 +19,15 @@ define supervisor::app( $config, $appname, $user ) {
   }
 }
 
+define supervisor::celery( $appname, $user ) {
+  file { "/etc/supervisor/conf.d/celery.conf":
+    ensure  => present,
+    owner   => root,
+    group   => root,
+    mode    => '644',
+    content => template("supervisor/celery.tpl"),
+    require => Package[supervisor],
+    notify  => Service[supervisor],
+  }
+}
+

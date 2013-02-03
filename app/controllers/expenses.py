@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import celery
 import web
 
 import app.formatters as formatters
 import app.parsers as parsers
+import app.tasks as tasks
 from app.forms import expenses_add
 from app.forms import expenses_edit
+from app.forms import expenses_export
 from app.forms import expenses_import
 from app.models import Expense
 from app.upload import UploadedFile
@@ -188,3 +191,37 @@ class ExpensesImportHandler(BaseHandler):
             return jsonify(success=True,
                     expenses=[ExpenseWrapper(e, self.current_user().currency)
                             for e in expenses])
+
+
+class ExpensesExportHandler(BaseHandler):
+
+    @protected
+    def GET(self):
+        return web.ctx.render.expenses_export_complete(user=self.current_user(),
+                expenses_export=expenses_export())
+
+    @protected
+    def POST(self):
+        form = expenses_export()
+        if not form.validates():
+            return jsonify(success=False,
+                    errors=dict((i.name, i.note) for i in form.inputs
+                        if i.note is not None))
+        else:
+            task_id = tasks.ExpensesExportTSVTask.delay(
+                    web.ctx.exportman, self.current_user()).task_id
+            return jsonify(success=True,
+                    goto='/expenses/export/tsv/status/%s' % task_id)
+
+
+class ExpensesExportTSVStatusHandler(BaseHandler):
+
+    @protected
+    def GET(self, task_id):
+        try:
+            retval = (tasks.ExpensesExportTSVTask.AsyncResult(task_id)
+                    .get(timeout=1.0))
+        except celery.exceptions.TimeoutError:
+            return jsonify(success=False, goto=web.ctx.path)
+        else:
+            return jsonify(success=True, goto=retval)

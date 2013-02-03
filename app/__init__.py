@@ -14,6 +14,7 @@ from .tools.app_processor import load_path_url
 from .tools.app_processor import load_render
 from .tools.app_processor import load_session
 from .tools.app_processor import load_sqla
+from .export import ExportManager
 from .upload import UploadManager
 from .urls import URLS
 
@@ -33,4 +34,6 @@ app.add_processor(web.loadhook(load_render(workingdir)))
 app.add_processor(web.loadhook(load_session(session)))
 app.add_processor(web.loadhook(load_keyvalue('uploadman',
                                              UploadManager(workingdir))))
+app.add_processor(web.loadhook(load_keyvalue('exportman',
+                                             ExportManager(workingdir))))
 app.add_processor(load_sqla(db_session))
