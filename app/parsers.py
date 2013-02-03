@@ -18,6 +18,12 @@ def currency(value):
     else:
         return value
 
+def format(value):
+    if value not in utils.formats():
+        raise ValueError()
+    else:
+        return value
+
 def expenses(data):
     expenses = []
 
