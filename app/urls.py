@@ -52,7 +52,6 @@ URLS = (
     '/expenses/import', ExpensesImportHandler,
     '/expenses/export', ExpensesExportHandler,
     '/expenses/export/tsv/status/(.+)', ExpensesExportTSVStatusHandler,
-    '/expenses/export/(.+)', ExpensesExportHandler,
 
     '/categories/names', CategoriesNamesHandler,
 )

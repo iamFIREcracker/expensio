@@ -203,7 +203,7 @@ var ExpensesManager = (function() {
 
                 $form.ajaxSubmit({
                     dataType: 'json',
-                    url: '/expenses/export/' + $form.find('select').val(),
+                    url: '/expenses/export',
                     success: onExportSubmitSuccess,
                     error: onExportSubmitError,
                 });

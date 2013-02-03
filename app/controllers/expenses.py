@@ -201,7 +201,7 @@ class ExpensesExportHandler(BaseHandler):
                 expenses_export=expenses_export())
 
     @protected
-    def POST(self, format):
+    def POST(self):
         form = expenses_export()
         if not form.validates():
             return jsonify(success=False,
