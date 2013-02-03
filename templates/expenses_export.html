@@ -1,0 +1,11 @@
+{% from "_formhelpers.html" import render_field %}
+<form id="exp_export" class="form" enctype="multipart/form-data" method="post">
+    {% for input in expenses_export.inputs %}
+        {{ render_field(input) }}
+    {% endfor %}
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-primary" name="tsv">TSV</button>
+        </div>
+    </div>
+</form>

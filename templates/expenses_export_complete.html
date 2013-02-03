@@ -1,0 +1,22 @@
+{% extends 'base_2row_2col.html' %}
+
+{% block js %}
+<script src="/static/js/formatter.js"></script>
+<script src="/static/js/expenses.manager.js"></script>
+{% endblock %}
+
+{% block jsready %}
+ExpensesManager.onReady(Logger);
+{% endblock %}
+
+{% block row1_col1 %}
+    <h3 class="center">Export expenses</h3>
+    <div>
+        <div class="alert alert-info">
+            While adding expenses, one per line, be careful to use
+            <em>tabular</em> separators and to specify, in the following order,
+            the date, amount, category and a note for the expense.
+        </div>
+    </div>
+    {% include 'expenses_export.html' %}
+{% endblock %}
