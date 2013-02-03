@@ -12,7 +12,7 @@ class ExpenseTSVWrapper(object):
         self.e = e
 
     def __repr__(self):
-        date = formatters.date(self.e.date)
+        date = formatters.date_us(self.e.date)
         category = self.e.category
         amount = "{:,.2f}".format(self.e.amount)
         note = self.e.note
