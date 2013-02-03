@@ -9,7 +9,6 @@ cscope*
 dist/*
 expenses.egg*
 fontconfig/*
-gunicorn.log
 sessions/*
 static/uploads/*
 static/exports/*
