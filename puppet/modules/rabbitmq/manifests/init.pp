@@ -7,4 +7,3 @@ class rabbitmq {
     require => Package['rabbitmq-server']
   }
 }
-
