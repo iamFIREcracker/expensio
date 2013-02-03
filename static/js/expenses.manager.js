@@ -114,6 +114,48 @@ var ExpensesManager = (function() {
     };
 
 
+    var onExportCheckStatusSuccess = function($btn) {
+        return function(data) {
+            if (!data.success) {
+                setTimeout(function() {
+                    exportCheckStatus($btn, data.goto);
+                }, 1000);
+            } else {
+                $btn.parent().find('img').remove();
+                window.location.href = data.goto;
+            }
+        };
+    };
+
+    var onExportCheckStatusError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+    var exportCheckStatus = function($btn, url) {
+        $img = $btn.parent().find('img');
+        if (!$img.length) {
+            $btn.parent().append('<img src="/static/images/loading.gif" />');
+        }
+
+        $.ajax({
+            dataType: 'json',
+            url: url,
+            success: onExportCheckStatusSuccess($btn),
+            error: onExportCheckStatusError,
+        });
+    };
+
+    var onExportSubmitSuccess = function($btn) {
+        return function(data) {
+            exportCheckStatus($btn, data.goto);
+        };
+    };
+
+    var onExportSubmitError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+
     return {
         onReady: function(logger_, date_, ui_) {
             logger = logger_;
@@ -159,7 +201,22 @@ var ExpensesManager = (function() {
                 });
 
                 return false;
+            })
+
+            $('#exp_export button[name="tsv"]').click(function() {
+                var $btn = $(this);
+                var $form = $btn.parent().parent().parent(); // ugly as hell!!!
+
+                $form.ajaxSubmit({
+                    dataType: 'json',
+                    url: '/expenses/export/tsv',
+                    success: onExportSubmitSuccess($btn),
+                    error: onExportSubmitError,
+                });
+
+                return false;
             });
+
         },
 
         onMonthChange: function(year, month) {
