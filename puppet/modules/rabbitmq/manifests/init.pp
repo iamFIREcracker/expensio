@@ -7,3 +7,17 @@ class rabbitmq {
     require => Package['rabbitmq-server']
   }
 }
+
+define rabbitmq::connection( $user, $password, $vhost ) {
+  exec { 'rabbitmq-user':
+    require => Package[ 'rabbitmq-server' ],
+    command => "rabbitmqctl add_user $user $password",
+    unless  => "rabbitmqctl list_users | grep $user",
+  } -> 
+  exec { 'rabbitmq-user-permissions':
+    command => "rabbitmqctl set_permissions -p $vhost '.*' '.*' '.*'",
+    unless  => "rabbitmqctl list_user_permissions $user"
+    notify => Service[ 'rabbitmq-server' ],
+  }
+}
+

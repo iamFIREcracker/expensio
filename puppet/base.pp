@@ -27,3 +27,9 @@ supervisor::celery {'gunicorn':
   appname => $appname,
   user => $user,
 }
+
+rabbitmq::connection {'rabbitmq':
+  user => 'expenses',
+  password => 'expenses',
+  vhost => '/',
+}
