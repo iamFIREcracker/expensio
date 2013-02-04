@@ -20,13 +20,12 @@ nginx::site {'gunicorn':
   appname => $appname,
 }
 
-supervisor::app {'gunicorn':
-  config => 'gunicorn',
+supervisor::app {'supervisor-gunicorn':
   appname => $appname,
   user => $user,
 }
 
-supervisor::celery {'gunicorn':
+supervisor::celery {'supervisor-celery':
   appname => $appname,
   user => $user,
 }

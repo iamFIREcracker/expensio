@@ -7,13 +7,13 @@ class supervisor {
   }
 }
 
-define supervisor::app( $config, $appname, $user ) {
-  file { "/etc/supervisor/conf.d/${appname}.conf":
+define supervisor::app( $appname, $user ) {
+  file { "/etc/supervisor/conf.d/gunicorn.conf":
     ensure  => present,
     owner   => root,
     group   => root,
     mode    => '644',
-    content => template("supervisor/${config}.tpl"),
+    content => template("supervisor/gunicorn.tpl"),
     require => Package[supervisor],
     notify  => Service[supervisor],
   }
