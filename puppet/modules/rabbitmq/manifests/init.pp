@@ -16,7 +16,7 @@ define rabbitmq::connection( $user, $password, $vhost ) {
   } -> 
   exec { 'rabbitmq-user-permissions':
     command => "rabbitmqctl set_permissions -p $vhost '.*' '.*' '.*'",
-    unless  => "rabbitmqctl list_user_permissions $user"
+    unless  => "rabbitmqctl list_user_permissions $user",
     notify => Service[ 'rabbitmq-server' ],
   }
 }
