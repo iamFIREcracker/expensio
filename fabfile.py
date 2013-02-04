@@ -282,11 +282,14 @@ def update():
 @task
 def restart():
     ''' Restart the app.  Usable from other commands or from the CLI.'''
-    print(cyan("Restarting gunicorn..."))
-    cmd("sudo supervisorctl restart expenses")
+    print(cyan("Restarting rabbitmq..."))
+    sdo("service rabbitmq-server restart")
 
     print(cyan("Restarting celery..."))
     cmd("sudo supervisorctl restart celery")
+
+    print(cyan("Restarting gunicorn..."))
+    cmd("sudo supervisorctl restart expenses")
 
 @task
 def pull_uploads():
