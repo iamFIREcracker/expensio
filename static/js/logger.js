@@ -21,6 +21,10 @@ var Logger = (function() {
             message('success', msg, next);
         },
 
+        warn: function(msg, next) {
+            message('warn', msg, next);
+        },
+
         error: function(msg, next) {
             message('error', msg, next);
         },
