@@ -1,9 +1,9 @@
 var Logger = (function() {
-    var $data = null;
+    var $pageAlert = null;
     var fadeouttimeout = null;
 
     var message = function(kind, msg, next) {
-        $data.html(msg).addClass('alert-' + kind)
+        $pageAlert.html(msg).addClass('alert-' + kind)
             .fadeIn().delay(fadeouttimeout).fadeOut('slow').removeClass('alert' + kind);
 
         if ((typeof next != undefined) && (next != null)) {
@@ -11,9 +11,10 @@ var Logger = (function() {
         }
     };
 
+
     return {
-        onReady: function($data_, fadeouttimeout_) {
-            $data = $data_;
+        onReady: function($pageAlert_, fadeouttimeout_) {
+            $pageAlert = $pageAlert_;
             fadeouttimeout = fadeouttimeout_;
         },
 
@@ -21,12 +22,9 @@ var Logger = (function() {
             message('success', msg, next);
         },
 
-        warn: function(msg, next) {
-            message('warn', msg, next);
-        },
-
         error: function(msg, next) {
             message('error', msg, next);
+
         },
     }
 })();
