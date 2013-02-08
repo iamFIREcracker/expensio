@@ -25,41 +25,41 @@
 {% endblock %}
 
 {% block jsready %}
-DateManager.onReady($('#current_month'), {{ year }}, {{ month }});
-HistoryManager.onReady(DateManager);
-PaletteManager.onReady();
-UsersManager.onReady(Logger);
-DaysUI.onReady(Formatter, PaletteManager, $('#days'));
-DaysManager.onReady(Logger, DateManager, DaysUI);
-ExpensesUI.onReady(
-        Formatter, PaletteManager, $('#current_month_overall'),
-        $('#expenses'));
-ExpensesManager.onReady(Logger, DateManager, ExpensesUI);
-CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
-CategoriesManager.onReady(Logger, DateManager, CategoriesUI);
-Manager.onReady(Logger, DateManager, 30000);
+PaletteManager.onReady(Logger, function() {
+    DateManager.onReady($('#current_month'), {{ year }}, {{ month }});
+    HistoryManager.onReady(DateManager);
+    UsersManager.onReady(Logger);
+    DaysUI.onReady(Formatter, PaletteManager, $('#days'));
+    DaysManager.onReady(Logger, DateManager, DaysUI);
+    ExpensesUI.onReady(
+            Formatter, PaletteManager, $('#current_month_overall'),
+            $('#expenses'));
+    ExpensesManager.onReady(Logger, DateManager, ExpensesUI);
+    CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
+    CategoriesManager.onReady(Logger, DateManager, CategoriesUI);
+    Manager.onReady(Logger, DateManager, 30000);
 
-Manager.update(function() {
-    DaysManager.onUpdate();
-    ExpensesManager.onUpdate();
-    CategoriesManager.onUpdate();
-});
-Manager.monthChange(function(year, month) {
-    DateManager.onMonthChange(year, month);
-    HistoryManager.onMonthChange(year, month);
-    PaletteManager.onMonthChange(year, month);
-    ExpensesManager.onMonthChange(year, month);
-    CategoriesManager.onMonthChange(year, month);
-});
+    Manager.update(function() {
+        DaysManager.onUpdate();
+        ExpensesManager.onUpdate();
+        CategoriesManager.onUpdate();
+    });
+    Manager.monthChange(function(year, month) {
+        DateManager.onMonthChange(year, month);
+        HistoryManager.onMonthChange(year, month);
+        ExpensesManager.onMonthChange(year, month);
+        CategoriesManager.onMonthChange(year, month);
+    });
 
-ExpensesManager.addSubmit(function() {
-    DaysManager.onUpdate();
-    CategoriesManager.onUpdate();
-})
-ExpensesUI.addExpense(function(exp) {
-    ExpensesManager.onAddExpense(exp);
-})
-Manager.onUpdate(0);
+    ExpensesManager.addSubmit(function() {
+        DaysManager.onUpdate();
+        CategoriesManager.onUpdate();
+    })
+    ExpensesUI.addExpense(function(exp) {
+        ExpensesManager.onAddExpense(exp);
+    })
+    Manager.onUpdate(0);
+});
 {% endblock %}
 
 {% block row1_col1 %}
