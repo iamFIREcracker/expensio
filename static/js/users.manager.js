@@ -5,9 +5,7 @@ var UsersManager = (function() {
         OnSubmitSuccess($('#user_edit'), data, function() {
             logger.success(
                     'User edited successfully!', function() {
-                        setTimeout(function() {
-                            window.location = '/';
-                        }, 2000);
+                        window.location = '/';
                     });
         });
     };
@@ -20,9 +18,7 @@ var UsersManager = (function() {
     var onDeleteSubmitSuccess = function(data) {
         logger.success(
                 'Account successfully deactivated .. bye byeeee!', function() {
-                    setTimeout(function() {
-                        window.location = '/';
-                    }, 2000);
+                    window.location = '/';
                 });
     };
 

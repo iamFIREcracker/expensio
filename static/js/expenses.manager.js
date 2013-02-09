@@ -72,9 +72,7 @@ var ExpensesManager = (function() {
     var onEditSubmitSuccess = function(data) {
         OnSubmitSuccess($('#exp_edit'), data, function() {
             logger.success('Expense edited successfully!', function() {
-                setTimeout(function() {
-                    window.location = "/";
-                }, 2000);
+                window.location = "/";
             });
         });
     };
@@ -102,9 +100,7 @@ var ExpensesManager = (function() {
     var onImportSubmitSuccess = function(data) {
         OnSubmitSuccess($('#exp_import'), data, function() {
             logger.success('Expenses imported successfully!', function() {
-                setTimeout(function() {
-                    window.location = "/";
-                }, 2000);
+                window.location = "/";
             });
         });
     };
