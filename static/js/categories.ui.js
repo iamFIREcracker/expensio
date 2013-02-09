@@ -19,7 +19,7 @@
         latest = '';
     };
 
-    var initChart = function() {
+    var initChart = function(data) {
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: $chart[0].id,
@@ -57,7 +57,7 @@
             series: [{
                 type: 'pie',
                 name: 'Amount spent',
-                data: [],
+                data: data
             }]
         });
     };
@@ -69,19 +69,19 @@
             color: palette.background(category.name),
             obj: category,
         };
-    }
+    };
 
     var updateChart = function() {
-        // Lazy initialization
-        if (chart == null) {
-            initChart(); // Call this when the container is *visible*!
-        }
+        var data = _.sortBy(
+                _.map(categories, preparePoint), function(e) { return -e.y; });
 
-        chart.series[0].setData(
-            _.sortBy(
-                _.map(categories, preparePoint),
-                function(e) { return -e.y; }));
-    }
+        // Lazy initialization
+        if (chart === null) {
+            initChart(data); // Call this when the container is *visible*!
+        } else {
+            chart.series[0].setData(data);
+        }
+    };
 
     var updateCategory = function(obj) {
         var prev = categories[obj.name];
