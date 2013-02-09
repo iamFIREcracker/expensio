@@ -37,7 +37,8 @@
                 formatter: function() {
                     var c = this.point.obj;
                     return sprintf(
-                        "%s", formatter.amount(c.amount, c.currency))
+                        "<strong>%s</strong>: %s",
+                        c.name, formatter.amount(c.amount, c.currency));
                 },
             },
             plotOptions: {
