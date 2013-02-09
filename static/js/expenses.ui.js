@@ -129,9 +129,7 @@ var ExpensesUI = (function() {
                 $loading.remove();
             }
 
-            $.each(data.expenses, EachCallbackWrapper(function(i, value, _this) {
-                updateExpense(value);
-            }, this));
+            _.map(data.expenses, updateExpense);
             updateTitle();
 
             if (_.any(expenses) == false) {

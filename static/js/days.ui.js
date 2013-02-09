@@ -21,7 +21,7 @@
         _.map(_.range(__daysnumber), function(i) { days[i] = null; });
     };
 
-    var initChart = function() {
+    var initChart = function(data, categories) {
         var fontFamily = $('body').css('fontFamily');
         chart = new Highcharts.Chart({
             chart: {
@@ -36,6 +36,7 @@
                 text: null,
             },
             xAxis: {
+                categories: categories,
                 title: {
                     text: null
                 },
@@ -84,37 +85,43 @@
             },
             series: [{
                 name: 'Amount',
-                data: [],
-            }]
+                data: data,
+            }],
         });
     };
 
     var preparePoint = function(day) {
-        if (day == null)
+        if (day === null) {
             return 0.0;
-        else
-            return {
-                y: day.amount,
-                color: palette.chart(),
-                obj: day
-            };
-    }
-
-    var prepareLabel = function(day) {
-        if (day == null)
-            return "";
-        else
-            return formatter.date(day.date);
-    }
-
-    var updateChart = function() {
-        // Lazy initialization
-        if (chart == null) {
-            initChart(); // Call this when the container is *visible*!
         }
 
-        chart.series[0].setData(_.map(days, preparePoint));
-        chart.xAxis[0].setCategories(_.map(days, prepareLabel));
+        return {
+            y: day.amount,
+            color: palette.chart(),
+            obj: day
+        };
+    };
+
+    var prepareLabel = function(day) {
+        if (day === null) {
+            return "";
+        }
+
+        return formatter.date(day.date);
+    };
+
+    var updateChart = function() {
+        var data = _.map(days, preparePoint);
+        var categories = _.map(days, prepareLabel);
+
+        // Lazy initialization
+        if (chart == null) {
+            initChart(data, categories); // Call this when the container is *visible*!
+        } else {
+            chart.series[0].setData(data);
+            chart.xAxis[0].setCategories(categories);
+        }
+
     }
 
     var updateDay = function(obj) {
