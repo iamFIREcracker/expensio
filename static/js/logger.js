@@ -1,13 +1,39 @@
 var Logger = (function() {
     var $pageAlert = null;
     var fadeouttimeout = null;
+    var tid = null;
+    var queue = [];
 
     var message = function(kind, msg, next) {
         $pageAlert.html(msg).addClass('alert-' + kind)
-            .fadeIn().delay(fadeouttimeout).fadeOut('slow').removeClass('alert' + kind);
+            .fadeIn().delay(fadeouttimeout).fadeOut('slow', function () {
+                $(this).removeClass('alert' + kind);
 
-        if ((typeof next != undefined) && (next != null)) {
-            next();
+                if (next !== undefined) {
+                    next();
+                }
+
+                reschedule();
+            });
+    };
+
+    var reschedule = function() {
+        tid = null;
+
+        if (queue.length) {
+            var item = queue.pop(0);
+
+            enqueue(item.kind, item.msg, item.next);
+        }
+    };
+
+    var enqueue = function(kind, msg, next) {
+        if (tid === null) {
+            tid = setTimeout(function() {
+                message(kind, msg, next);
+            });
+        } else {
+            queue.push({ kind: kind, msg: msg, next: next });
         }
     };
 
@@ -19,16 +45,15 @@ var Logger = (function() {
         },
 
         success: function(msg, next) {
-            message('success', msg, next);
+            enqueue('success', msg, next);
         },
 
         warn: function(msg, next) {
-            message('warn', msg, next);
+            enqueue('warn', msg, next);
         },
 
         error: function(msg, next) {
-            message('error', msg, next);
-
-        },
-    }
-})();
+            enqueue('error', msg, next);
+        }
+    };
+}());

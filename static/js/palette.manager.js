@@ -1,4 +1,6 @@
 var PaletteManager = (function() {
+    var __help = '<h4>Reloading the page!</h4>'
+               + 'A new category has been added to the system';
     var logger = null;
     var onReadySuccess = null;
 
@@ -14,6 +16,7 @@ var PaletteManager = (function() {
         {bg: 'violet',  fg: '#ffe',},
     ];
     var mapping = null;
+    var warnTriggered = false;
 
     var init = function() {
         mapping = Object();
@@ -52,13 +55,13 @@ var PaletteManager = (function() {
             if (key in mapping)
                 return 1 + (mapping[key] % (palette.length - 1));
             else {
-                var msg = '<h4>Reloading the page!</h4>'
-                        + 'A new category has been added to the system';
-                logger.warn(msg, function() {
-                    setTimeout(function() {
+                if (!warnTriggered) {
+                    warnTriggered = true;
+
+                    logger.warn(__help, function() {
                         location.reload();
-                    }, 2000);
-                });
+                    });
+                }
                 return 0;
             }
         },
