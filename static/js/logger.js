@@ -7,7 +7,7 @@ var Logger = (function() {
     var message = function(kind, msg, next) {
         $pageAlert.html(msg).addClass('alert-' + kind)
             .fadeIn().delay(fadeouttimeout).fadeOut('slow', function () {
-                $(this).removeClass('alert' + kind);
+                $(this).removeClass('alert-' + kind);
 
                 if (next !== undefined) {
                     next();
