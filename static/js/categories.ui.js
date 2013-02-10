@@ -62,24 +62,77 @@
         });
     };
 
-    var preparePoint = function(category) {
+    var sortByDecreasingAmount = function(obj) {
+        return -obj.amount;
+    };
+
+    var preparePoint = function(indexCategoryArray) {
+        var index = indexCategoryArray[0];
+        var category = indexCategoryArray[1];
+
         return {
             name: category.name,
+            //legendIndex: index,
             y: category.amount,
             color: palette.background(category.name),
             obj: category,
         };
     };
 
+    var prepareData = function(categories) {
+        return (
+            _.map(
+                _.zip(_.range(1, _.size(categories) + 1), _.values(categories)),
+                preparePoint));
+    };
+
+    var addPoint = function(_) {
+        chart.series[0].addPoint(0);
+    };
+
+    var removePoint = function(_) {
+        chart.series[0].data[0].remove();
+    };
+
+    var updatePoint = function(indexPointArray) {
+        var i = indexPointArray[0];
+        var point = indexPointArray[1];
+
+        chart.series[0].data[i].update(point);
+    };
+
     var updateChart = function() {
-        var data = _.sortBy(
-                _.map(categories, preparePoint), function(e) { return -e.y; });
+        var categoriesSortedByAmount =
+            _.sortBy(categories, sortByDecreasingAmount);
+        var data = prepareData(categoriesSortedByAmount);
 
         // Lazy initialization
         if (chart === null) {
             initChart(data); // Call this when the container is *visible*!
         } else {
+            // Refresh the legend
+            //chart.series[0].options.showInLegend = false;
+            //chart.series[0].legendItem = null;
+            //chart.legend.destroyItem(chart.series[0]);
+            //chart.legend.render();
+
+            var pointsDifference = data.length - chart.series[0].data.length;
+
+            // Update the length of the series dataset
+            if (pointsDifference > 0) {
+                _.times(pointsDifference, addPoint);
+            } else if (pointsDifference < 0) {
+                _.times(-pointsDifference, removePoint);
+            }
+
+            // Update each point
+            //_.map(_.zip(_.range(data.length), data), updatePoint);
             chart.series[0].setData(data);
+
+
+            //charts.series[0].options.showInLegend = true;
+            //chart.legend.renderItem(chart.series[0]);
+            //chart.legend.render();
         }
     };
 
