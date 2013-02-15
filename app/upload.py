@@ -6,8 +6,6 @@ import uuid
 
 import web
 
-from config import UPLOAD_DIR
-
 
 class UploadedFile(object):
 
@@ -30,14 +28,15 @@ class UploadedFile(object):
 
 class UploadManager(object):
 
-    def __init__(self, wdir):
+    def __init__(self, ddir, wdir):
+        self._ddir = ddir
         self._wdir = wdir
 
     def add(self, uploaded):
         _, extension = os.path.splitext(uploaded.filename)
 
         filename = '{0}{1}'.format(uuid.uuid4(), extension)
-        relativepath = os.path.join(UPLOAD_DIR, filename)
+        relativepath = os.path.join(self._ddir, filename)
         absolutepath = os.path.join(self._wdir, relativepath)
 
         with open(absolutepath, 'wb') as f:

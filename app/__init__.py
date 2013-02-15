@@ -33,7 +33,8 @@ app.add_processor(web.loadhook(load_path_url))
 app.add_processor(web.loadhook(load_render(workingdir)))
 app.add_processor(web.loadhook(load_session(session)))
 app.add_processor(web.loadhook(load_keyvalue('uploadman',
-                                             UploadManager(workingdir))))
+                                             UploadManager(config.UPLOAD_DIR,
+                                                           workingdir))))
 app.add_processor(web.loadhook(load_keyvalue('exportman',
                                              ExportManager(workingdir))))
 app.add_processor(load_sqla(db_session))
