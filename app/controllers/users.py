@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import celery
 import web
 
+import app.tasks as tasks
+from app.forms import users_avatar
 from app.forms import users_edit
 from app.forms import users_delete
+from app.upload import UploadedFile
 from app.utils import jsonify
 from app.utils import logout
 from app.utils import me
@@ -20,6 +24,48 @@ class UserWrapper(object):
     def __init__(self, u):
         self.u = u
 
+
+class UsersAvatarUploadChange(BaseHandler):
+
+    @protected
+    @me
+    def POST(self, id):
+        avatar = UploadedFile('avatar')
+        form = users_avatar()
+        
+        if not form.validates():
+            return jsonify(success=False,
+                    errors=dict((i.name, i.note) for i in form.inputs
+                        if i.note is not None))
+        else:
+            task_id = tasks.UsersAvatarChangeTask.delay(
+                    avatar, web.ctx.exportman, self.current_user()).task_id
+            return jsonify(success=True,
+                    goto='/users/avatar/change/status/%s' % task_id)
+
+
+class UsersAvatarUploadChangeStatusHandler(BaseHandler):
+
+    @protected
+    def GET(self, task_id):
+        try:
+            retval = (tasks.UsersAvatarUploadTask.AsyncResult(task_id)
+                    .get(timeout=1.0))
+        except celery.exceptions.TimeoutError:
+            return jsonify(success=False, goto=web.ctx.path)
+        else:
+            return jsonify(success=True, goto=retval)
+
+
+class UsersAvatarUploadRemove(BaseHandler):
+    @protected
+    @me
+    def POST(self, id):
+        u = self.current_user()
+        u.avatar = None
+        web.ctx.orm.add(u)
+        u = web.ctx.orm.merge(u)
+        return jsonify(success=True, user=UserWrapper(u))
 
 
 class UsersEditHandler(BaseHandler):
