@@ -34,4 +34,10 @@ def ExpensesExportTSVTask(exportman, user):
 
 @celery.task
 def UsersAvatarUploadTask(avatar, avatarman, user):
-    pass
+    # Do image processing here
+    # ...
+
+    url = avatarman.add(avatar) if avatar else None
+    user.avatar = db_session.add(user)
+    user = db_session.merge(user)
+    return url
