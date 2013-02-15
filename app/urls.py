@@ -21,6 +21,9 @@ from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
 from .controllers.stats import StatsCategoriesHandler
 from .controllers.stats import StatsDaysHandler
+from .controllers.users import UsersAvatarUploadChange
+from .controllers.users import UsersAvatarUploadChangeStatusHandler
+from .controllers.users import UsersAvatarUploadRemove
 from .controllers.users import UsersDeleteHandler
 from .controllers.users import UsersEditHandler
 
@@ -40,6 +43,9 @@ URLS = (
     '/logout', LogoutHandler,
 
     '/users/(.+)/edit', UsersEditHandler,
+    '/users/(.+)/avatar/change', UsersAvatarUploadChange,
+    '/users/(.+)/avatar/change/status/(.+)', UsersAvatarUploadChangeStatusHandler,
+    '/users/(.+)/avatar/remove', UsersAvatarUploadRemove,
     '/users/(.+)/delete', UsersDeleteHandler,
 
     '/stats/days', StatsDaysHandler,
