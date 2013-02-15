@@ -17,7 +17,6 @@ class UploadedFile(object):
         self.delegate = getattr(data, name)
 
     def __nonzero__(self):
-        web.debug(self.delegate != '')
         return self.delegate != ''
 
     @property
