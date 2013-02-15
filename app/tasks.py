@@ -30,3 +30,8 @@ def ExpensesExportTSVTask(exportman, user):
                 .all())
     return exportman.add(user.id, filename,
             (ExpenseTSVWrapper(e) for e in expenses))
+
+
+@celery.task
+def UsersAvatarUploadTask(avatar, avatarman, user):
+    pass
