@@ -32,7 +32,7 @@ class UsersAvatarUploadChange(BaseHandler):
     def POST(self, id):
         avatar = UploadedFile('avatar')
         form = users_avatar()
-        
+
         if not form.validates():
             return jsonify(success=False,
                     errors=dict((i.name, i.note) for i in form.inputs
@@ -92,7 +92,6 @@ class UsersEditHandler(BaseHandler):
             u.currency = form.d.currency
             web.ctx.orm.add(u)
             u = web.ctx.orm.merge(u)
-
             return jsonify(success=True, user=UserWrapper(u))
 
 
