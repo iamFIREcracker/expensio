@@ -1,4 +1,5 @@
-﻿var DaysUI = (function() {
+﻿chart = null;
+var DaysUI = (function() {
     var __animationtimeout = 200; // milliseconds
     var __daysnumber = 30;
 
@@ -6,7 +7,7 @@
     var palette = null;
     var $days = null;
     var $chart = null;
-    var chart = null;
+    //var chart = null;
     var days = null;
     var latest = null;
 
@@ -110,6 +111,13 @@
         return formatter.date(day.date);
     };
 
+    var updatePoint = function(indexPointArray) {
+        var i = indexPointArray[0];
+        var point = indexPointArray[1];
+
+        chart.series[0].data[i].update(point);
+    };
+
     var updateChart = function() {
         var data = _.map(days, preparePoint);
         var categories = _.map(days, prepareLabel);
@@ -118,7 +126,7 @@
         if (chart == null) {
             initChart(data, categories); // Call this when the container is *visible*!
         } else {
-            chart.series[0].setData(data);
+            _.map(_.zip(_.range(data.length), data), updatePoint);
             chart.xAxis[0].setCategories(categories);
         }
 

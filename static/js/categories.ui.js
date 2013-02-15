@@ -106,34 +106,11 @@
             _.sortBy(categories, sortByDecreasingAmount);
         var data = prepareData(categoriesSortedByAmount);
 
-        // Lazy initialization
-        if (chart === null) {
-            initChart(data); // Call this when the container is *visible*!
-        } else {
-            // Refresh the legend
-            //chart.series[0].options.showInLegend = false;
-            //chart.series[0].legendItem = null;
-            //chart.legend.destroyItem(chart.series[0]);
-            //chart.legend.render();
-
-            var pointsDifference = data.length - chart.series[0].data.length;
-
-            // Update the length of the series dataset
-            if (pointsDifference > 0) {
-                _.times(pointsDifference, addPoint);
-            } else if (pointsDifference < 0) {
-                _.times(-pointsDifference, removePoint);
-            }
-
-            // Update each point
-            //_.map(_.zip(_.range(data.length), data), updatePoint);
-            chart.series[0].setData(data);
-
-
-            //charts.series[0].options.showInLegend = true;
-            //chart.legend.renderItem(chart.series[0]);
-            //chart.legend.render();
+        if (chart !== null) {
+            chart.destroy();
         }
+
+        initChart(data);
     };
 
     var updateCategory = function(obj) {
