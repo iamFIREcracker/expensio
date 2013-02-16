@@ -8,7 +8,6 @@ var UsersManager = (function() {
                 avatarChangeCheckStatus(data.goto);
             }, 1000);
         } else {
-            alert(data.avatar);
             window.location.reload();
         }
     };
