@@ -35,3 +35,7 @@ rabbitmq::connection {'rabbitmq':
   password => 'expenses',
   vhost => '/',
 }
+
+package { ['libjpeg-dev']:
+  ensure => installed,
+}
