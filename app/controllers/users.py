@@ -25,7 +25,7 @@ class UserWrapper(object):
         self.u = u
 
 
-class UsersAvatarUploadChange(BaseHandler):
+class UsersAvatarChange(BaseHandler):
 
     @protected
     @me
@@ -44,8 +44,7 @@ class UsersAvatarUploadChange(BaseHandler):
                     goto='/users/avatar/change/status/%s' % task_id)
 
 
-class UsersAvatarUploadChangeStatusHandler(BaseHandler):
-
+class UsersAvatarChangeStatusHandler(BaseHandler):
     @protected
     def GET(self, task_id):
         try:
@@ -57,7 +56,7 @@ class UsersAvatarUploadChangeStatusHandler(BaseHandler):
             return jsonify(success=True, goto=retval)
 
 
-class UsersAvatarUploadRemove(BaseHandler):
+class UsersAvatarRemove(BaseHandler):
     @protected
     @me
     def POST(self, id):
