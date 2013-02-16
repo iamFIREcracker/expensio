@@ -10,6 +10,7 @@ dist/*
 expenses.egg*
 fontconfig/*
 sessions/*
+static/avatars/*
 static/uploads/*
 static/exports/*
 tags
