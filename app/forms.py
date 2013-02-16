@@ -3,6 +3,7 @@
 
 from web import form
 
+from app import config
 import parsers
 import utils
 
@@ -23,11 +24,6 @@ class ImageBootstrap(form.Input):
 class ImageBootstrap2(form.Input):
     def render(self):
         attrs = self.attrs.copy()
-        if 'width' not in attrs:
-            attrs['width'] = 72
-        if 'height' not in attrs:
-            attrs['height'] = 72
-        attrs['src'] = "http://www.placehold.it/{width}x{height}/EFEFEF/AAAAAA&text=no+image".format(**attrs)
         if self.value is not None:
             attrs['src'] = self.value
 
@@ -71,7 +67,9 @@ validimportdata = form.Validator('Invalid format', parsers.expenses)
 
 users_avatar = form.Form(
         form.Hidden('id'),
-        ImageBootstrap2('avatar', form.notnull, description='Avatar'),
+        ImageBootstrap2('avatar', form.notnull, width=config.AVATAR_WIDTH,
+            height=config.AVATAR_HEIGHT, src=config.AVATAR_PLACEHOLD,
+            description='Avatar'),
     )
 
 users_edit = form.Form(

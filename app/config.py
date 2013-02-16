@@ -3,6 +3,11 @@
 
 DATABASE_URL = 'sqlite:///expenses.db'
 
+AVATAR_WIDTH = 72
+AVATAR_HEIGHT = AVATAR_WIDTH
+AVATAR_PLACEHOLD = "http://www.placehold.it/{width}x{height}/EFEFEF/AAAAAA&text=no+image".format(
+        width=AVATAR_WIDTH, height=AVATAR_HEIGHT)
+
 PERIOD_FORMAT = '%Y-%m'
 DATE_FORMAT = '%Y-%m-%d'
 DATE_US_FORMAT = '%m/%d/%Y'
