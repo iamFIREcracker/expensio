@@ -50,8 +50,7 @@ class LoginGoogleAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
-        raise web.found(
-                '/users/%s/edit' % user.id if newuser else '/')
+        raise web.found('/profile' if newuser else '/')
 
 
 class LoginGoogleHandler():
