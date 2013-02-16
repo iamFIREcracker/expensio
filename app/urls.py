@@ -26,6 +26,7 @@ from .controllers.users import UsersAvatarUploadChangeStatusHandler
 from .controllers.users import UsersAvatarUploadRemove
 from .controllers.users import UsersDeleteHandler
 from .controllers.users import UsersEditHandler
+from .controllers.users import UsersProfileHandler
 
 
 URLS = (
@@ -42,6 +43,7 @@ URLS = (
     '/login/fake/authorized', LoginFakeAuthorizedHandler,
     '/logout', LogoutHandler,
 
+    '/users/(.+)/profile', UsersProfileHandler,
     '/users/(.+)/edit', UsersEditHandler,
     '/users/(.+)/avatar/change', UsersAvatarUploadChange,
     '/users/(.+)/avatar/change/status/(.+)', UsersAvatarUploadChangeStatusHandler,

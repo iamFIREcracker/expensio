@@ -1,11 +1,8 @@
 {% from "_formhelpers.html" import render_field %}
 <form id="user_edit" class="form-horizontal" enctype="multipart/form-data">
-    {% include 'users_avatar.html' %}
-    <hr />
     {% for input in users_edit.inputs %}
         {{ render_field(input) }}
     {% endfor %}
-    <hr />
     <div class="control-group">
         <div class="controls">
             <button type="submit" class="btn btn-primary">Done</button>
