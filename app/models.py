@@ -40,6 +40,7 @@ class User(Base):
     id = Column(String, default=_uuid, primary_key=True)
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+    avatar = Column(String)
     name = Column(String, nullable=False)
     currency = Column(String)
     google_id = Column(String)

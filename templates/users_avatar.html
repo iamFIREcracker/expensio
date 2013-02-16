@@ -1,0 +1,6 @@
+{% from "_formhelpers.html" import render_field %}
+<form id="user_avatar" class="form-horizontal" enctype="multipart/form-data">
+    {% for input in users_avatar.inputs %}
+        {{ render_field(input) }}
+    {% endfor %}
+</form>

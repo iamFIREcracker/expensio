@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+import tempfile
 import uuid
 
 import web
-
-from config import UPLOAD_DIR
 
 
 class UploadedFile(object):
@@ -14,34 +13,36 @@ class UploadedFile(object):
     def __init__(self, name):
         defaults = {name:{}}
         data = web.input(**defaults)
-        self.delegate = getattr(data, name)
+        f = getattr(data, name)
+
+        if f != '':
+            with tempfile.NamedTemporaryFile("w+b", delete=False) as tmp:
+                tmp.write(f.file.read())
+
+                self.filename = f.filename
+                self.name = tmp.name
 
     def __nonzero__(self):
-        web.debug(self.delegate != '')
-        return self.delegate != ''
+        return hasattr(self, 'filename')
 
-    @property
-    def filename(self):
-        return self.delegate.filename
-
-    @property
-    def file(self):
-        return self.delegate.file
 
 
 class UploadManager(object):
 
-    def __init__(self, wdir):
+    def __init__(self, ddir, wdir):
+        self._ddir = ddir
         self._wdir = wdir
 
     def add(self, uploaded):
         _, extension = os.path.splitext(uploaded.filename)
 
         filename = '{0}{1}'.format(uuid.uuid4(), extension)
-        relativepath = os.path.join(UPLOAD_DIR, filename)
+        relativepath = os.path.join(self._ddir, filename)
         absolutepath = os.path.join(self._wdir, relativepath)
 
-        with open(absolutepath, 'wb') as f:
-            f.write(uploaded.file.read())
+        with open(absolutepath, 'wb') as fout:
+            with open(uploaded.name, 'rb') as fin:
+                fout.write(fin.read())
 
-        return os.path.join(web.ctx.home, relativepath)
+        os.unlink(uploaded.name)
+        return relativepath

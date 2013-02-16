@@ -21,8 +21,12 @@ from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
 from .controllers.stats import StatsCategoriesHandler
 from .controllers.stats import StatsDaysHandler
+from .controllers.users import UsersAvatarChange
+from .controllers.users import UsersAvatarChangeStatusHandler
+from .controllers.users import UsersAvatarRemove
 from .controllers.users import UsersDeleteHandler
 from .controllers.users import UsersEditHandler
+from .controllers.users import UsersProfileHandler
 
 
 URLS = (
@@ -39,7 +43,12 @@ URLS = (
     '/login/fake/authorized', LoginFakeAuthorizedHandler,
     '/logout', LogoutHandler,
 
+    '/profile', UsersProfileHandler,
+
     '/users/(.+)/edit', UsersEditHandler,
+    '/users/(.+)/avatar/change', UsersAvatarChange,
+    '/users/(.+)/avatar/change/status/(.+)', UsersAvatarChangeStatusHandler,
+    '/users/(.+)/avatar/remove', UsersAvatarRemove,
     '/users/(.+)/delete', UsersDeleteHandler,
 
     '/stats/days', StatsDaysHandler,

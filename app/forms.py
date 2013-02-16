@@ -20,6 +20,36 @@ class ImageBootstrap(form.Input):
         return '<img %s />' % (attrs, )
 
 
+class ImageBootstrap2(form.Input):
+    def render(self):
+        attrs = self.attrs.copy()
+        if 'width' not in attrs:
+            attrs['width'] = 72
+        if 'height' not in attrs:
+            attrs['height'] = 72
+        attrs['src'] = "http://www.placehold.it/{width}x{height}/EFEFEF/AAAAAA&text=no+image".format(**attrs)
+        if self.value is not None:
+            attrs['src'] = self.value
+
+        return """
+<img src='{src}' class='img-rounded pull-left' width='{width}' height='{height}'>
+<div class="btn-group span1">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        Change
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a id="choose">Choose another</a>
+        </li>
+        <li>
+            <a id="remove">Remove</a>
+        </li>
+    </ul>
+</div>
+""".format(**attrs)
+
+
 class FileBootstrap(form.File):
     def render(self):
         return """
@@ -38,6 +68,11 @@ validamount = form.Validator('Invalid (e.g. 1.00)', parsers.amount)
 validdate = form.Validator('Invalid (e.g. 1/22/2013)', parsers.date_us)
 validimportdata = form.Validator('Invalid format', parsers.expenses)
 
+
+users_avatar = form.Form(
+        form.Hidden('id'),
+        ImageBootstrap2('avatar', form.notnull, description='Avatar'),
+    )
 
 users_edit = form.Form(
         form.Hidden('id'),

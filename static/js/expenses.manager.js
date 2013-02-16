@@ -116,7 +116,6 @@ var ExpensesManager = (function() {
                 exportCheckStatus(data.goto);
             }, 1000);
         } else {
-            $('#exp_export').find('img').remove();
             window.location.href = data.goto;
         }
     };

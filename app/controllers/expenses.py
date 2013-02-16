@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 import celery
 import web
 
@@ -88,7 +90,8 @@ class ExpensesAddHandler(BaseHandler):
                     errors=dict((i.name, i.note) for i in form.inputs
                         if i.note is not None))
         else:
-            url = web.ctx.uploadman.add(attachment) if attachment else None
+            url = (os.path.join(web.ctx.home, web.ctx.uploadman.add(attachment))
+                    if attachment else None)
 
             e = Expense(user_id=self.current_user().id,
                     amount=parsers.amount(form.d.amount),
@@ -127,7 +130,8 @@ class ExpensesEditHandler(BaseHandler):
                     errors=dict((i.name, i.note) for i in form.inputs
                         if i.note is not None))
         else:
-            url = web.ctx.uploadman.add(attachment) if attachment else None
+            url = (os.path.join(web.ctx.home, web.ctx.uploadman.add(attachment))
+                    if attachment else None)
 
             e = self.current_item()
 

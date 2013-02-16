@@ -105,11 +105,11 @@ def active(func):
     return inner1
 
 def me(func):
-    def inner1(self, id):
+    def inner1(self, id, *args, **kwargs):
         if id != self.current_user().id:
             raise web.unauthorized()
 
-        return func(self, id)
+        return func(self, id, *args, **kwargs)
     return inner1
 
 
