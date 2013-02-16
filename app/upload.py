@@ -16,7 +16,9 @@ class UploadedFile(object):
         f = getattr(data, name)
 
         if f != '':
-            with tempfile.NamedTemporaryFile("w+b", delete=False) as tmp:
+            _, ext = os.path.splitext(f.filename)
+            suffix = '.' + ext
+            with tempfile.NamedTemporaryFile("w+b", suffix=suffix, delete=False) as tmp:
                 tmp.write(f.file.read())
 
                 self.filename = f.filename
@@ -34,9 +36,9 @@ class UploadManager(object):
         self._wdir = wdir
 
     def add(self, uploaded):
-        _, extension = os.path.splitext(uploaded.filename)
+        _, ext = os.path.splitext(uploaded.filename)
 
-        filename = '{0}{1}'.format(uuid.uuid4(), extension)
+        filename = '{0}{1}'.format(uuid.uuid4(), ext)
         relativepath = os.path.join(self._ddir, filename)
         absolutepath = os.path.join(self._wdir, relativepath)
 
