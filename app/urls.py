@@ -43,7 +43,8 @@ URLS = (
     '/login/fake/authorized', LoginFakeAuthorizedHandler,
     '/logout', LogoutHandler,
 
-    '/users/(.+)/profile', UsersProfileHandler,
+    '/profile', UsersProfileHandler,
+
     '/users/(.+)/edit', UsersEditHandler,
     '/users/(.+)/avatar/change', UsersAvatarChange,
     '/users/(.+)/avatar/change/status/(.+)', UsersAvatarChangeStatusHandler,
