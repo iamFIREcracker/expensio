@@ -48,13 +48,24 @@ var UsersManager = (function() {
             ui = ui_;
 
             $('#user_avatar #choose').click(function() {
-                alert('Choose');
+                var $form = $(this).closest('form');
+                var $modal = ui.avatarChange($form.find('#id').val());
+
+                $modal.find('a').click(function() {
+                    a = $(this);
+                    var $form = $(this).parent().parent().find('form');
+
+                    $form.ajaxSubmit({
+                        dataType: 'json',
+                        url: '/users/' + $form.find('#id').val() + '/avatar/change',
+                        success: onAvatarRemoveSubmitSuccess,
+                        error: onAvatarRemoveSubmitError,
+                    });
+                });
             });
 
             $('#user_avatar #remove').click(function() {
-                var $remove = $(this);
-                var $form = $remove.closest('form');
-                console.log($form);
+                var $form = $(this).closest('form');
                 var $modal = ui.confirmAvatarRemove();
 
                 $modal.find('a').click(function() {
