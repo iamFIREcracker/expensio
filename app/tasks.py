@@ -3,6 +3,8 @@
 
 import os
 
+from PIL import Image
+
 import app.formatters as formatters
 from app.celery import celery
 from app.database import db_session
@@ -36,8 +38,10 @@ def ExpensesExportTSVTask(exportman, user):
 
 @celery.task
 def UsersAvatarChangeTask(avatar, avatarman, user, home):
-    # Do image processing here
-    # ...
+    _, ext = os.path.splitext(avatar.filename)
+    im = Image.open(avatar.name)
+    im.thumbnail((128, 128), Image.ANTIALIAS)
+    im.save(avatar.name)
 
     url = avatarman.add(avatar) if avatar else None
 
