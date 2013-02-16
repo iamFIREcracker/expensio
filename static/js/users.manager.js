@@ -2,12 +2,51 @@ var UsersManager = (function() {
     var logger = null;
     var ui = null;
 
+    var onAvatarChangeCheckStatusSuccess = function(data) {
+        if (!data.success) {
+            setTimeout(function() {
+                avatarChangeCheckStatus(data.goto);
+            }, 1000);
+        } else {
+            alert(data.avatar);
+            window.location.reload();
+        }
+    };
+
+    var onAvatarChangeCheckStatusError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+    var avatarChangeCheckStatus = function(url) {
+        $.ajax({
+            dataType: 'json',
+            url: url,
+            success: onAvatarChangeCheckStatusSuccess,
+            error: onAvatarChangeCheckStatusError,
+        });
+    };
+
+
+    var onAvatarChangeSubmitSuccess = function(data) {
+        OnSubmitSuccess($('#exp_avatar'), data, function() {
+            logger.success('Waiting for the server to process the image...', function() {
+                avatarChangeCheckStatus(data.goto);
+            });
+        });
+    };
+
+    var onAvatarChangeSubmitError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
 
     var onAvatarRemoveSubmitSuccess = function(data) {
-        logger.success(
-                'Avatar successfully removed!', function() {
-                    window.location.reload();
-                });
+        OnSubmitSuccess($('#exp_avatar'), data, function() {
+            logger.success(
+                    'Avatar successfully removed!', function() {
+                        window.location.reload();
+                    });
+        });
     };
 
     var onAvatarRemoveSubmitError = function(data) {
@@ -58,8 +97,8 @@ var UsersManager = (function() {
                     $form.ajaxSubmit({
                         dataType: 'json',
                         url: '/users/' + $form.find('#id').val() + '/avatar/change',
-                        success: onAvatarRemoveSubmitSuccess,
-                        error: onAvatarRemoveSubmitError,
+                        success: onAvatarChangeSubmitSuccess,
+                        error: onAvatarChangeSubmitError,
                     });
                 });
             });

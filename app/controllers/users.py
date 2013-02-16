@@ -41,19 +41,21 @@ class UsersAvatarChange(BaseHandler):
             task_id = tasks.UsersAvatarChangeTask.delay(
                     avatar, web.ctx.avatarman, self.current_user(), web.ctx.home).task_id
             return jsonify(success=True,
-                    goto='/users/avatar/change/status/%s' % task_id)
+                    goto='/users/%s/avatar/change/status/%s' % (
+                            self.current_user().id, task_id))
 
 
 class UsersAvatarChangeStatusHandler(BaseHandler):
     @protected
-    def GET(self, task_id):
+    @me
+    def GET(self, id, task_id):
         try:
-            retval = (tasks.UsersAvatarUploadTask.AsyncResult(task_id)
+            retval = (tasks.UsersAvatarChangeTask.AsyncResult(task_id)
                     .get(timeout=1.0))
         except celery.exceptions.TimeoutError:
             return jsonify(success=False, goto=web.ctx.path)
         else:
-            return jsonify(success=True, goto=retval)
+            return jsonify(success=True, avatar=retval)
 
 
 class UsersAvatarRemove(BaseHandler):
