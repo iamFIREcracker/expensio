@@ -69,11 +69,10 @@ class UsersAvatarRemove(BaseHandler):
 
 class UsersProfileHandler(BaseHandler):
     @protected
-    @me
-    def GET(self, id):
+    def GET(self):
         user = self.current_user()
         avatar = users_avatar()
-        avatar.fill(avatar=user.avatar)
+        avatar.fill(id=user.id, avatar=user.avatar)
         edit = users_edit()
         edit.fill(id=user.id, name=user.name, currency=user.currency)
         return web.ctx.render.users_settings(user=self.current_user(),

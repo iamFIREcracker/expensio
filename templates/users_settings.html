@@ -2,10 +2,11 @@
 
 {% block js %}
 <script src="/static/js/users.manager.js"></script>
+<script src="/static/js/users.ui.js"></script>
 {% endblock %}
 
 {% block jsready %}
-UsersManager.onReady(Logger);
+UsersManager.onReady(Logger, UsersUI);
 {% endblock %}
 
 {% block row1_col1 %}
