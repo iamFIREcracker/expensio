@@ -39,7 +39,7 @@ class UsersAvatarChange(BaseHandler):
                         if i.note is not None))
         else:
             task_id = tasks.UsersAvatarChangeTask.delay(
-                    avatar.file, web.ctx.avatarman, self.current_user()).task_id
+                    avatar, web.ctx.avatarman, self.current_user(), web.ctx.home).task_id
             return jsonify(success=True,
                     goto='/users/avatar/change/status/%s' % task_id)
 

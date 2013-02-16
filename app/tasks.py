@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 import app.formatters as formatters
 from app.celery import celery
 from app.database import db_session
@@ -33,11 +35,15 @@ def ExpensesExportTSVTask(exportman, user):
 
 
 @celery.task
-def UsersAvatarUploadTask(avatar, avatarman, user):
+def UsersAvatarChangeTask(avatar, avatarman, user, home):
     # Do image processing here
     # ...
 
     url = avatarman.add(avatar) if avatar else None
-    user.avatar = db_session.add(user)
-    user = db_session.merge(user)
-    return url
+
+    user.avatar = url
+    db_session.add(user)
+    db_session.commit()
+    db_session.remove()
+
+    return os.path.join(home, url)
