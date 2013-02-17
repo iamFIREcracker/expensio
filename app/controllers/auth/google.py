@@ -95,6 +95,7 @@ class AccountsGoogleDisconnectHandler(BaseHandler):
     @protected
     def POST(self):
         user = self.current_user()
+        user.google_id = None
         connect = users_connect()
         if not connect.validates(
                 google=(user.google_id is not None),
@@ -102,6 +103,5 @@ class AccountsGoogleDisconnectHandler(BaseHandler):
                 twitter=(user.twitter_id is not None)):
             return jsonify(success=False, reason=connect.note)
 
-        user.google_id = None
         web.ctx.orm.add(user)
         return jsonify(success=True)
