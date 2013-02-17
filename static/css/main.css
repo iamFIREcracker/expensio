@@ -38,17 +38,19 @@
 }
 
 .exp_attach {
-    width: 16px;
+    margin-left: 2%;
+    width: 14px;
     display: inline-block;
 }
 
 .exp_amount {
-    margin-left: 3%;
     display: inline-block;
-    width: 15%;
+    width: 14%;
+    text-align: right;
 }
 
 .exp_inner {
+    margin-left: 3%;
     white-space: nowrap;
     display: inline-block;
     width: 52%;
