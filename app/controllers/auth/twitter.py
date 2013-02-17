@@ -13,6 +13,7 @@ from app.forms import users_connect
 from app.models import User
 from app.utils import jsonify
 from app.utils import protected
+from app.utils import redirectable
 from app.utils import BaseHandler
 
 
@@ -49,16 +50,20 @@ class LoginTwitterAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
-        raise web.found('/profile' if newuser else '/')
+
+        raise web.found(
+                web.ctx.session.pop('back') if 'back' in web.ctx.session else
+                '/profile' if newuser else '/')
 
 
 class LoginTwitterHandler():
+    @redirectable
     def GET(self):
         if 'twitter_access_token' in web.ctx.session:
             raise web.found(web.ctx.path_url + '/authorized')
 
         consumer = oauth2.Consumer(TWITTER_APP_ID, TWITTER_APP_SECRET)
-        data = web.input(denied=None, oauth_token=None)
+        data = web.input(denied=None, oauth_token=None, back=None)
 
         if 'twitter_request_token' not in web.ctx.session:
             client = oauth2.Client(consumer)

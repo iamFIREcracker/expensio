@@ -7,7 +7,11 @@ from datetime import datetime
 
 import web
 
+from app.forms import users_connect
 from app.models import User
+from app.utils import jsonify
+from app.utils import protected
+from app.utils import redirectable
 from app.utils import BaseHandler
 from app.config import COOKIE_EXPIRATION
 
@@ -25,10 +29,14 @@ class LoginFakeAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
-        raise web.found('/profile' if not self.current_user() else '/')
+
+        raise web.found(
+                web.ctx.session.pop('back') if 'back' in web.ctx.session else
+                '/profile' if self.current_user() else '/')
 
 
 class LoginFakeHandler():
+    @redirectable
     def GET(self):
         if 'fake_access_token' in web.ctx.session:
             raise web.found(web.ctx.path_url + '/authorized')
@@ -36,3 +44,17 @@ class LoginFakeHandler():
         web.ctx.session['fake_access_token'] = hashlib.sha256(
                 str(datetime.now())).digest()
         raise web.found(web.ctx.path_url + '/authorized')
+
+
+class AccountsFakeDisconnectHandler(BaseHandler):
+    @protected
+    def POST(self):
+        user = self.current_user()
+        connect = users_connect()
+        if not connect.validates(
+                google=(user.google_id is not None),
+                facebook=(user.facebook_id is not None),
+                twitter=(user.twitter_id is not None)):
+            return jsonify(success=False, reason=connect.note)
+
+        return jsonify(success=True)

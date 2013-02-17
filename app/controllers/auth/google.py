@@ -13,6 +13,7 @@ from app.forms import users_connect
 from app.models import User
 from app.utils import jsonify
 from app.utils import protected
+from app.utils import redirectable
 from app.utils import BaseHandler
 
 
@@ -53,10 +54,14 @@ class LoginGoogleAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
-        raise web.found('/profile' if newuser else '/')
+
+        raise web.found(
+                web.ctx.session.pop('back') if 'back' in web.ctx.session else
+                '/profile' if newuser else '/')
 
 
 class LoginGoogleHandler():
+    @redirectable
     def GET(self):
         if 'google_access_token' in web.ctx.session:
             raise web.found(web.ctx.path_url + '/authorized')
