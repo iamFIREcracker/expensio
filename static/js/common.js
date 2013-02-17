@@ -46,8 +46,6 @@ var OnSubmitSuccess = function($form, data, onSuccessCallback) {
                     '<span class="help-inline">' + data.errors[name] + '</span>');
         }
     } else {
-        $form.clearForm();
-
         onSuccessCallback();
     }
 }

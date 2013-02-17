@@ -27,7 +27,7 @@ var UsersManager = (function() {
 
 
     var onAvatarChangeSubmitSuccess = function(data) {
-        OnSubmitSuccess($('#exp_avatar'), data, function() {
+        OnSubmitSuccess($('#user_avatar'), data, function() {
             logger.success('Waiting for the server to process the image...', function() {
                 avatarChangeCheckStatus(data.goto);
             });
@@ -40,7 +40,7 @@ var UsersManager = (function() {
 
 
     var onAvatarRemoveSubmitSuccess = function(data) {
-        OnSubmitSuccess($('#exp_avatar'), data, function() {
+        OnSubmitSuccess($('#user_avatar'), data, function() {
             logger.success(
                     'Avatar successfully removed!', function() {
                         window.location.reload();

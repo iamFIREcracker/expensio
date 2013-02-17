@@ -53,10 +53,11 @@ var ExpensesManager = (function() {
 
 
     var onAddSubmitSuccess = function(data) {
-        OnSubmitSuccess($('#exp_add'), data, function() {
+        var $form = $('#exp_add');
+        OnSubmitSuccess($form, data, function() {
             logger.success('Expense tracked successfully!', function() {
+                $form.clearForm();
                 update();
-
                 $.each(addsubmitlisteners, function(index, func) {
                     func();
                 });
@@ -98,7 +99,9 @@ var ExpensesManager = (function() {
 
 
     var onImportSubmitSuccess = function(data) {
-        OnSubmitSuccess($('#exp_import'), data, function() {
+        var $form = $('#exp_import');
+        OnSubmitSuccess($form, data, function() {
+            $form.clearForm();
             logger.success('Expenses imported successfully!', function() {
                 window.location = "/";
             });
@@ -134,7 +137,9 @@ var ExpensesManager = (function() {
     };
 
     var onExportSubmitSuccess = function(data) {
-        OnSubmitSuccess($('#exp_import'), data, function() {
+        var $form = $('#exp_import');
+        OnSubmitSuccess($form, data, function() {
+            $form.clearForm();
             logger.success('Waiting for the server to generate export file...', function() {
                 exportCheckStatus(data.goto);
             });
