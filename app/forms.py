@@ -123,20 +123,20 @@ users_delete = form.Form(
 
 
 expenses_add = form.Form(
-        form.Textbox('amount', validamount, description='Amount', placeholder='1.00'),
+        form.Textbox('date', validdate, description='Date', placeholder='1/22/2013'),
         form.Textbox('category', form.notnull, description='Category', placeholder='bar'),
         form.Textbox('note', description='Note', placeholder='coffe with mom'),
-        form.Textbox('date', validdate, description='Date', placeholder='1/22/2013'),
+        form.Textbox('amount', validamount, description='Amount', placeholder='1.00'),
         FileBootstrap('attachment', description='Attachment'),
     )
 
 expenses_edit = form.Form(
         form.Hidden('id'),
-        form.Textbox('amount', validamount, description='Amount'),
+        form.Textbox('date', validdate, description='Date'),
         form.Textbox('category', form.notnull, description='Category',
             id='category'),
         form.Textbox('note', description='Note'),
-        form.Textbox('date', validdate, description='Date'),
+        form.Textbox('amount', validamount, description='Amount'),
         FileBootstrap('attachment', description='Attachment'),
         ImageBootstrap('oldattachment', description='Old Attachment'),
     )
