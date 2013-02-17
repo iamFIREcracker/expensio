@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import web
 from web import form
 
 from app import config
@@ -72,7 +73,7 @@ class Connect(form.Input):
             attrs['title'] = 'Disconnect from %s' % self.description
         else:
             value = 'Connect'
-            attrs['href'] = '/login/%s' % self.id
+            attrs['href'] = '/login/%s?back=%s' % (self.id, web.ctx.path)
             attrs['title'] = 'Connect to %s' % self.description
         return '<a %s>%s</a>' % (attrs, value)
 
