@@ -79,6 +79,15 @@ def protected(func):
     return inner
 
 
+def redirectable(func):
+    def inner(self, *args, **kwargs):
+        data = web.input(back=None)
+        if data.back:
+            web.ctx.session['back'] = data.back
+        return func(self, *args, **kwargs)
+    return inner
+
+
 def owner(model):
     def inner1(func):
         def inner2(self, id):
