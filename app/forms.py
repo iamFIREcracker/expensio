@@ -57,7 +57,7 @@ class FileBootstrap(form.File):
 """ % super(FileBootstrap, self).render()
 
 
-class Connect(form.Button):
+class Connect(form.Input):
     def __init__(self, name, *validators, **attrs):
         self.connected = False
         description = attrs.pop('description', name)
@@ -65,8 +65,16 @@ class Connect(form.Button):
         self.description = description
 
     def render(self):
-        self.attrs['html'] = 'Disconnect' if self.connected else 'Connect'
-        return super(Connect, self).render()
+        attrs = self.attrs.copy()
+        if self.connected:
+            value = 'Disconnect'
+            attrs['href'] = '/accounts/%s/disconnect' % self.id
+            attrs['title'] = 'Disconnect from %s' % self.description
+        else:
+            value = 'Connect'
+            attrs['href'] = '/login/%s' % self.id
+            attrs['title'] = 'Connect to %s' % self.description
+        return '<a %s>%s</a>' % (attrs, value)
 
     def set_value(self, value):
         self.connected = bool(value)
