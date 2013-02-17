@@ -79,7 +79,10 @@ class UsersProfileHandler(BaseHandler):
         connect = users_connect()
         connect.fill(google=(user.google_id is not None),
                      facebook=(user.facebook_id is not None),
-                     twitter=(user.twitter_id is not None))
+                     twitter=(user.twitter_id is not None),
+                     fake=(not any([user.google_id is not None,
+                                    user.facebook_id is not None,
+                                    user.twitter_id is not None])))
         edit = users_edit()
         edit.fill(id=user.id, name=user.name, currency=user.currency)
         return web.ctx.render.profile(user=self.current_user(),
