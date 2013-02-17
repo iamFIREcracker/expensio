@@ -116,6 +116,9 @@ var UsersManager = (function() {
                 });
             });
 
+            $('#submit').click(function() {
+                $('#user_edit').submit();
+            });
             $('#user_edit').submit(function() {
                 var $form = $(this);
 
