@@ -43,17 +43,18 @@
     display: inline-block;
 }
 
-.exp_amount {
+.exp_date {
+    text-align: right;
     display: inline-block;
     width: 14%;
-    text-align: right;
 }
+
 
 .exp_inner {
     margin-left: 3%;
     white-space: nowrap;
     display: inline-block;
-    width: 52%;
+    width: 53%;
     overflow-x: hidden;
 }
 
@@ -68,11 +69,11 @@
     display: inline-block;
 }
 
-.exp_date {
+.exp_amount {
     margin-left: 1%;
-    text-align: right;
     display: inline-block;
     width: 14%;
+    text-align: right;
 }
 
 .exp_edit {
