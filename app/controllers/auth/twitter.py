@@ -9,6 +9,7 @@ import oauth2
 import web
 
 from app.config import COOKIE_EXPIRATION
+from app.forms import users_connect
 from app.models import User
 from app.utils import jsonify
 from app.utils import protected
@@ -99,9 +100,12 @@ class AccountsTwitterDisconnectHandler(BaseHandler):
     @protected
     def POST(self):
         user = self.current_user()
-        if user.google_id is None and user.facebook_id is None:
-            return jsonify(success=False,
-                    reason="There should be at least one external account linked.")
+        connect = users_connect()
+        if not connect.validates(
+                google=(user.google_id is not None),
+                facebook=(user.facebook_id is not None),
+                twitter=(user.twitter_id is not None)):
+            return jsonify(success=False, reason=connect.note)
 
         user.twitter_id = None
         web.ctx.orm.add(user)
