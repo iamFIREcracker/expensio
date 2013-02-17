@@ -149,9 +149,7 @@ var UsersManager = (function() {
                     var $anchor = $(this);
                     var $form = $anchor.closest('form');
 
-                    if ($anchor.html() === "Connect") {
-                        
-                    } else {
+                    if ($anchor.html() === "Disconnect") {
                         $form.ajaxSubmit({
                             dataType: 'json',
                             url: $anchor.attr('href'),
