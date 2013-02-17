@@ -29,6 +29,14 @@ var OnSubmitSuccess = function($form, data, onSuccessCallback) {
     $form.find('.error').removeClass('error');
     $form.find('.help-inline').remove();
     if (!data.success) {
+        if (data.reason) {
+            $form.prepend(
+'<div class="control-group error">' +
+    '<div class="controls">' +
+        '<span class="help-inline">' + data.reason + '</span>' +
+    '</div>' +
+'</div>');
+        }
         for (name in data.errors) {
             $field = $form.find('#' + name);
             $field.parent().parent().addClass('error');
