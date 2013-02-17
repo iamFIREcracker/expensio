@@ -18,8 +18,10 @@ from app.config import COOKIE_EXPIRATION
 
 class LoginFakeAuthorizedHandler(BaseHandler):
     def GET(self):
+        newuser = False
         user = self.current_user()
         if not user:
+            newuser = True
             user = User(name='Fake Name')
 
         web.ctx.orm.add(user)
@@ -32,7 +34,7 @@ class LoginFakeAuthorizedHandler(BaseHandler):
 
         raise web.found(
                 web.ctx.session.pop('back') if 'back' in web.ctx.session else
-                '/profile' if self.current_user() else '/')
+                '/profile' if newuser else '/')
 
 
 class LoginFakeHandler():
