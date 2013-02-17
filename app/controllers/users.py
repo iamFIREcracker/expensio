@@ -6,6 +6,7 @@ import web
 
 import app.tasks as tasks
 from app.forms import users_avatar
+from app.forms import users_connect
 from app.forms import users_edit
 from app.forms import users_delete
 from app.upload import UploadedFile
@@ -75,10 +76,14 @@ class UsersProfileHandler(BaseHandler):
         user = self.current_user()
         avatar = users_avatar()
         avatar.fill(id=user.id, avatar=user.avatar)
+        connect = users_connect()
+        connect.fill(google=(user.google_id is not None),
+                     facebook=(user.facebook_id is not None),
+                     twitter=(user.twitter_id is not None))
         edit = users_edit()
         edit.fill(id=user.id, name=user.name, currency=user.currency)
         return web.ctx.render.profile(user=self.current_user(),
-                users_avatar=avatar, users_edit=edit)
+                users_avatar=avatar, users_connect=connect, users_edit=edit)
 
 
 class UsersEditHandler(BaseHandler):

@@ -57,6 +57,23 @@ class FileBootstrap(form.File):
 """ % super(FileBootstrap, self).render()
 
 
+class Connect(form.Button):
+    def __init__(self, name, *validators, **attrs):
+        self.connected = False
+        description = attrs.pop('description', name)
+        super(Connect, self).__init__(name, *validators, **attrs)
+        self.description = description
+
+    def render(self):
+        self.attrs['html'] = 'Disconnect' if self.connected else 'Connect'
+        return super(Connect, self).render()
+
+    def set_value(self, value):
+        self.connected = bool(value)
+
+    def get_value(self):
+        return self.connected
+
 
 validcurrency = form.Validator('€, $ ..', parsers.currency)
 validformat = form.Validator('tsv, csv ..', parsers.format)
@@ -78,6 +95,12 @@ users_edit = form.Form(
             placeholder="John Smith"),
         form.Dropdown('currency', zip(utils.currencies(), utils.currencies()),
             validcurrency, description='Currency'),
+    )
+
+users_connect = form.Form(
+        Connect('google', description='Google', class_='btn btn-warning'),
+        Connect('facebook', description='Facebook', class_='btn btn-info'),
+        Connect('twitter', description='Twitter', class_='btn btn-success')
     )
 
 
