@@ -83,6 +83,9 @@ class Connect(form.Input):
         return self.connected
 
 
+validaccounts = form.Validator(
+        "There should be - at least - one external account linked!",
+        lambda i: any(v for v in i.itervalues()))
 validcurrency = form.Validator('€, $ ..', parsers.currency)
 validformat = form.Validator('tsv, csv ..', parsers.format)
 validamount = form.Validator('Invalid (e.g. 1.00)', parsers.amount)
@@ -108,7 +111,8 @@ users_edit = form.Form(
 users_connect = form.Form(
         Connect('google', description='Google', class_='btn btn-warning'),
         Connect('facebook', description='Facebook', class_='btn btn-info'),
-        Connect('twitter', description='Twitter', class_='btn btn-success')
+        Connect('twitter', description='Twitter', class_='btn btn-success'),
+        validators=[validaccounts]
     )
 
 
