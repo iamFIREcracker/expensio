@@ -10,6 +10,8 @@ import web
 
 from app.config import COOKIE_EXPIRATION
 from app.models import User
+from app.utils import jsonify
+from app.utils import protected
 from app.utils import BaseHandler
 
 
@@ -86,3 +88,16 @@ class LoginGoogleHandler():
         access_token = json.loads(content)
         web.ctx.session['google_access_token'] = access_token
         raise web.found(web.ctx.path_url + '/authorized')
+
+
+class AccountsGoogleDisconnectHandler(BaseHandler):
+    @protected
+    def POST(self):
+        user = self.current_user()
+        if user.facebook_id is None and user.twitter_id is None:
+            return jsonify(success=False,
+                    reason="There should be at least one external account linked.")
+
+        user.google_id = None
+        web.ctx.orm.add(user)
+        return jsonify(success=True)

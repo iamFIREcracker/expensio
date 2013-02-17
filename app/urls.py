@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from .controllers.auth.facebook import AccountsFacebookDisconnectHandler
+from .controllers.auth.google import AccountsGoogleDisconnectHandler
+from .controllers.auth.twitter import AccountsTwitterDisconnectHandler
 from .controllers.auth import LoginFacebookAuthorizedHandler
 from .controllers.auth import LoginFacebookHandler
 from .controllers.auth import LoginFakeAuthorizedHandler
@@ -35,10 +38,13 @@ URLS = (
 
     '/login/google', LoginGoogleHandler,
     '/login/google/authorized', LoginGoogleAuthorizedHandler,
+    '/accounts/google/disconnect', AccountsGoogleDisconnectHandler,
     '/login/facebook', LoginFacebookHandler,
     '/login/facebook/authorized', LoginFacebookAuthorizedHandler,
+    '/accounts/facebook/disconnect', AccountsFacebookDisconnectHandler,
     '/login/twitter', LoginTwitterHandler,
     '/login/twitter/authorized', LoginTwitterAuthorizedHandler,
+    '/accounts/twitter/disconnect', AccountsTwitterDisconnectHandler,
     '/login/fake', LoginFakeHandler,
     '/login/fake/authorized', LoginFakeAuthorizedHandler,
     '/logout', LogoutHandler,

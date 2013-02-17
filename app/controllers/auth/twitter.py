@@ -10,6 +10,8 @@ import web
 
 from app.config import COOKIE_EXPIRATION
 from app.models import User
+from app.utils import jsonify
+from app.utils import protected
 from app.utils import BaseHandler
 
 
@@ -91,3 +93,16 @@ class LoginTwitterHandler():
         access_token = urlparse.parse_qs(content)
         web.ctx.session['twitter_access_token'] = access_token
         raise web.found(web.ctx.path_url + '/authorized')
+
+
+class AccountsTwitterDisconnectHandler(BaseHandler):
+    @protected
+    def POST(self):
+        user = self.current_user()
+        if user.google_id is None and user.facebook_id is None:
+            return jsonify(success=False,
+                    reason="There should be at least one external account linked.")
+
+        user.twitter_id = None
+        web.ctx.orm.add(user)
+        return jsonify(success=True)
