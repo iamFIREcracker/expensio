@@ -53,7 +53,6 @@ var UsersManager = (function() {
     };
 
 
-
     var onEditSubmitSuccess = function(data) {
         OnSubmitSuccess($('#user_edit'), data, function() {
             logger.success(
@@ -64,6 +63,20 @@ var UsersManager = (function() {
     };
 
     var onEditSubmitError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+
+    var onAccountDisconnectSuccess = function(data) {
+        OnSubmitSuccess($('#user_connect'), data, function() {
+            logger.success(
+                    'Account disconnected successfully!', function() {
+                        window.location.reload();
+                    });
+        });
+    };
+
+    var onAccountDisconnectError = function(data) {
         logger.error('Something went wrong while contacting the server');
     };
 
@@ -101,7 +114,6 @@ var UsersManager = (function() {
                     });
                 });
             });
-
             $('#user_avatar #remove').click(function() {
                 var $form = $(this).closest('form');
                 var $modal = ui.confirmAvatarRemove();
@@ -130,6 +142,26 @@ var UsersManager = (function() {
                 });
 
                 return false;
+            });
+
+            $('#user_connect a').each(function(i) {
+                $(this).click(function() {
+                    var $anchor = $(this);
+                    var $form = $anchor.closest('form');
+
+                    if ($anchor.html() === "Connect") {
+                        
+                    } else {
+                        $form.ajaxSubmit({
+                            dataType: 'json',
+                            url: $anchor.attr('href'),
+                            success: onAccountDisconnectSuccess,
+                            error: onAccountDisconnectError,
+                        });
+
+                        return false;
+                    }
+                });
             });
 
             $('#user_delete').submit(function() {
