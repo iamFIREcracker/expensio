@@ -58,8 +58,7 @@
     margin-left: 3%;
     white-space: nowrap;
     display: inline-block;
-    width: 53%;
-    overflow-x: hidden;
+    width: 52%;
 }
 
 .exp_category {
@@ -71,6 +70,10 @@
     margin-left: 2%;
     color: #888;
     display: inline-block;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    width: inherit;
 }
 
 .exp_amount {
