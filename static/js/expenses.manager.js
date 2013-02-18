@@ -140,7 +140,7 @@ var ExpensesManager = (function() {
         var $form = $('#exp_import');
         OnSubmitSuccess($form, data, function() {
             $form.clearForm();
-            logger.success('Waiting for the server to generate export file...', function() {
+            logger.info('Waiting for the server to generate export file...', function() {
                 exportCheckStatus(data.goto);
             });
         });

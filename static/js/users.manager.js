@@ -28,7 +28,7 @@ var UsersManager = (function() {
 
     var onAvatarChangeSubmitSuccess = function(data) {
         OnSubmitSuccess($('#user_avatar'), data, function() {
-            logger.success('Waiting for the server to process the image...', function() {
+            logger.info('Waiting for the server to process the image...', function() {
                 avatarChangeCheckStatus(data.goto);
             });
         });
