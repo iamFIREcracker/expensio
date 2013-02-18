@@ -9,12 +9,12 @@ var Logger = (function() {
             .fadeIn().delay(fadeouttimeout).fadeOut('slow', function () {
                 $(this).removeClass('alert-' + kind);
 
-                if (next !== undefined) {
-                    next();
-                }
-
                 reschedule();
             });
+
+        if (next !== undefined) {
+            next();
+        }
     };
 
     var reschedule = function() {

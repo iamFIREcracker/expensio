@@ -59,7 +59,9 @@ var PaletteManager = (function() {
                     warnTriggered = true;
 
                     logger.warn(__help, function() {
-                        location.reload();
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
                     });
                 }
                 return 0;

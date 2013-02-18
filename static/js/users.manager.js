@@ -43,7 +43,9 @@ var UsersManager = (function() {
         OnSubmitSuccess($('#user_avatar'), data, function() {
             logger.success(
                     'Avatar successfully removed!', function() {
-                        window.location.reload();
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 2000);
                     });
         });
     };
@@ -57,7 +59,9 @@ var UsersManager = (function() {
         OnSubmitSuccess($('#user_edit'), data, function() {
             logger.success(
                     'User edited successfully!', function() {
-                        window.location = '/';
+                        setTimeout(function() {
+                            window.location = '/';
+                        }, 2000);
                     });
         });
     };
@@ -71,7 +75,9 @@ var UsersManager = (function() {
         OnSubmitSuccess($('#user_connect'), data, function() {
             logger.success(
                     'Account disconnected successfully!', function() {
-                        window.location.reload();
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 2000);
                     });
         });
     };
@@ -84,7 +90,9 @@ var UsersManager = (function() {
     var onDeleteSubmitSuccess = function(data) {
         logger.success(
                 'Account successfully deactivated .. bye byeeee!', function() {
-                    window.location = '/';
+                    setTimeout(function() {
+                        window.location = '/';
+                    }, 2000);
                 });
     };
 
