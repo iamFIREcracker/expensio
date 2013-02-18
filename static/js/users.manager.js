@@ -112,6 +112,8 @@ var UsersManager = (function() {
                         success: onAvatarChangeSubmitSuccess,
                         error: onAvatarChangeSubmitError,
                     });
+
+                    logger.info("Sending avatar to the server...");
                 });
             });
             $('#user_avatar #remove').click(function() {
