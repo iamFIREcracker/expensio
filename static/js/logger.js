@@ -44,6 +44,10 @@ var Logger = (function() {
             fadeouttimeout = fadeouttimeout_;
         },
 
+        info: function(msg, next) {
+            enqueue('info', msg, next);
+        },
+
         success: function(msg, next) {
             enqueue('success', msg, next);
         },
