@@ -81,6 +81,11 @@ class ExpensesHandler(BaseHandler):
 
 class ExpensesAddHandler(BaseHandler):
     @protected
+    def GET(self):
+        form = expenses_add()
+        return web.ctx.render.expenses_add(expenses_add=form)
+
+    @protected
     def POST(self):
         attachment = UploadedFile('attachment')
         form = expenses_add()
