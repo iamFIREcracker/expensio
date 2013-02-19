@@ -5,8 +5,8 @@ var ExpensesManager = (function() {
     var addsubmitlisteners = Array();
 
 
-    var initWidgets = function() {
-        var $date = $('#date');
+    var initWidgets = function($context) {
+        var $date = $context.find('#date');
         if ($date.length) {
             $date.datepicker({
                 autoclose: true,
@@ -53,13 +53,18 @@ var ExpensesManager = (function() {
 
 
     var onAddSubmitSuccess = function(data) {
-        var $form = $('#exp_add');
+        var $modal = $('.modal');
+        var $form = $modal.find('#exp_add');
+
         OnSubmitSuccess($form, data, function() {
-            logger.success('Expense tracked successfully!', function() {
-                $form.clearForm();
-                update();
-                $.each(addsubmitlisteners, function(index, func) {
-                    func();
+            $modal.modal('hide');
+            $modal.on('hidden', function() {
+                logger.success('Expense tracked successfully!', function() {
+                    $form.clearForm();
+                    update();
+                    $.each(addsubmitlisteners, function(index, func) {
+                        func();
+                    });
                 });
             });
         });
@@ -161,18 +166,25 @@ var ExpensesManager = (function() {
             date = date_;
             ui = ui_;
 
-            initWidgets();
+            $('#exp_new').click(function() {
+                var $modal = ui.expensesAdd();
 
-            $('#exp_add').submit(function() {
-                var $form = $(this);
+                $modal.find('.modal-body').load('expenses/add', function() {
+                    initWidgets($modal);
 
-                $form.ajaxSubmit({
-                    dataType: 'json',
-                    url: '/expenses/add',
-                    success: onAddSubmitSuccess,
-                    error: onAddSubmitError,
+                    $modal.find('#exp_add').submit(function() {
+                        var $form = $(this);
+
+                        $form.ajaxSubmit({
+                            dataType: 'json',
+                            url: '/expenses/add',
+                            success: onAddSubmitSuccess,
+                            error: onAddSubmitError,
+                        });
+
+                        return false;
+                    });
                 });
-
                 return false;
             });
 
