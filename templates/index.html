@@ -16,8 +16,6 @@
 <script src="/static/js/date.manager.js"></script>
 <script src="/static/js/palette.manager.js"></script>
 <script src="/static/js/users.manager.js"></script>
-<script src="/static/js/days.ui.js"></script>
-<script src="/static/js/days.manager.js"></script>
 <script src="/static/js/expenses.ui.js"></script>
 <script src="/static/js/expenses.manager.js"></script>
 <script src="/static/js/categories.ui.js"></script>
@@ -29,8 +27,6 @@ PaletteManager.onReady(Logger, function() {
     DateManager.onReady($('#current_month'), {{ year }}, {{ month }});
     HistoryManager.onReady(DateManager);
     UsersManager.onReady(Logger);
-    DaysUI.onReady(Formatter, PaletteManager, $('#days'));
-    DaysManager.onReady(Logger, DateManager, DaysUI);
     ExpensesUI.onReady(
             Formatter, PaletteManager, $('#current_month_overall'),
             $('#expenses'));
@@ -40,7 +36,6 @@ PaletteManager.onReady(Logger, function() {
     Manager.onReady(Logger, DateManager, 30000);
 
     Manager.update(function() {
-        DaysManager.onUpdate();
         ExpensesManager.onUpdate();
         CategoriesManager.onUpdate();
     });
@@ -52,7 +47,6 @@ PaletteManager.onReady(Logger, function() {
     });
 
     ExpensesManager.addSubmit(function() {
-        DaysManager.onUpdate();
         CategoriesManager.onUpdate();
     })
     ExpensesUI.addExpense(function(exp) {
@@ -64,24 +58,12 @@ PaletteManager.onReady(Logger, function() {
 
 {% block pre_row2 %}
 <div class="span12">
-    <button type="button" class="btn btn-link pull-left" id="prev_month">&laquo; Previous Month</button>
-    <button type="button" class="btn btn-link pull-right" id="next_month">Next Month &raquo;</button>
     <h2 class="center"><span id="current_month"></span></h2>
     <div class="center"><span id="current_month_overall"></span></div>
+    <button type="button" class="btn btn-link pull-left" id="prev_month">&laquo; Previous Month</button>
+    <button type="button" class="btn btn-link pull-right" id="next_month">Next Month &raquo;</button>
     <br style="clear: both" />
 </div>
-{% endblock %}
-
-{% block row1_col2 %}
-    <h3 class="center">Last 30 Days</h3>
-    <div id="days">
-        <div class="alert alert-info" style="display: none">
-            As soon as you start adding expenses, this space will be replaced
-            with a chart showing how much you have spent, on a day by day basis
-            in the last 30 days
-        </div>
-        <div id="days-chart" style="height: 275px; margin: 0 auto"></div>
-    </div>
 {% endblock %}
 
 {% block row2_col1 %}
