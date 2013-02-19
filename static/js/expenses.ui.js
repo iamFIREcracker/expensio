@@ -215,7 +215,6 @@ var Expense = function(ui, palette, formatter) {
             attachment: attachment,
             $elem: $('' +
 '<div class="exp">' +
-    addAttachment(attachment, note) +
     '<span class="exp_date">' + formatter.date(date) + '</span>' +
     '<span class="exp_inner">' +
         '<span class="exp_category palette" ' +
@@ -226,6 +225,7 @@ var Expense = function(ui, palette, formatter) {
         '<span class="exp_note">' + note + '</span>' +
     '</span>' +
     '<span class="exp_amount">' + formatter.amount(amount, currency) + '</span>' +
+    addAttachment(attachment, note) +
     '<span class="exp_edit">' +
         '<a href="/expenses/' + id + '/edit" title="Edit expense">' +
             '<i class="icon-pencil"></i>' +
