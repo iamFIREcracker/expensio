@@ -60,9 +60,10 @@ PaletteManager.onReady(Logger, function() {
 <div class="span12">
     <h2 class="center"><span id="current_month"></span></h2>
     <div class="center"><span id="current_month_overall"></span></div>
-    <button type="button" class="btn btn-link pull-left" id="prev_month">&laquo; Previous Month</button>
-    <button type="button" class="btn btn-link pull-right" id="next_month">Next Month &raquo;</button>
-    <br style="clear: both" />
+    <ul class="nav nav-pills">
+        <li class="pull-left"><a id="prev_month" href="#">&laquo; Previous Month</a>
+        <li class="pull-right"><a id="next_month" href="#">Next Month &raquo;</a>
+    </ul>
 </div>
 {% endblock %}
 
