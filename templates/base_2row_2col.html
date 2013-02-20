@@ -3,8 +3,8 @@
 {% block content %}
 {% include "elements/navbar.html" %}
 <div class="page-alert" ><div id="logger" class="alert alert-block" style="display: none"></div></div>
-<div class="container">
-    <div class="row">
+<div class="container-fluid">
+    <div class="row-fluid">
         {% block pre_row1 %}{% endblock %}
 
         <div class="span6">
@@ -14,7 +14,7 @@
             {% block row1_col2 %}{% endblock %}
         </div>
     </div>
-    <div class="row">
+    <div class="row-fluid">
         {% block pre_row2 %}{% endblock %}
 
         <div class="span6">

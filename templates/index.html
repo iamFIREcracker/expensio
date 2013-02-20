@@ -55,13 +55,15 @@ PaletteManager.onReady(Logger, function() {
 {% endblock %}
 
 {% block pre_row1 %}
-<div class="span12">
-    <h2 class="center"><span id="current_month"></span></h2>
-    <div class="center"><span id="current_month_overall"></span></div>
-    <ul class="nav nav-pills">
-        <li class="pull-left"><a id="prev_month" href="#">&laquo; Previous Month</a>
-        <li class="pull-right"><a id="next_month" href="#">Next Month &raquo;</a>
-    </ul>
+<div class="row-fluid">
+    <div class="span12">
+        <h2 class="center"><span id="current_month"></span></h2>
+        <div class="center"><span id="current_month_overall"></span></div>
+        <ul class="nav nav-pills">
+            <li class="pull-left"><a id="prev_month" href="#">&laquo; Previous Month</a>
+            <li class="pull-right"><a id="next_month" href="#">Next Month &raquo;</a>
+        </ul>
+    </div>
 </div>
 {% endblock %}
 
