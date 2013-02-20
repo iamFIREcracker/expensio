@@ -8,7 +8,9 @@ var UsersManager = (function() {
                 avatarChangeCheckStatus(data.goto);
             }, 1000);
         } else {
-            window.location.reload();
+            setTimeout(function() {
+                window.location.reload();
+            }, 2000);
         }
     };
 
