@@ -61,7 +61,6 @@ var ExpensesManager = (function() {
             $modal.on('hidden', function() {
                 logger.success('Expense tracked successfully!', function() {
                     $form.clearForm();
-                    update();
                     $.each(addsubmitlisteners, function(index, func) {
                         func();
                     });

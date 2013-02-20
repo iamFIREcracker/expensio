@@ -47,6 +47,7 @@ PaletteManager.onReady(Logger, function() {
     });
 
     ExpensesManager.addSubmit(function() {
+        ExpensesManager.onUpdate();
         CategoriesManager.onUpdate();
     })
     ExpensesUI.addExpense(function(exp) {
