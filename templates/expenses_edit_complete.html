@@ -7,11 +7,13 @@
 
 {% block js %}
 <script src="/static/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
-<script src="/static/js/expenses.manager.js"></script>
 {% endblock %}
 
 {% block jsready %}
-ExpensesManager.onReady(Logger);
+ExpensesUI.onReady(
+        Formatter, PaletteManager, $('#current_month_overall'),
+        $('#expenses'));
+ExpensesManager.onReady(Logger, ExpensesUI);
 {% endblock %}
 
 {% block row1_col1 %}

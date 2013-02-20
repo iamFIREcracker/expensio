@@ -1,11 +1,15 @@
 {% extends 'base_2row_2col.html' %}
 
 {% block js %}
-<script src="/static/js/users.manager.js"></script>
 <script src="/static/js/users.ui.js"></script>
+<script src="/static/js/users.manager.js"></script>
 {% endblock %}
 
 {% block jsready %}
+ExpensesUI.onReady(
+        Formatter, PaletteManager, $('#current_month_overall'),
+        $('#expenses'));
+ExpensesManager.onReady(Logger, ExpensesUI);
 UsersManager.onReady(Logger, UsersUI);
 {% endblock %}
 

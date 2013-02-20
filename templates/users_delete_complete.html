@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block jsready %}
+ExpensesUI.onReady(
+        Formatter, PaletteManager, $('#current_month_overall'), $('#expenses'));
+ExpensesManager.onReady(Logger, ExpensesUI);
 UsersManager.onReady(Logger);
 {% endblock %}
 
