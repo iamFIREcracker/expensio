@@ -30,7 +30,7 @@ PaletteManager.onReady(Logger, function() {
     ExpensesUI.onReady(
             Formatter, PaletteManager, $('#current_month_overall'),
             $('#expenses'));
-    ExpensesManager.onReady(Logger, DateManager, ExpensesUI);
+    ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
     CategoriesManager.onReady(Logger, DateManager, CategoriesUI);
     Manager.onReady(Logger, DateManager, 30000);

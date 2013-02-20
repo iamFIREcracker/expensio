@@ -1,7 +1,7 @@
 var ExpensesManager = (function() {
     var logger = null;
-    var date = null;
     var ui = null;
+    var date = null;
     var addsubmitlisteners = Array();
 
 
@@ -160,10 +160,10 @@ var ExpensesManager = (function() {
 
 
     return {
-        onReady: function(logger_, date_, ui_) {
+        onReady: function(logger_, ui_, date_) {
             logger = logger_;
-            date = date_;
             ui = ui_;
+            date = date_;
 
             $('#exp_new').click(function() {
                 var $modal = ui.expensesAdd();
