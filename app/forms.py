@@ -30,7 +30,7 @@ class ImageBootstrap2(form.Input):
 
         return """
 <img src='{src}' class='img-rounded pull-left' width='{width}' height='{height}'>
-<div class="btn-group span1">
+<div class="btn-group" style="margin-left: 20px">
     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
         Change
         <span class="caret"></span>
