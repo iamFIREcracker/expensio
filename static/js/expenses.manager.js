@@ -168,7 +168,7 @@ var ExpensesManager = (function() {
             $('#exp_new').click(function() {
                 var $modal = ui.expensesAdd();
 
-                $modal.find('.modal-body').load('expenses/add', function() {
+                $modal.find('.modal-body').load('/expenses/add', function() {
                     initWidgets($modal);
 
                     $modal.find('#exp_add').submit(function() {
