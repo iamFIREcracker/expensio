@@ -3,8 +3,13 @@
         <div class="container">
             <a class="brand" href="/" title="Home">Expenses</a>
             <ul class="nav">
+                {% block navbar %}{% endblock %}
+                <li class="divider-vertical"></li>
                 <li><a id="exp_new" href="/expenses/add">New</a></li>
-                <!--<li><a href="#">Last 30 days</a></li>-->
+                <li class="divider-vertical"></li>
+                <li><a href="#">Last 30 days</a></li>
+                <li class="divider-vertical"></li>
+                <li><a href="#">Since you joined!</a></li>
             </ul>
             <ul class="nav pull-right">
                 <li class="dropdown">
