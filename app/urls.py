@@ -28,6 +28,7 @@ from .controllers.stats import StatsDaysHandler
 from .controllers.users import UsersAvatarChange
 from .controllers.users import UsersAvatarChangeStatusHandler
 from .controllers.users import UsersAvatarRemove
+from .controllers.users import UsersDeactivateHandler
 from .controllers.users import UsersDeleteHandler
 from .controllers.users import UsersEditHandler
 from .controllers.users import UsersProfileHandler
@@ -52,6 +53,7 @@ URLS = (
     '/logout', LogoutHandler,
 
     '/profile', UsersProfileHandler,
+    '/deactivate', UsersDeactivateHandler,
 
     '/users/(.+)/edit', UsersEditHandler,
     '/users/(.+)/avatar/change', UsersAvatarChange,

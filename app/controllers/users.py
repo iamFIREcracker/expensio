@@ -107,16 +107,16 @@ class UsersEditHandler(BaseHandler):
             return jsonify(success=True, user=UserWrapper(u))
 
 
-class UsersDeleteHandler(BaseHandler):
+class UsersDeactivateHandler(BaseHandler):
     @protected
-    @me
-    def GET(self, id):
+    def GET(self):
         form = users_delete()
-        user = self.current_user()
-        form.fill(id=user.id)
-        return web.ctx.render.users_delete_complete(user=self.current_user(),
+        form.fill(id=self.current_user().id)
+        return web.ctx.render.deactivate_complete(user=self.current_user(),
                 users_delete=form)
 
+
+class UsersDeleteHandler(BaseHandler):
     @protected
     @me
     def POST(self, id):
