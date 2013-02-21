@@ -15,13 +15,8 @@ var PaletteManager = (function() {
         {bg: 'indigo',  fg: '#ffe',},
         {bg: 'violet',  fg: '#ffe',},
     ];
-    var mapping = null;
+    var mapping = Object();
     var warnTriggered = false;
-
-    var init = function() {
-        mapping = Object();
-    };
-
 
     var onCategoryListSuccess = function(data) {
         _.map(data.categories, function(catname) {
@@ -38,8 +33,6 @@ var PaletteManager = (function() {
         onReady: function(logger_, onReadySuccess_) {
             logger = logger_;
             onReadySuccess = onReadySuccess_;
-
-            init();
 
             $.ajax({
                 dataType: 'json',

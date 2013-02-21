@@ -6,75 +6,54 @@
 
 {% block js %}
 <script src="/static/highcharts/js/highcharts.js"></script>
-<script src="/static/lightbox/js/lightbox.js"></script>
-<script src="/static/js/history.manager.js"></script>
 <script src="/static/js/manager.js"></script>
 <script src="/static/js/date.manager.js"></script>
 <script src="/static/js/users.manager.js"></script>
-<script src="/static/js/categories.ui.js"></script>
-<script src="/static/js/categories.manager.js"></script>
+<script src="/static/js/days.ui.js"></script>
+<script src="/static/js/days.manager.js"></script>
 {% endblock %}
 
 {% block jsready %}
 PaletteManager.onReady(Logger, function() {
     DateManager.onReady($('#current_month'), {{ year }}, {{ month }});
-    HistoryManager.onReady(DateManager);
     UsersManager.onReady(Logger);
     ExpensesUI.onReady(
             Formatter, PaletteManager, $('#current_month_overall'),
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
-    CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
-    CategoriesManager.onReady(Logger, DateManager, CategoriesUI);
+    DaysUI.onReady(Formatter, PaletteManager, $('#days'));
+    DaysManager.onReady(Logger, DateManager, DaysUI);
     Manager.onReady(Logger, DateManager, 30000);
 
     Manager.update(function() {
-        ExpensesManager.onUpdate();
-        CategoriesManager.onUpdate();
-    });
-    Manager.monthChange(function(year, month) {
-        DateManager.onMonthChange(year, month);
-        HistoryManager.onMonthChange(year, month);
-        ExpensesManager.onMonthChange(year, month);
-        CategoriesManager.onMonthChange(year, month);
+        DaysManager.onUpdate();
     });
 
     ExpensesManager.addSubmit(function() {
         ExpensesManager.onUpdate();
-        CategoriesManager.onUpdate();
     })
-    ExpensesUI.addExpense(function(exp) {
-        ExpensesManager.onAddExpense(exp);
-    })
+
     Manager.onUpdate(0);
 });
 {% endblock %}
 
 {% block pre_row1 %}
 <div class="row-fluid">
-    <div class="span12">
-        <h2 class="center"><span id="current_month"></span></h2>
-        <div class="center"><span id="current_month_overall"></span></div>
-        <ul class="nav nav-pills">
-            <li class="pull-left"><a id="prev_month" href="#">&laquo; Previous Month</a>
-            <li class="pull-right"><a id="next_month" href="#">Next Month &raquo;</a>
-        </ul>
+    <h2 class="center">Last 30 Days</h2>
+</div>
+
+<div class="row-fluid">
+    <h3 class="center">Amounts By Date</h3>
+    <div id="days">
+        <div class="alert alert-info" style="display: none">
+            As soon as you start adding expenses, this space will be replaced
+            with a chart showing how much you have spent, on a day by day basis
+            in the last 30 days
+        </div>
+        <div id="days-chart" style="height: 275px; margin: 0 auto"></div>
     </div>
 </div>
-{% endblock %}
-
-{% block row1_col1 %}
-    <h3 class="center">By Date</h3>
-    <div id="expenses">
-        <div class="alert alert-info" style="display: none">
-            All the tracked expenses for the current month will be listed here,
-            one above the other, sorted by date.
-        </div>
-        <div id="expenses-inner"></div>
-    </div>
-{% endblock %}
-
-{% block row1_col2 %}
+<div class="row-fluid">
     <h3 class="center">Summary</h3>
     <div id="categories">
         <div class="alert alert-info" style="display: none">
@@ -84,4 +63,5 @@ PaletteManager.onReady(Logger, function() {
         </div>
         <div id="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
     </div>
+</div>
 {% endblock %}

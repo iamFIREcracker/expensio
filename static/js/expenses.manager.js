@@ -91,8 +91,6 @@ var ExpensesManager = (function() {
 
     var onDeleteSubmitSuccess = function(data) {
         logger.success('Expense deleted successfully!', function() {
-            update();
-
             $.each(addsubmitlisteners, function(index, func) {
                 func();
             });

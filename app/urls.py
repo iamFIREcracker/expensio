@@ -23,6 +23,7 @@ from .controllers.expenses import ExpensesExportTSVStatusHandler
 from .controllers.expenses import ExpensesImportHandler
 from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
+from .controllers.general import ThirthyDaysHandler
 from .controllers.stats import StatsCategoriesHandler
 from .controllers.stats import StatsDaysHandler
 from .controllers.users import UsersAvatarChange
@@ -54,6 +55,8 @@ URLS = (
 
     '/profile', UsersProfileHandler,
     '/deactivate', UsersDeactivateHandler,
+
+    '/30days', ThirthyDaysHandler,
 
     '/users/(.+)/edit', UsersEditHandler,
     '/users/(.+)/avatar/change', UsersAvatarChange,

@@ -8,6 +8,7 @@ import web
 import app.formatters as formatters
 import app.parsers as parsers
 from app.utils import logout
+from app.utils import protected
 from app.utils import BaseHandler
 from app.forms import expenses_add
 
@@ -33,3 +34,13 @@ class LogoutHandler():
     def GET(self):
         logout()
         raise web.found('/')
+
+
+class ThirthyDaysHandler(BaseHandler):
+    @protected
+    def GET(self):
+        today = datetime.today()
+        year = today.year
+        month = today.month
+        return web.ctx.render.thirthy_days(user=self.current_user(),
+                                           year=year, month=month)
