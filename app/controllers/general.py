@@ -36,6 +36,16 @@ class LogoutHandler():
         raise web.found('/')
 
 
+class WeekHandler(BaseHandler):
+    @protected
+    def GET(self):
+        today = datetime.today()
+        year = today.year
+        month = today.month
+        return web.ctx.render.thirthy_days(user=self.current_user(),
+                                           year=year, month=month, ndays=7)
+
+
 class ThirthyDaysHandler(BaseHandler):
     @protected
     def GET(self):
@@ -43,4 +53,5 @@ class ThirthyDaysHandler(BaseHandler):
         year = today.year
         month = today.month
         return web.ctx.render.thirthy_days(user=self.current_user(),
-                                           year=year, month=month)
+                                           year=year, month=month, ndays=30)
+

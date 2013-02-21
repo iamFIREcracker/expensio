@@ -1,8 +1,8 @@
 ﻿chart = null;
 var DaysUI = (function() {
     var __animationtimeout = 200; // milliseconds
-    var __daysnumber = 30;
 
+    var ndays = null;
     var formatter = null;
     var palette = null;
     var $days = null;
@@ -19,7 +19,7 @@ var DaysUI = (function() {
         days = Object();
         latest = '';
 
-        _.map(_.range(__daysnumber), function(i) { days[i] = null; });
+        _.map(_.range(ndays), function(i) { days[i] = null; });
     };
 
     var initChart = function(data, categories) {
@@ -133,7 +133,7 @@ var DaysUI = (function() {
     }
 
     var updateDay = function(obj) {
-        var i = obj.delta + __daysnumber - 1;
+        var i = obj.delta + ndays - 1;
         var prev = days[i];
 
         /*
@@ -164,7 +164,8 @@ var DaysUI = (function() {
     };
 
     return {
-        onReady: function(formatter_, palette_, $days_) {
+        onReady: function(ndays_, formatter_, palette_, $days_) {
+            ndays = ndays_;
             formatter = formatter_;
             palette = palette_;
             $days = $days_;
@@ -195,7 +196,7 @@ var DaysUI = (function() {
 
 
         getN: function() {
-            return __daysnumber;
+            return ndays;
         },
 
         getLatest: function() {
