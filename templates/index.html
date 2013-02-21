@@ -61,27 +61,29 @@ PaletteManager.onReady(Logger, function() {
         </ul>
     </div>
 </div>
+
+<div class="row-fluid">
+    <div class="span6 pull-right">
+        <h3 class="center">Summary</h3>
+        <div id="categories">
+            <div class="alert alert-info" style="display: none">
+                Want to know how much did you spent in the current month for each
+                expense category?  You are looking in the right place!  See the
+                chart populating as as soon as you track expenses...
+            </div>
+            <div id="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+        </div>
+    </div>
+    <div class="span6">
+        <h3 class="center">By Date</h3>
+        <div id="expenses">
+            <div class="alert alert-info" style="display: none">
+                All the tracked expenses for the current month will be listed here,
+                one above the other, sorted by date.
+            </div>
+            <div id="expenses-inner"></div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
-{% block row1_col1 %}
-    <h3 class="center">By Date</h3>
-    <div id="expenses">
-        <div class="alert alert-info" style="display: none">
-            All the tracked expenses for the current month will be listed here,
-            one above the other, sorted by date.
-        </div>
-        <div id="expenses-inner"></div>
-    </div>
-{% endblock %}
-
-{% block row1_col2 %}
-    <h3 class="center">Summary</h3>
-    <div id="categories">
-        <div class="alert alert-info" style="display: none">
-            Want to know how much did you spent in the current month for each
-            expense category?  You are looking in the right place!  See the
-            chart populating as as soon as you track expenses...
-        </div>
-        <div id="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
-    </div>
-{% endblock %}
