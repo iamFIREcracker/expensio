@@ -2,12 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import hashlib
+import random
 import time
+from datetime import timedelta
 from datetime import datetime
 
 import web
 
 from app.forms import users_connect
+from app.models import Expense
 from app.models import User
 from app.utils import jsonify
 from app.utils import protected
@@ -31,6 +34,15 @@ class LoginFakeAuthorizedHandler(BaseHandler):
 
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
+
+        dates = [datetime.today() - timedelta(i) for i in range(30)]
+        categories = 'foo bar baz qux quux corge grault'.split()
+        amounts = range(1, 40)
+        web.ctx.orm.add_all(
+                Expense(user_id=user.id, date=random.choice(dates),
+                        category=random.choice(categories),
+                        amount=random.choice(amounts))
+                        for _ in xrange(100))
 
         raise web.found(
                 web.ctx.session.pop('back') if 'back' in web.ctx.session else
