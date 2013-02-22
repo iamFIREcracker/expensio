@@ -194,11 +194,6 @@ var DaysUI = (function() {
             }
         },
 
-
-        getN: function() {
-            return ndays;
-        },
-
         getLatest: function() {
             return latest;
         },

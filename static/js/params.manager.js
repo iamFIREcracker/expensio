@@ -1,4 +1,4 @@
-var ParamsManager = function(mode, date, ui) {
+var ParamsManager = function(date, ui, mode, optionaldays) {
     var params = {
         'period': function() { return period(); },
         'days': function() { return days(); },
@@ -20,7 +20,7 @@ var ParamsManager = function(mode, date, ui) {
 
     var days = function() {
         var data = {
-            since: date.ndaysback(ui.getN() - 1),
+            since: date.ndaysback(optionaldays - 1),
             to: date.today(),
         };
         var latest = ui.getLatest();

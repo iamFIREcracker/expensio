@@ -12,6 +12,8 @@
 <script src="/static/js/params.manager.js"></script>
 <script src="/static/js/days.ui.js"></script>
 <script src="/static/js/days.manager.js"></script>
+<script src="/static/js/categories.ui.js"></script>
+<script src="/static/js/categories.manager.js"></script>
 {% endblock %}
 
 {% block jsready %}
@@ -23,15 +25,19 @@ PaletteManager.onReady(Logger, function() {
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
     DaysUI.onReady({{ ndays }}, Formatter, PaletteManager, $('#days'));
-    DaysManager.onReady(Logger, DaysUI, ParamsManager('days', DateManager, DaysUI));
+    DaysManager.onReady(Logger, DaysUI, ParamsManager(DateManager, DaysUI, 'days', {{ ndays }}));
+    CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
+    CategoriesManager.onReady(Logger, CategoriesUI, ParamsManager(DateManager, CategoriesUI, 'days', {{ ndays }}));
     Manager.onReady(Logger, DateManager, 30000);
 
     Manager.update(function() {
         DaysManager.onUpdate();
+        CategoriesManager.onUpdate();
     });
 
     ExpensesManager.addSubmit(function() {
-        ExpensesManager.onUpdate();
+        DaysManager.onUpdate();
+        CategoriesManager.onUpdate();
     })
 
     Manager.onUpdate(0);
