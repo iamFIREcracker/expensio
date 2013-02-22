@@ -11,6 +11,7 @@
 <script src="/static/js/manager.js"></script>
 <script src="/static/js/date.manager.js"></script>
 <script src="/static/js/users.manager.js"></script>
+<script src="/static/js/params.manager.js"></script>
 <script src="/static/js/categories.ui.js"></script>
 <script src="/static/js/categories.manager.js"></script>
 {% endblock %}
@@ -25,7 +26,8 @@ PaletteManager.onReady(Logger, function() {
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
-    CategoriesManager.onReady(Logger, DateManager, CategoriesUI);
+    ParamsManager.onReady('period', DateManager, CategoriesUI);
+    CategoriesManager.onReady(Logger, CategoriesUI, ParamsManager);
     Manager.onReady(Logger, DateManager, 30000);
 
     Manager.update(function() {
