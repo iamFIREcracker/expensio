@@ -23,8 +23,7 @@ PaletteManager.onReady(Logger, function() {
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
     DaysUI.onReady({{ ndays }}, Formatter, PaletteManager, $('#days'));
-    ParamsManager.onReady('days', DateManager, DaysUI);
-    DaysManager.onReady(Logger, DaysUI, ParamsManager);
+    DaysManager.onReady(Logger, DaysUI, ParamsManager('days', DateManager, DaysUI));
     Manager.onReady(Logger, DateManager, 30000);
 
     Manager.update(function() {

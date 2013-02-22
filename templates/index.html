@@ -26,8 +26,7 @@ PaletteManager.onReady(Logger, function() {
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
-    ParamsManager.onReady('period', DateManager, CategoriesUI);
-    CategoriesManager.onReady(Logger, CategoriesUI, ParamsManager);
+    CategoriesManager.onReady(Logger, CategoriesUI, ParamsManager('period', DateManager, CategoriesUI));
     Manager.onReady(Logger, DateManager, 30000);
 
     Manager.update(function() {

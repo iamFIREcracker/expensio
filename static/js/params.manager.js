@@ -1,9 +1,4 @@
-var ParamsManager = (function() {
-
-    var mode = null;
-    var date = null;
-    var ui = null;
-
+var ParamsManager = function(mode, date, ui) {
     var params = {
         'period': function() { return period(); },
         'days': function() { return days(); },
@@ -38,14 +33,8 @@ var ParamsManager = (function() {
     };
 
     return {
-        onReady: function(mode_, date_, ui_) {
-            mode = mode_;
-            date = date_;
-            ui = ui_;
-        },
-
         get: function() {
             return params[mode]();
         }
     };
-}());
+};
