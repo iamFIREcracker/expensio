@@ -54,7 +54,8 @@ class UsersProfileHandler(BaseHandler):
         edit = users_edit()
         edit.fill(id=user.id, name=user.name, currency=user.currency)
         return web.ctx.render.profile(user=self.current_user(),
-                users_avatar=avatar, users_connect=connect, users_edit=edit)
+                current='profile', users_avatar=avatar, users_connect=connect,
+                users_edit=edit)
 
 
 class UsersDeactivateHandler(BaseHandler):
@@ -63,7 +64,7 @@ class UsersDeactivateHandler(BaseHandler):
         form = users_delete()
         form.fill(id=self.current_user().id)
         return web.ctx.render.deactivate_complete(user=self.current_user(),
-                users_delete=form)
+                current='deactivate', users_delete=form)
 
 
 class LogoutHandler():
@@ -76,14 +77,14 @@ class ImportHandler(BaseHandler):
     @protected
     def GET(self):
         return web.ctx.render.expenses_import_complete(user=self.current_user(),
-                expenses_import=expenses_import())
+                current='import', expenses_import=expenses_import())
 
 
 class ExportHandler(BaseHandler):
     @protected
     def GET(self):
         return web.ctx.render.expenses_export_complete(user=self.current_user(),
-                expenses_export=expenses_export())
+                current='export', expenses_export=expenses_export())
 
 
 class StatsHandler(BaseHandler):
