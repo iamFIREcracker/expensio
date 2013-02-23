@@ -57,7 +57,6 @@ var ExpensesManager = (function() {
         var $form = $modal.find('#exp_add');
 
         OnSubmitSuccess($form, data, function() {
-            $modal.modal('hide');
             $modal.on('hidden', function() {
                 logger.success('Expense tracked successfully!', function() {
                     $form.clearForm();
@@ -65,7 +64,7 @@ var ExpensesManager = (function() {
                         func();
                     });
                 });
-            });
+            }).modal('hide');
         });
     };
 
