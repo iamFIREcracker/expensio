@@ -26,15 +26,15 @@ from .controllers.general import MainHandler
 from .controllers.general import ThirthyDaysHandler
 from .controllers.general import WeekHandler
 from .controllers.general import StatsHandler
+from .controllers.general import UsersDeactivateHandler
+from .controllers.general import UsersProfileHandler
 from .controllers.stats import StatsCategoriesHandler
 from .controllers.stats import StatsDaysHandler
 from .controllers.users import UsersAvatarChange
 from .controllers.users import UsersAvatarChangeStatusHandler
 from .controllers.users import UsersAvatarRemove
-from .controllers.users import UsersDeactivateHandler
 from .controllers.users import UsersDeleteHandler
 from .controllers.users import UsersEditHandler
-from .controllers.users import UsersProfileHandler
 
 
 URLS = (
@@ -51,9 +51,6 @@ URLS = (
     '/login/fake/authorized', LoginFakeAuthorizedHandler,
     '/accounts/fake/disconnect', AccountsFakeDisconnectHandler,
     '/logout', LogoutHandler,
-
-    '/profile', UsersProfileHandler,
-    '/deactivate', UsersDeactivateHandler,
 
     '/users/(.+)/edit', UsersEditHandler,
     '/users/(.+)/avatar/change', UsersAvatarChange,
@@ -79,4 +76,8 @@ URLS = (
     '/week', WeekHandler,
     '/30days', ThirthyDaysHandler,
     '/stats/(quadrimester|year|life)', StatsHandler,
+
+    '/profile', UsersProfileHandler,
+    '/deactivate', UsersDeactivateHandler,
+
 )

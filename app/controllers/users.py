@@ -6,15 +6,15 @@ import web
 
 import app.tasks as tasks
 from app.forms import users_avatar
-from app.forms import users_connect
 from app.forms import users_edit
-from app.forms import users_delete
 from app.upload import UploadedFile
 from app.utils import jsonify
 from app.utils import logout
 from app.utils import me
 from app.utils import protected
 from app.utils import BaseHandler
+
+
 
 class UserWrapper(object):
     __serializable__ = {
@@ -70,25 +70,6 @@ class UsersAvatarRemove(BaseHandler):
         return jsonify(success=True, user=UserWrapper(u))
 
 
-class UsersProfileHandler(BaseHandler):
-    @protected
-    def GET(self):
-        user = self.current_user()
-        avatar = users_avatar()
-        avatar.fill(id=user.id, avatar=user.avatar)
-        connect = users_connect()
-        connect.fill(google=(user.google_id is not None),
-                     facebook=(user.facebook_id is not None),
-                     twitter=(user.twitter_id is not None),
-                     fake=(not any([user.google_id is not None,
-                                    user.facebook_id is not None,
-                                    user.twitter_id is not None])))
-        edit = users_edit()
-        edit.fill(id=user.id, name=user.name, currency=user.currency)
-        return web.ctx.render.profile(user=self.current_user(),
-                users_avatar=avatar, users_connect=connect, users_edit=edit)
-
-
 class UsersEditHandler(BaseHandler):
     @protected
     @me
@@ -105,15 +86,6 @@ class UsersEditHandler(BaseHandler):
             web.ctx.orm.add(u)
             u = web.ctx.orm.merge(u)
             return jsonify(success=True, user=UserWrapper(u))
-
-
-class UsersDeactivateHandler(BaseHandler):
-    @protected
-    def GET(self):
-        form = users_delete()
-        form.fill(id=self.current_user().id)
-        return web.ctx.render.deactivate_complete(user=self.current_user(),
-                users_delete=form)
 
 
 class UsersDeleteHandler(BaseHandler):
