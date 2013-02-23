@@ -35,7 +35,7 @@ class LoginFakeAuthorizedHandler(BaseHandler):
         web.setcookie(
                 'user', user.id, time.time() + COOKIE_EXPIRATION)
 
-        dates = [datetime.today() - timedelta(i) for i in range(30)]
+        dates = [datetime.today() - timedelta(i) for i in range(1000)]
         categories = 'foo bar baz qux quux corge grault'.split()
         notes = [s.strip() for s in '''Past the sticky heritage relaxes a waved aunt.
                                        A widest noise resigns a barred cue.
@@ -49,7 +49,7 @@ class LoginFakeAuthorizedHandler(BaseHandler):
                 Expense(user_id=user.id, date=random.choice(dates),
                         category=random.choice(categories),
                         note=random.choice(notes),
-                        amount=random.choice(amounts)) for _ in xrange(100))
+                        amount=random.choice(amounts)) for _ in xrange(1000))
 
         raise web.found(
                 web.ctx.session.pop('back') if 'back' in web.ctx.session else
