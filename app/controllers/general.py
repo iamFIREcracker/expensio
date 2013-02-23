@@ -57,7 +57,6 @@ class ThirthyDaysHandler(BaseHandler):
 
 
 class StatsHandler(BaseHandler):
-    modes = 'quadrimester year life'.split()
     days = {'quadrimester': 120, 'year': 365, 'life': 1000}
 
     @protected
@@ -65,8 +64,6 @@ class StatsHandler(BaseHandler):
         today = datetime.today()
         year = today.year
         month = today.month
-        if mode is None or mode not in self.modes:
-            mode = 'quadrimester'
         return web.ctx.render.stats2(user=self.current_user(),
-                                     year=year, month=month, modes=self.modes,
-                                     mode=mode, ndays=self.days[mode])
+                                     year=year, month=month, current=mode,
+                                     ndays=self.days[mode])

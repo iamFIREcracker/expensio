@@ -34,15 +34,16 @@ PaletteManager.onReady(Logger, function() {
 {% endblock %}
 
 {% block pre_row1 %}
+<span class="spacer20"></span>
 <div class="row-fluid">
     <div class="span3">
         <div class="sidebar-nav-fixed">
             <div class="well">
                 <ul class="nav nav-list">
                     <li class="nav-header">Stats</li>
-                    {% for m in modes %}
-                    <li {{ 'class="active"' if m == mode }}><a href="/stats/{{ m }} "> {{ m | capitalize }}</a></li>
-                    {% endfor %}
+                    <li {{ 'class="active"' if current == 'quadrimester' }}><a href="/stats/quadrimester ">Last Quadrimester</a></li>
+                    <li {{ 'class="active"' if current == 'year' }}><a href="/stats/year">Last Year</a></li>
+                    <li {{ 'class="active"' if current == 'life' }}><a href="/stats/life">Lifetime</a></li>
                 </ul>
             </div>
         </div>
@@ -57,6 +58,7 @@ PaletteManager.onReady(Logger, function() {
                 <div id="days-chart" style="height: 275px; margin: 0 auto"></div>
             </div>
         </div>
+        <span class="spacer20"></span>
         <div class="row-fluid">
             <h3 class="center">Amounts By Category</h3>
             <div id="categories">

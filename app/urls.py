@@ -78,5 +78,5 @@ URLS = (
     '/(\d+)/(\d+)', MainHandler,
     '/week', WeekHandler,
     '/30days', ThirthyDaysHandler,
-    '/stats/(.*)', StatsHandler,
+    '/stats/(quadrimester|year|life)', StatsHandler,
 )
