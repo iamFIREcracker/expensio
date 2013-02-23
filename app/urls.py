@@ -25,6 +25,7 @@ from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
 from .controllers.general import ThirthyDaysHandler
 from .controllers.general import WeekHandler
+from .controllers.general import StatsHandler
 from .controllers.stats import StatsCategoriesHandler
 from .controllers.stats import StatsDaysHandler
 from .controllers.users import UsersAvatarChange
@@ -37,9 +38,6 @@ from .controllers.users import UsersProfileHandler
 
 
 URLS = (
-    '/', MainHandler,
-    '/(\d+)/(\d+)', MainHandler,
-
     '/login/google', LoginGoogleHandler,
     '/login/google/authorized', LoginGoogleAuthorizedHandler,
     '/accounts/google/disconnect', AccountsGoogleDisconnectHandler,
@@ -56,9 +54,6 @@ URLS = (
 
     '/profile', UsersProfileHandler,
     '/deactivate', UsersDeactivateHandler,
-
-    '/week', WeekHandler,
-    '/30days', ThirthyDaysHandler,
 
     '/users/(.+)/edit', UsersEditHandler,
     '/users/(.+)/avatar/change', UsersAvatarChange,
@@ -78,4 +73,10 @@ URLS = (
     '/expenses/export/tsv/status/(.+)', ExpensesExportTSVStatusHandler,
 
     '/categories/names', CategoriesNamesHandler,
+
+    '/', MainHandler,
+    '/(\d+)/(\d+)', MainHandler,
+    '/week', WeekHandler,
+    '/30days', ThirthyDaysHandler,
+    '/stats/(.*)', StatsHandler,
 )

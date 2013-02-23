@@ -55,3 +55,18 @@ class ThirthyDaysHandler(BaseHandler):
         return web.ctx.render.thirthy_days(user=self.current_user(),
                                            year=year, month=month, ndays=30)
 
+
+class StatsHandler(BaseHandler):
+    modes = 'quadrimester year life'.split()
+    days = {'quadrimester': 120, 'year': 365, 'life': 1000}
+
+    @protected
+    def GET(self, mode=None):
+        today = datetime.today()
+        year = today.year
+        month = today.month
+        if mode is None or mode not in self.modes:
+            mode = 'quadrimester'
+        return web.ctx.render.stats2(user=self.current_user(),
+                                     year=year, month=month, modes=self.modes,
+                                     mode=mode, ndays=self.days[mode])
