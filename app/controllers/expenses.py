@@ -208,7 +208,6 @@ class ExpensesImportHandler(BaseHandler):
 
 
 class ExpensesExportHandler(BaseHandler):
-
     @protected
     def GET(self):
         return web.ctx.render.expenses_export_complete(user=self.current_user(),

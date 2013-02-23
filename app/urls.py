@@ -23,8 +23,6 @@ from .controllers.expenses import ExpensesExportTSVStatusHandler
 from .controllers.expenses import ExpensesImportHandler
 from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
-from .controllers.general import ThirthyDaysHandler
-from .controllers.general import WeekHandler
 from .controllers.general import StatsHandler
 from .controllers.general import UsersDeactivateHandler
 from .controllers.general import UsersProfileHandler
@@ -73,11 +71,7 @@ URLS = (
 
     '/', MainHandler,
     '/(\d+)/(\d+)', MainHandler,
-    '/week', WeekHandler,
-    '/30days', ThirthyDaysHandler,
-    '/stats/(quadrimester|year|life)', StatsHandler,
-
     '/profile', UsersProfileHandler,
     '/deactivate', UsersDeactivateHandler,
-
+    '/stats/(quadrimester|year|life)', StatsHandler,
 )

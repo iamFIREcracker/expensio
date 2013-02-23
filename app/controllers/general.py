@@ -16,6 +16,8 @@ from app.utils import protected
 from app.utils import BaseHandler
 from app.forms import expenses_add
 
+
+
 class MainHandler(BaseHandler):
     def GET(self, year=None, month=None):
         if not self.current_user():
@@ -66,26 +68,6 @@ class LogoutHandler():
     def GET(self):
         logout()
         raise web.found('/')
-
-
-class WeekHandler(BaseHandler):
-    @protected
-    def GET(self):
-        today = datetime.today()
-        year = today.year
-        month = today.month
-        return web.ctx.render.thirthy_days(user=self.current_user(),
-                                           year=year, month=month, ndays=7)
-
-
-class ThirthyDaysHandler(BaseHandler):
-    @protected
-    def GET(self):
-        today = datetime.today()
-        year = today.year
-        month = today.month
-        return web.ctx.render.thirthy_days(user=self.current_user(),
-                                           year=year, month=month, ndays=30)
 
 
 class StatsHandler(BaseHandler):
