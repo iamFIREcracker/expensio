@@ -120,8 +120,7 @@ class ExpensesEditHandler(BaseHandler):
                 category=item.category, note=item.note,
                 date=formatters.date_us(item.date),
                 oldattachment=item.attachment)
-        return web.ctx.render.expenses_edit_complete(user=self.current_user(),
-                expenses_edit=form)
+        return web.ctx.render.expenses_edit(expenses_edit=form)
 
     @protected
     @owner(Expense)

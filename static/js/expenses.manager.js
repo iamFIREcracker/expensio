@@ -59,7 +59,6 @@ var ExpensesManager = (function() {
         OnSubmitSuccess($form, data, function() {
             $modal.on('hidden', function() {
                 logger.success('Expense tracked successfully!', function() {
-                    $form.clearForm();
                     $.each(addsubmitlisteners, function(index, func) {
                         func();
                     });
@@ -74,12 +73,17 @@ var ExpensesManager = (function() {
 
 
     var onEditSubmitSuccess = function(data) {
+        var $modal = $('.modal');
+        var $form = $modal.find('#exp_edit');
+
         OnSubmitSuccess($('#exp_edit'), data, function() {
-            logger.success('Expense edited successfully!', function() {
-                setTimeout(function() {
-                    window.location = "/";
-                }, 2000);
-            });
+            $modal.on('hidden', function() {
+                logger.success('Expense edited successfully!', function() {
+                    $.each(addsubmitlisteners, function(index, func) {
+                        func();
+                    });
+                });
+            }).modal('hide');
         });
     };
 
@@ -191,19 +195,6 @@ var ExpensesManager = (function() {
                 return false;
             });
 
-            $('#exp_edit').submit(function() {
-                var $form = $(this);
-
-                $form.ajaxSubmit({
-                    dataType: 'json',
-                    url: '/expenses/' + $form.find('#id').val() + '/edit',
-                    success: onEditSubmitSuccess,
-                    error: onEditSubmitError,
-                });
-
-                return false;
-            });
-
             $('#exp_import').submit(function() {
                 var $form = $(this);
 
@@ -242,6 +233,29 @@ var ExpensesManager = (function() {
         },
 
         onAddExpense: function(exp) {
+            exp.$elem.find('.exp_edit').click(function() {
+                var $modal = ui.expensesEdit();
+
+                $modal.find('.modal-body').load('/expenses/' + exp.id + '/edit', function() {
+                    initWidgets($modal);
+
+                    $modal.find('#exp_edit').submit(function() {
+                        var $form = $(this);
+
+                        $form.ajaxSubmit({
+                            dataType: 'json',
+                            url: '/expenses/' + exp.id + '/edit',
+                            success: onEditSubmitSuccess,
+                            error: onEditSubmitError,
+                        });
+
+                        return false;
+                    });
+                });
+
+                return false;
+            });
+
             exp.$elem.find('.exp_delete').click(function() {
                 var $modal = ui.expensesDelete();
 
