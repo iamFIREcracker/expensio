@@ -89,10 +89,17 @@ var ExpensesManager = (function() {
 
 
     var onDeleteSubmitSuccess = function(data) {
-        logger.success('Expense deleted successfully!', function() {
-            $.each(addsubmitlisteners, function(index, func) {
-                func();
-            });
+        var $modal = $('.modal');
+        var $form = $modal.find('#exp_delete');
+
+        OnSubmitSuccess($form, data, function() {
+            $modal.on('hidden', function() {
+                logger.success('Expense deleted successfully!', function() {
+                    $.each(addsubmitlisteners, function(index, func) {
+                        func();
+                    });
+                });
+            }).modal('hide');
         });
     };
 
@@ -236,25 +243,30 @@ var ExpensesManager = (function() {
 
         onAddExpense: function(exp) {
             exp.$elem.find('.exp_delete').click(function() {
-                var $form = $(this);
-                var $modal = ui.confirmDelete(exp);
+                var $modal = ui.expensesDelete();
 
-                $modal.find('a').click(function() {
-                    $form.ajaxSubmit({
-                        dataType: 'json',
-                        url: '/expenses/' + $form.find('#id').val() + '/delete',
-                        success: onDeleteSubmitSuccess,
-                        error: onDeleteSubmitError,
+                $modal.find('.modal-body').load('/expenses/' + exp.id + '/delete', function() {
+                    $modal.find('#exp_delete').submit(function() {
+                        var $form = $(this);
+
+                        $form.ajaxSubmit({
+                            dataType: 'json',
+                            url: '/expenses/' + exp.id + '/delete',
+                            success: onDeleteSubmitSuccess,
+                            error: onDeleteSubmitError,
+                        });
+
+                        return false;
                     });
                 });
 
                 return false;
-            })
+            });
         },
 
         addSubmit: function(func) {
             addsubmitlisteners.push(func)
         },
 
-    }
-})();
+    };
+}());

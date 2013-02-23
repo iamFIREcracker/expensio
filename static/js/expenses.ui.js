@@ -155,7 +155,7 @@ var ExpensesUI = (function() {
 
         },
 
-        confirmDelete: function(exp) {
+        expensesDelete: function() {
             return $('' +
 '<div class="modal hide fade">' +
   '<div class="modal-header">' +
@@ -163,19 +163,10 @@ var ExpensesUI = (function() {
     '<h3>Delete expense</h3>' +
   '</div>' +
   '<div class="modal-body">' +
-    '<p>You are about to delete the following expense:</p>' +
-    '<ul>' +
-        '<li><strong>Amount</strong>: ' + formatter.amount(exp.amount, exp.currency) + '</li>' +
-        '<li><strong>Category</strong>: ' + exp.category + '</li>' +
-        '<li><strong>Amount</strong>: ' + formatter.date(exp.date) + '</li>' +
-        '<li><strong>Note</strong>: ' + exp.note + '</li>' +
-    '</ul>' +
-  '</div>' +
-  '<div class="modal-footer">' +
-    '<a href="#" class="btn btn-danger" data-dismiss="modal">Continue</a>' +
   '</div>' +
 '</div>'
             ).modal();
+
         },
 
         addExpense: function(func) {
@@ -231,12 +222,11 @@ var Expense = function(ui, palette, formatter) {
             '<i class="icon-pencil"></i>' +
         '</a>' +
     '</span>' +
-    '<form class="exp_delete" method="post">' +
-        '<input type="hidden" value="' + id + '" name="id" id="id"/>' +
+    '<span class="exp_delete">' +
         '<a href="/expenses/' + id + '/delete" title="Delete expense">' +
             '<i class="icon-remove"></i>' +
         '</a>' +
-    '</form>' +
+    '</span>' +
 '</div>'
                 ),
             _timeoutid: null,

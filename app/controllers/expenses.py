@@ -166,6 +166,12 @@ class ExpensesDeleteHandler(BaseHandler):
     @protected
     @owner(Expense)
     @active
+    def GET(self, id):
+        return web.ctx.render.expenses_delete(expense=self.current_item())
+
+    @protected
+    @owner(Expense)
+    @active
     def POST(self, id):
         e = self.current_item()
         e.deleted = True
