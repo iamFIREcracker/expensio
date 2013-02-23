@@ -140,7 +140,6 @@ expenses_edit = form.Form(
         form.Textbox('note', description='Note'),
         form.Textbox('amount', validamount, description='Amount'),
         FileBootstrap('attachment', description='Attachment'),
-        ImageBootstrap('oldattachment', description='Old Attachment'),
     )
 
 expenses_export = form.Form(
@@ -150,6 +149,6 @@ expenses_export = form.Form(
 
 expenses_import = form.Form(
         form.Textarea('data', validimportdata, description='',
-            class_="span6", rows=24,
+            class_="span12", rows=24,
             placeholder="1/22/2013	bar	1.00	coffe with mom")
     )

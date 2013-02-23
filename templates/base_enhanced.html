@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include "elements/navbar.html" %}
+<div class="page-alert" ><div id="logger" class="alert alert-block" style="display: none"></div></div>
+<div class="container-fluid">{% block container %}{% endblock %}</div>
+{% endblock %}
