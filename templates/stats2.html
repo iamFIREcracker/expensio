@@ -37,15 +37,13 @@ PaletteManager.onReady(Logger, function() {
 <span class="spacer20"></span>
 <div class="row-fluid">
     <div class="span3">
-        <div class="sidebar-nav-fixed">
-            <div class="well">
-                <ul class="nav nav-list">
-                    <li class="nav-header">Stats</li>
-                    <li {{ 'class="active"' if current == 'quadrimester' }}><a href="/stats/quadrimester ">Last Quadrimester</a></li>
-                    <li {{ 'class="active"' if current == 'year' }}><a href="/stats/year">Last Year</a></li>
-                    <li {{ 'class="active"' if current == 'life' }}><a href="/stats/life">Lifetime</a></li>
-                </ul>
-            </div>
+        <div class="well">
+            <ul class="nav nav-list">
+                <li class="nav-header">Stats</li>
+                <li {{ 'class="active"' if current == 'quadrimester' }}><a href="/stats/quadrimester ">Last Quadrimester</a></li>
+                <li {{ 'class="active"' if current == 'year' }}><a href="/stats/year">Last Year</a></li>
+                <li {{ 'class="active"' if current == 'life' }}><a href="/stats/life">Lifetime</a></li>
+            </ul>
         </div>
     </div>
     <div class="offset1 span7">
