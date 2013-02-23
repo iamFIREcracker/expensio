@@ -27,6 +27,7 @@ var DaysUI = (function() {
             chart: {
                 renderTo: $chart[0].id,
                 animation: false,
+                type: 'spline'
             },
             title: {
                 text: null,
