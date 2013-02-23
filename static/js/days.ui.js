@@ -1,4 +1,3 @@
-﻿chart = null;
 var DaysUI = (function() {
     var __animationtimeout = 200; // milliseconds
 
