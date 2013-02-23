@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from itertools import tee
+
 import web
 from web import form
 
@@ -105,7 +107,7 @@ users_edit = form.Form(
         form.Hidden('id'),
         form.Textbox('name', form.notnull, description='Name',
             placeholder="John Smith"),
-        form.Dropdown('currency', zip(utils.currencies(), utils.currencies()),
+        form.Dropdown('currency', zip(*tee([''] + utils.currencies())),
             validcurrency, description='Currency'),
     )
 
