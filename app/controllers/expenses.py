@@ -183,11 +183,6 @@ class ExpensesDeleteHandler(BaseHandler):
 
 class ExpensesImportHandler(BaseHandler):
     @protected
-    def GET(self):
-        return web.ctx.render.expenses_import_complete(user=self.current_user(),
-                expenses_import=expenses_import())
-
-    @protected
     def POST(self):
         form = expenses_import()
         if not form.validates():
@@ -208,11 +203,6 @@ class ExpensesImportHandler(BaseHandler):
 
 
 class ExpensesExportHandler(BaseHandler):
-    @protected
-    def GET(self):
-        return web.ctx.render.expenses_export_complete(user=self.current_user(),
-                expenses_export=expenses_export())
-
     @protected
     def POST(self):
         form = expenses_export()

@@ -7,6 +7,8 @@ import web
 
 import app.formatters as formatters
 import app.parsers as parsers
+from app.forms import expenses_import
+from app.forms import expenses_export
 from app.forms import users_avatar
 from app.forms import users_connect
 from app.forms import users_edit
@@ -68,6 +70,20 @@ class LogoutHandler():
     def GET(self):
         logout()
         raise web.found('/')
+
+
+class ImportHandler(BaseHandler):
+    @protected
+    def GET(self):
+        return web.ctx.render.expenses_import_complete(user=self.current_user(),
+                expenses_import=expenses_import())
+
+
+class ExportHandler(BaseHandler):
+    @protected
+    def GET(self):
+        return web.ctx.render.expenses_export_complete(user=self.current_user(),
+                expenses_export=expenses_export())
 
 
 class StatsHandler(BaseHandler):

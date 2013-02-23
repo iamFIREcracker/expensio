@@ -21,6 +21,8 @@ from .controllers.expenses import ExpensesHandler
 from .controllers.expenses import ExpensesExportHandler
 from .controllers.expenses import ExpensesExportTSVStatusHandler
 from .controllers.expenses import ExpensesImportHandler
+from .controllers.general import ExportHandler
+from .controllers.general import ImportHandler
 from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
 from .controllers.general import StatsHandler
@@ -73,5 +75,7 @@ URLS = (
     '/(\d+)/(\d+)', MainHandler,
     '/profile', UsersProfileHandler,
     '/deactivate', UsersDeactivateHandler,
+    '/import', ImportHandler,
+    '/export', ExportHandler,
     '/stats/(quadrimester|year|life)', StatsHandler,
 )
