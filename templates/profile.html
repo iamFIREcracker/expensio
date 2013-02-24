@@ -1,25 +1,28 @@
-{% extends 'base_2row_2col.html' %}
+{% extends 'controls.html' %}
 
 {% block js %}
-<script src="/static/js/users.manager.js"></script>
 <script src="/static/js/users.ui.js"></script>
+<script src="/static/js/users.manager.js"></script>
 {% endblock %}
 
 {% block jsready %}
+ExpensesUI.onReady(
+        Formatter, PaletteManager, $('#current_month_overall'),
+        $('#expenses'));
+ExpensesManager.onReady(Logger, ExpensesUI);
 UsersManager.onReady(Logger, UsersUI);
 {% endblock %}
 
-{% block row1_col1 %}
-    <h3 class="center">Profile</h3>
-    {% include 'users_avatar.html' %}
-    <hr />
-    {% include 'users_edit.html' %}
-    <hr />
-    {% include 'users_connect.html' %}
-    <hr />
-    <div class="control-group form-horizontal">
-        <div class="controls">
-            <button id="submit" type="submit" class="btn btn-primary">Done</button>
-        </div>
+{% block pane %}
+{% include 'users_avatar.html' %}
+<hr />
+{% include 'users_edit.html' %}
+<hr />
+{% include 'users_connect.html' %}
+<hr />
+<div class="control-group form-horizontal">
+    <div class="controls">
+        <button id="submit" type="submit" class="btn btn-primary">Done</button>
     </div>
+</div>
 {% endblock %}

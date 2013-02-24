@@ -141,7 +141,35 @@ var ExpensesUI = (function() {
             }
         },
 
-        confirmDelete: function(exp) {
+        expensesAdd: function() {
+            return $('' +
+'<div class="modal hide fade">' +
+  '<div class="modal-header">' +
+    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+    '<h3>Add expense</h3>' +
+  '</div>' +
+  '<div class="modal-body">' +
+  '</div>' +
+'</div>'
+            ).modal();
+
+        },
+
+        expensesEdit: function() {
+            return $('' +
+'<div class="modal hide fade">' +
+  '<div class="modal-header">' +
+    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+    '<h3>Edit expense</h3>' +
+  '</div>' +
+  '<div class="modal-body">' +
+  '</div>' +
+'</div>'
+            ).modal();
+
+        },
+
+        expensesDelete: function() {
             return $('' +
 '<div class="modal hide fade">' +
   '<div class="modal-header">' +
@@ -149,19 +177,10 @@ var ExpensesUI = (function() {
     '<h3>Delete expense</h3>' +
   '</div>' +
   '<div class="modal-body">' +
-    '<p>You are about to delete the following expense:</p>' +
-    '<ul>' +
-        '<li><strong>Amount</strong>: ' + formatter.amount(exp.amount, exp.currency) + '</li>' +
-        '<li><strong>Category</strong>: ' + exp.category + '</li>' +
-        '<li><strong>Amount</strong>: ' + formatter.date(exp.date) + '</li>' +
-        '<li><strong>Note</strong>: ' + exp.note + '</li>' +
-    '</ul>' +
-  '</div>' +
-  '<div class="modal-footer">' +
-    '<a href="#" class="btn btn-danger" data-dismiss="modal">Continue</a>' +
   '</div>' +
 '</div>'
             ).modal();
+
         },
 
         addExpense: function(func) {
@@ -201,7 +220,6 @@ var Expense = function(ui, palette, formatter) {
             attachment: attachment,
             $elem: $('' +
 '<div class="exp">' +
-    addAttachment(attachment, note) +
     '<span class="exp_date">' + formatter.date(date) + '</span>' +
     '<span class="exp_inner">' +
         '<span class="exp_category palette" ' +
@@ -212,17 +230,17 @@ var Expense = function(ui, palette, formatter) {
         '<span class="exp_note">' + note + '</span>' +
     '</span>' +
     '<span class="exp_amount">' + formatter.amount(amount, currency) + '</span>' +
+    addAttachment(attachment, note) +
     '<span class="exp_edit">' +
         '<a href="/expenses/' + id + '/edit" title="Edit expense">' +
             '<i class="icon-pencil"></i>' +
         '</a>' +
     '</span>' +
-    '<form class="exp_delete" method="post">' +
-        '<input type="hidden" value="' + id + '" name="id" id="id"/>' +
+    '<span class="exp_delete">' +
         '<a href="/expenses/' + id + '/delete" title="Delete expense">' +
             '<i class="icon-remove"></i>' +
         '</a>' +
-    '</form>' +
+    '</span>' +
 '</div>'
                 ),
             _timeoutid: null,

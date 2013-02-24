@@ -81,6 +81,11 @@ class ExpensesHandler(BaseHandler):
 
 class ExpensesAddHandler(BaseHandler):
     @protected
+    def GET(self):
+        form = expenses_add()
+        return web.ctx.render.expenses_add(expenses_add=form)
+
+    @protected
     def POST(self):
         attachment = UploadedFile('attachment')
         form = expenses_add()
@@ -115,8 +120,7 @@ class ExpensesEditHandler(BaseHandler):
                 category=item.category, note=item.note,
                 date=formatters.date_us(item.date),
                 oldattachment=item.attachment)
-        return web.ctx.render.expenses_edit_complete(user=self.current_user(),
-                expenses_edit=form)
+        return web.ctx.render.expenses_edit(expenses_edit=form)
 
     @protected
     @owner(Expense)
@@ -161,6 +165,12 @@ class ExpensesDeleteHandler(BaseHandler):
     @protected
     @owner(Expense)
     @active
+    def GET(self, id):
+        return web.ctx.render.expenses_delete(expense=self.current_item())
+
+    @protected
+    @owner(Expense)
+    @active
     def POST(self, id):
         e = self.current_item()
         e.deleted = True
@@ -172,11 +182,6 @@ class ExpensesDeleteHandler(BaseHandler):
 
 
 class ExpensesImportHandler(BaseHandler):
-    @protected
-    def GET(self):
-        return web.ctx.render.expenses_import_complete(user=self.current_user(),
-                expenses_import=expenses_import())
-
     @protected
     def POST(self):
         form = expenses_import()
@@ -198,12 +203,6 @@ class ExpensesImportHandler(BaseHandler):
 
 
 class ExpensesExportHandler(BaseHandler):
-
-    @protected
-    def GET(self):
-        return web.ctx.render.expenses_export_complete(user=self.current_user(),
-                expenses_export=expenses_export())
-
     @protected
     def POST(self):
         form = expenses_export()

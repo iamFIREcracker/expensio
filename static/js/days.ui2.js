@@ -26,8 +26,8 @@ var DaysUI = (function() {
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: $chart[0].id,
-                type: 'column',
                 animation: false,
+                type: 'spline'
             },
             title: {
                 text: null,
@@ -36,7 +36,7 @@ var DaysUI = (function() {
                 text: null,
             },
             xAxis: {
-                categories: categories,
+                categories: null,
                 title: {
                     text: null
                 },
@@ -64,18 +64,15 @@ var DaysUI = (function() {
 
                     var d = this.point.obj;
                     return sprintf(
-                        "Amount: %s", formatter.amount(d.amount, d.currency))
+                        "<strong>Date</strong>: %s <strong>Amount</strong>: %s",
+                        formatter.date(d.date),
+                        formatter.amount(d.amount, d.currency));
                 },
                 style: {
                     fontFamily: fontFamily,
                 },
             },
             plotOptions: {
-                bar: {
-                    dataLabels: {
-                        enabled: false
-                    }
-                },
             },
             legend: {
                 enabled: false
@@ -86,6 +83,10 @@ var DaysUI = (function() {
             series: [{
                 name: 'Amount',
                 data: data,
+                color: palette.chart(),
+                marker : {
+                    enabled : false,
+                },
             }],
         });
     };

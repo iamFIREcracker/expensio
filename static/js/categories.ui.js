@@ -23,6 +23,7 @@
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: $chart[0].id,
+                type: 'pie',
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false
@@ -55,7 +56,6 @@
                 enabled: false,
             },
             series: [{
-                type: 'pie',
                 name: 'Amount spent',
                 data: data
             }]

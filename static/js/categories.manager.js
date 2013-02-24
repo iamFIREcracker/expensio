@@ -1,7 +1,7 @@
 var CategoriesManager = (function() {
     var logger = null;
-    var date = null;
     var ui = null;
+    var paramsFactory = null;
 
     var onUpdateSuccess = function(data) {
         ui.onNewData(data);
@@ -12,10 +12,10 @@ var CategoriesManager = (function() {
     };
 
     return {
-        onReady: function(logger_, date_, ui_) {
+        onReady: function(logger_, ui_, paramsFactory_) {
             logger = logger_;
-            date = date_;
             ui = ui_;
+            paramsFactory = paramsFactory_;
         },
 
         onMonthChange: function(year, month) {
@@ -24,27 +24,17 @@ var CategoriesManager = (function() {
         },
 
         onUpdate: function() {
-            var latest = ui.getLatest();
-            var data = {
-                since: date.startofcurrentmonth(),
-                to: date.endofcurrentmonth(),
-            }
-
-            if (latest) {
-                data['latest'] = latest;
-            }
-
             $.ajax({
                 url: '/stats/categories',
                 type: 'GET',
                 dataType: 'json',
-                data: data,
+                data: paramsFactory.get(),
                 success: onUpdateSuccess,
                 error: onUpdateError,
             });
 
             return false;
         },
-    }
-})();
+    };
+}());
 

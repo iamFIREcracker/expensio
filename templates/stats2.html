@@ -1,0 +1,71 @@
+{% extends 'base_2col.html' %}
+
+{% block css %}
+<link href="/static/lightbox/css/lightbox.css" rel="stylesheet" />
+{% endblock %}
+
+{% block js %}
+<script src="/static/highcharts/js/highcharts.js"></script>
+<script src="/static/js/date.manager.js"></script>
+<script src="/static/js/users.manager.js"></script>
+<script src="/static/js/params.manager.js"></script>
+<script src="/static/js/days.ui2.js"></script>
+<script src="/static/js/days.manager.js"></script>
+<script src="/static/js/categories.ui.js"></script>
+<script src="/static/js/categories.manager.js"></script>
+{% endblock %}
+
+{% block jsready %}
+PaletteManager.onReady(Logger, function() {
+    DateManager.onReady($('#current_month'), {{ year }}, {{ month }});
+    UsersManager.onReady(Logger);
+    ExpensesUI.onReady(
+            Formatter, PaletteManager, $('#current_month_overall'),
+            $('#expenses'));
+    ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
+    DaysUI.onReady({{ ndays }}, Formatter, PaletteManager, $('#days'));
+    DaysManager.onReady(Logger, DaysUI, ParamsManager(DateManager, DaysUI, 'days', {{ ndays }}));
+    CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
+    CategoriesManager.onReady(Logger, CategoriesUI, ParamsManager(DateManager, CategoriesUI, 'days', {{ ndays }}));
+
+    DaysManager.onUpdate();
+    CategoriesManager.onUpdate();
+});
+{% endblock %}
+
+{% block pre_row1 %}
+<span class="spacer20"></span>
+<div class="row-fluid">
+    <div class="span3">
+        <div class="well">
+            <ul class="nav nav-list">
+                <li class="nav-header">Stats</li>
+                <li {{ 'class="active"' if current == 'quadrimester' }}><a href="/stats/quadrimester ">Last Quadrimester</a></li>
+                <li {{ 'class="active"' if current == 'year' }}><a href="/stats/year">Last Year</a></li>
+                <li {{ 'class="active"' if current == 'life' }}><a href="/stats/life">Lifetime</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="offset1 span7">
+        <div class="row-fluid">
+            <h3 class="center">Amounts By Date</h3>
+            <div id="days">
+                <div class="alert alert-info" style="display: none">
+                    {% block days_desc %}{% endblock %}
+                </div>
+                <div id="days-chart" style="height: 275px; margin: 0 auto"></div>
+            </div>
+        </div>
+        <span class="spacer20"></span>
+        <div class="row-fluid">
+            <h3 class="center">Amounts By Category</h3>
+            <div id="categories">
+                <div class="alert alert-info" style="display: none">
+                    {% block categories_desc %}{% endblock %}
+                </div>
+                <div id="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

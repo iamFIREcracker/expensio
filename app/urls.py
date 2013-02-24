@@ -21,8 +21,13 @@ from .controllers.expenses import ExpensesHandler
 from .controllers.expenses import ExpensesExportHandler
 from .controllers.expenses import ExpensesExportTSVStatusHandler
 from .controllers.expenses import ExpensesImportHandler
+from .controllers.general import ExportHandler
+from .controllers.general import ImportHandler
 from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
+from .controllers.general import StatsHandler
+from .controllers.general import UsersDeactivateHandler
+from .controllers.general import UsersProfileHandler
 from .controllers.stats import StatsCategoriesHandler
 from .controllers.stats import StatsDaysHandler
 from .controllers.users import UsersAvatarChange
@@ -30,13 +35,9 @@ from .controllers.users import UsersAvatarChangeStatusHandler
 from .controllers.users import UsersAvatarRemove
 from .controllers.users import UsersDeleteHandler
 from .controllers.users import UsersEditHandler
-from .controllers.users import UsersProfileHandler
 
 
 URLS = (
-    '/', MainHandler,
-    '/(\d+)/(\d+)', MainHandler,
-
     '/login/google', LoginGoogleHandler,
     '/login/google/authorized', LoginGoogleAuthorizedHandler,
     '/accounts/google/disconnect', AccountsGoogleDisconnectHandler,
@@ -50,8 +51,6 @@ URLS = (
     '/login/fake/authorized', LoginFakeAuthorizedHandler,
     '/accounts/fake/disconnect', AccountsFakeDisconnectHandler,
     '/logout', LogoutHandler,
-
-    '/profile', UsersProfileHandler,
 
     '/users/(.+)/edit', UsersEditHandler,
     '/users/(.+)/avatar/change', UsersAvatarChange,
@@ -71,4 +70,12 @@ URLS = (
     '/expenses/export/tsv/status/(.+)', ExpensesExportTSVStatusHandler,
 
     '/categories/names', CategoriesNamesHandler,
+
+    '/', MainHandler,
+    '/(\d+)/(\d+)', MainHandler,
+    '/profile', UsersProfileHandler,
+    '/deactivate', UsersDeactivateHandler,
+    '/import', ImportHandler,
+    '/export', ExportHandler,
+    '/stats/(quadrimester|year|life)', StatsHandler,
 )

@@ -1,0 +1,26 @@
+{% extends 'base_enhanced.html' %}
+
+{% block container %}
+<span class="spacer20"></span>
+<div class="row-fluid">
+    <div class="span3">
+        <div class="well">
+            <ul class="nav nav-list">
+                <li class="nav-header">Account</li>
+                <li {{ 'class="active"' if current == 'profile' }}><a href="/profile">Profile</a></li>
+                <li {{ 'class="active"' if current == 'deactivate' }}><a href="/deactivate">Deactivate</a></li>
+                <li class="nav-header">Expenses</li>
+                <li {{ 'class="active"' if current == 'import' }}><a href="/import">Import</a></li>
+                <li {{ 'class="active"' if current == 'export' }}><a href="/export">Export</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="span9">
+        <div class="row-fluid">
+            <div class="offset1 span7">
+                {% block pane %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

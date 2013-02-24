@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from itertools import tee
+
 import web
 from web import form
 
@@ -30,7 +32,7 @@ class ImageBootstrap2(form.Input):
 
         return """
 <img src='{src}' class='img-rounded pull-left' width='{width}' height='{height}'>
-<div class="btn-group span1">
+<div class="btn-group" style="margin-left: 20px">
     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
         Change
         <span class="caret"></span>
@@ -105,7 +107,7 @@ users_edit = form.Form(
         form.Hidden('id'),
         form.Textbox('name', form.notnull, description='Name',
             placeholder="John Smith"),
-        form.Dropdown('currency', zip(utils.currencies(), utils.currencies()),
+        form.Dropdown('currency', zip(*tee([''] + utils.currencies())),
             validcurrency, description='Currency'),
     )
 
@@ -138,7 +140,6 @@ expenses_edit = form.Form(
         form.Textbox('note', description='Note'),
         form.Textbox('amount', validamount, description='Amount'),
         FileBootstrap('attachment', description='Attachment'),
-        ImageBootstrap('oldattachment', description='Old Attachment'),
     )
 
 expenses_export = form.Form(
@@ -148,6 +149,6 @@ expenses_export = form.Form(
 
 expenses_import = form.Form(
         form.Textarea('data', validimportdata, description='',
-            class_="span6", rows=24,
+            class_="span12", rows=24,
             placeholder="1/22/2013	bar	1.00	coffe with mom")
     )

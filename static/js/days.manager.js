@@ -1,7 +1,7 @@
 var DaysManager = (function() {
     var logger = null;
-    var date = null;
     var ui = null;
+    var paramsFactory = null;
 
     var onUpdateSuccess = function(data) {
         ui.onNewData(data);
@@ -12,34 +12,24 @@ var DaysManager = (function() {
     };
 
     return {
-        onReady: function(logger_, date_, ui_) {
+        onReady: function(logger_, ui_, paramsFactory_) {
             logger = logger_;
-            date = date_;
             ui = ui_;
+            paramsFactory = paramsFactory_;
         },
 
 
         onUpdate: function() {
-            var latest = ui.getLatest();
-            var data = {
-                since: date.ndaysback(ui.getN() - 1),
-                to: date.today(),
-            }
-
-            if (latest) {
-                data['latest'] = latest;
-            }
-
             $.ajax({
                 url: '/stats/days',
                 type: 'GET',
                 dataType: 'json',
-                data: data,
+                data: paramsFactory.get(),
                 success: onUpdateSuccess,
                 error: onUpdateError,
             });
 
             return false;
         },
-    }
-})();
+    };
+}());
