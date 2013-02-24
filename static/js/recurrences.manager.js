@@ -1,7 +1,7 @@
 var RecurrencesManager = (function() {
     var logger = null;
     var ui = null;
-    var addsubmitlisteners = Array();
+    var addsubmitlisteners = [];
 
 
     var initWidgets = function($context) {
@@ -15,21 +15,10 @@ var RecurrencesManager = (function() {
 
 
     var update = function() {
-        var latest = ui.getLatest();
-        var data = {
-            since: date.startofcurrentmonth(),
-            to: date.endofcurrentmonth(),
-        }
-
-        if (latest) {
-            data['latest'] = latest;
-        }
-
         $.ajax({
             url: '/recurrences',
             type: 'GET',
             dataType: 'json',
-            data: data,
             success: onUpdateSuccess,
             error: onUpdateError,
         });
@@ -107,61 +96,6 @@ var RecurrencesManager = (function() {
     };
 
 
-    var onImportSubmitSuccess = function(data) {
-        var $form = $('#rec_import');
-        OnSubmitSuccess($form, data, function() {
-            $form.clearForm();
-            logger.success('Recurrences imported successfully!', function() {
-                setTimeout(function() {
-                    window.location = "/";
-                }, 2000);
-            });
-        });
-    };
-
-    var onImportSubmitError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
-
-    var onExportCheckStatusSuccess = function(data) {
-        if (!data.success) {
-            setTimeout(function() {
-                exportCheckStatus(data.goto);
-            }, 1000);
-        } else {
-            window.location.href = data.goto;
-        }
-    };
-
-    var onExportCheckStatusError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
-    var exportCheckStatus = function(url) {
-        $.ajax({
-            dataType: 'json',
-            url: url,
-            success: onExportCheckStatusSuccess,
-            error: onExportCheckStatusError,
-        });
-    };
-
-    var onExportSubmitSuccess = function(data) {
-        var $form = $('#rec_import');
-        OnSubmitSuccess($form, data, function() {
-            $form.clearForm();
-            logger.info('Waiting for the server to generate export file...', function() {
-                exportCheckStatus(data.goto);
-            });
-        });
-    };
-
-    var onExportSubmitError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
-
     return {
         onReady: function(logger_, ui_) {
             logger = logger_;
@@ -188,38 +122,6 @@ var RecurrencesManager = (function() {
                 });
                 return false;
             });
-
-            $('#rec_import').submit(function() {
-                var $form = $(this);
-
-                $form.ajaxSubmit({
-                    dataType: 'json',
-                    url: '/recurrences/import',
-                    success: onImportSubmitSuccess,
-                    error: onImportSubmitError,
-                });
-
-                return false;
-            })
-
-            $('#rec_export').submit(function() {
-                var $form = $(this);
-
-                $form.ajaxSubmit({
-                    dataType: 'json',
-                    url: '/recurrences/export',
-                    success: onExportSubmitSuccess,
-                    error: onExportSubmitError,
-                });
-
-                return false;
-            });
-
-        },
-
-        onMonthChange: function(year, month) {
-            ui.onMonthChange(year, month);
-            update();
         },
 
         onUpdate: function() {
@@ -273,7 +175,7 @@ var RecurrencesManager = (function() {
         },
 
         addSubmit: function(func) {
-            addsubmitlisteners.push(func)
+            addsubmitlisteners.push(func);
         },
 
     };
