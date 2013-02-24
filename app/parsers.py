@@ -24,6 +24,23 @@ def format(value):
     else:
         return value
 
+def yearday(value):
+    if value:
+        return date_us(value)
+
+def monthday(value):
+    if value:
+        value = int(value)
+        if value not in utils.monthdays():
+            raise ValueError()
+        return value
+
+def weekday(value):
+    if value:
+        if value not in utils.weekdays():
+            raise ValueError()
+        return value
+
 def expenses(data):
     expenses = []
 

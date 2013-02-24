@@ -22,6 +22,10 @@ _CURRENCIES = [u'€', u'$']
 
 _FORMATS = ['tsv']
 
+_MONTHDAYS = range(1, 29)
+
+_WEEKDAYS = list(calendar.day_name)
+
 
 def currencies():
     """Return a list of all the supported currencies."""
@@ -31,6 +35,14 @@ def currencies():
 def formats():
     """Return a list of all the supported formats."""
     return _FORMATS
+
+def monthdays():
+    """Return a list of monthdays."""
+    return _MONTHDAYS
+
+def weekdays():
+    """Return a list of weekdays."""
+    return _WEEKDAYS
 
 
 def jsonify(*args, **kwargs):
