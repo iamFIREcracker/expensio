@@ -1,0 +1,32 @@
+{% extends 'controls.html' %}
+
+{% block jsready %}
+PaletteManager.onReady(Logger, function() {
+    ExpensesUI.onReady(
+            Formatter, PaletteManager, $('#current_month_overall'), $('#expenses'));
+    ExpensesManager.onReady(Logger, ExpensesUI);
+    RecurrencesUI.onReady(Formatter, PaletteManager, $('#recurrences'));
+    RecurrencesManager.onReady(Logger, RecurrencesUI);
+
+    RecurrencesManager.addSubmit(function() {
+        setTimeout(function() {
+            window.location.reload();
+        }, 2000);
+    });
+    RecurrencesUI.addRecurrence(function(rec) {
+        RecurrencesManager.onAddRecurrence(rec);
+    })
+
+    RecurrencesManager.onUpdate();
+});
+{% endblock %}
+
+{% block pane %}
+<div id="recurrences">
+    <div class="alert alert-info" style="display: none">
+        All the recurrences tracked so far will be listed here, one above the
+        other, sorted by creation date.
+    </div>
+    <div id="recurrences-inner"></div>
+</div>
+{% endblock %}

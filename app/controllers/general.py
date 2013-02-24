@@ -73,6 +73,13 @@ class LogoutHandler():
         raise web.found('/')
 
 
+class RecurringHandler(BaseHandler):
+    @protected
+    def GET(self):
+        return web.ctx.render.recurring_complete(user=self.current_user(),
+                current='recurring')
+
+
 class ImportHandler(BaseHandler):
     @protected
     def GET(self):
@@ -85,13 +92,6 @@ class ExportHandler(BaseHandler):
     def GET(self):
         return web.ctx.render.expenses_export_complete(user=self.current_user(),
                 current='export', expenses_export=expenses_export())
-
-
-class RecurringHandler(BaseHandler):
-    @protected
-    def GET(self):
-        return web.ctx.render.recurrences(user=self.current_user(),
-                current='recurrences')
 
 
 class StatsHandler(BaseHandler):
