@@ -101,7 +101,7 @@ validmonthday = form.Validator('1, 2 ..',
 validweekday = form.Validator('Monday ..',
         lambda v: not v or parsers.weekday(v))
 validrepeat = form.Validator(
-        "Only one repeat rule should be set.",
+        "There should be one and only one repeat rule set.",
         lambda i: 1 == sum(map(bool, [i.yearly, i.monthly, i.weekly])))
 
 users_avatar = form.Form(
