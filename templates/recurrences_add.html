@@ -1,0 +1,11 @@
+{% from "_formhelpers.html" import render_field %}
+<form id="rec_add" class="form-horizontal" enctype="multipart/form-data" method="post">
+    {% for input in recurrences_add.inputs %}
+        {{ render_field(input) }}
+    {% endfor %}
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </div>
+</form>
