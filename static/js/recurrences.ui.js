@@ -8,98 +8,43 @@ var RecurrencesUI = (function() {
     var $recurrences = null;
     var $inner = null;
     var recurrences = null;
-    var latest = null;
-    var addrecurrencelisteners = Array();
+    var addrecurrencelisteners = [];
 
 
     var init = function() {
         $inner.empty();
-        $recurrences.append('<div class="loading"><img src="/static/images/loading.gif" /></div>')
+        $recurrences.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
         $help.hide();
-        recurrences = Object();
-        latest = '';
+        recurrences = {};
     };
 
     var updateRecurrence = function(obj) {
-        var prev = recurrences[obj.id];
-
-        /*
-         * Update the variable containing the date of the latest update.
-         * This operation should be done on all received updates, even those
-         * representing deleted items.
-         */
-        if (obj.updated > latest) {
-            latest = obj.updated;
-        }
-
-        /*
-         * The current recurrence has been deleted.  Check for a previously
-         * received update: if preset, issue a graceful remove, otherwise
-         * skip the element and return.
-         */
-        if (obj.deleted === true) {
-            if (prev === undefined) {
-                return false;
-            } else {
-                prev.gracefulRemove();
-                delete recurrences[obj.id];
-                return true;
-            }
-        }
-
-        /*
-         * If we are here, we received an update for the current recurrence.
-         * Remove the previous element.
-         */
-        if (prev !== undefined) {
-            prev.remove();
-            delete recurrences[prev.id];
-        }
-
-        if ($recurrences.find('.help').length) {
-            $inner.empty();
-        }
-
-        /*
-         * Add the recurrence to internal data structures 
-         * XXX fix ordering!!!!
-         */
-        var newexp = Recurrence(obj.id, obj.amount, obj.currency,
+        var newrec = Recurrence(obj.id, obj.amount, obj.currency,
                 obj.category, obj.note, obj.date, obj.attachment);
 
         for (var id in recurrences) {
-            var curexp = recurrences[id];
+            var currec = recurrences[id];
 
-            if (newexp.date > curexp.date) {
-                newexp.$elem.insertBefore(curexp.$elem);
-                recurrences[newexp.id] = newexp;
+            if (newrec.date > currec.date) {
+                newrec.$elem.insertBefore(currec.$elem);
+                recurrences[newrec.id] = newrec;
                 break;
             }
         }
-        if (!(newexp.id in recurrences)) {
-            $inner.append(newexp.$elem);
-            recurrences[newexp.id] = newexp;
+        if (!(newrec.id in recurrences)) {
+            $inner.append(newrec.$elem);
+            recurrences[newrec.id] = newrec;
         }
 
         /*
          * Trigger animations and notify listeners
          */
-        newexp.flash();
+        newrec.flash();
         $.each(addrecurrencelisteners, function(index, func) {
-            func(newexp);
+            func(newrec);
         })
 
         return true;
-    };
-
-    var updateTitle = function() {
-        var overall = 0.0;
-        var currency = '';
-
-        $.each(recurrences, function() {
-            overall += this.amount;
-            currency = this.currency;
-        });
     };
 
     return {
@@ -113,10 +58,6 @@ var RecurrencesUI = (function() {
             init();
         },
 
-        onMonthChange: function(year, month) {
-            init();
-        },
-
         onNewData: function(data) {
             var $loading = $recurrences.find('.loading');
 
@@ -124,8 +65,9 @@ var RecurrencesUI = (function() {
                 $loading.remove();
             }
 
+            $inner.empty();
+
             _.map(data.recurrences, updateRecurrence);
-            updateTitle();
 
             if (_.any(recurrences) == false) {
                 $inner.hide();
@@ -181,10 +123,6 @@ var RecurrencesUI = (function() {
         addRecurrence: function(func) {
             addrecurrencelisteners.push(func)
         },
-
-        getLatest: function() {
-            return latest;
-        },
     };
 })();
 
@@ -214,7 +152,7 @@ var Recurrence = function(ui, palette, formatter) {
             date: date,
             attachment: attachment,
             $elem: $('' +
-'<div class="exp">' +
+'<div class="rec">' +
     '<span class="rec_date">' + formatter.date(date) + '</span>' +
     '<span class="rec_inner">' +
         '<span class="rec_category palette" ' +
