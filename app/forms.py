@@ -175,3 +175,17 @@ recurrences_add = form.Form(
         validators=[validrepeat]
     )
 
+recurrences_edit = form.Form(
+        form.Hidden('id'),
+        form.Textbox('yearly', validyearday, description='Yearly',
+            placeholder='1/22/2013'),
+        form.Dropdown('monthly', zip(*tee([''] + utils.monthdays())),
+            validmonthday, description='Monthly'),
+        form.Dropdown('weekly', zip(*tee([''] + utils.weekdays())),
+            validweekday, description='Weekly'),
+        form.Textbox('category', form.notnull, description='Category', placeholder='bar'),
+        form.Textbox('note', description='Note', placeholder='coffe with mom'),
+        form.Textbox('amount', validamount, description='Amount', placeholder='1.00'),
+        validators=[validrepeat]
+    )
+

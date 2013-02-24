@@ -8,7 +8,7 @@ import web
 import app.formatters as formatters
 import app.parsers as parsers
 from app.forms import recurrences_add
-#from app.forms import recurrences_edit
+from app.forms import recurrences_edit
 from app.models import Recurrence
 from app.upload import UploadedFile
 from app.utils import active
@@ -37,26 +37,6 @@ class RecurrenceWrapper(object):
     def __init__(self, recurrence, currency):
         self.r = recurrence
         self.currency = currency
-
-
-def RecurrencesInBetween(user_id, since, to):
-    """
-    Get all the recurrences associated to the given user, which have been created
-    between `since` and `to`
-    """
-    return (web.ctx.orm.query(Recurrence)
-                .filter_by(user_id=user_id)
-                .filter(Recurrence.date >= since)
-                .filter(Recurrence.date <= to))
-
-
-def LatestRecurrencesInBetween(user_id, since, to, latest):
-    """
-    Get all the recurrences associated to the given user, which have been created
-    between `since` and `to` and that have been modified after `latest`
-    """
-    return (RecurrencesInBetween(user_id, since, to)
-                .filter(Recurrence.updated > latest))
 
 
 class RecurrencesHandler(BaseHandler):
@@ -109,49 +89,48 @@ class RecurrencesEditHandler(BaseHandler):
     def GET(self, id):
         form = recurrences_edit()
         item = self.current_item()
-        form.fill(id=item.id, amount=formatters.amount(item.amount),
+        form.fill(id=item.id, yearly=formatters.yearday(item.yearly),
+                monthly=formatters.monthday(item.monthly),
+                weekly=item.weekly,
                 category=item.category, note=item.note,
-                date=formatters.date_us(item.date),
-                oldattachment=item.attachment)
+                amount=formatters.amount(item.amount))
         return web.ctx.render.recurrences_edit(recurrences_edit=form)
 
     @protected
     @owner(Recurrence)
     @active
     def POST(self, id):
-        attachment = UploadedFile('attachment')
         form = recurrences_edit()
 
         if not form.validates():
             return jsonify(success=False,
+                    reason=form.note,
                     errors=dict((i.name, i.note) for i in form.inputs
                         if i.note is not None))
         else:
-            url = (os.path.join(web.ctx.home, web.ctx.uploadman.add(attachment))
-                    if attachment else None)
+            r = self.current_item()
 
-            e = self.current_item()
-
-            # Add a new recurrence being the copy of the current recurrence before
-            # the edit operations have been applied
-            deleted = Recurrence(original_id=e.id, user_id=self.current_user().id,
-                    amount=e.amount, category=e.category, note=e.note,
-                    date=e.date, deleted=True, attachment=e.attachment)
+            # Add a new recurrence being the copy of the current recurrence
+            # before the edit operations have been applied
+            deleted = Recurrence(original_id=r.id,
+                    user_id=self.current_user().id, yearly=r.yearly,
+                    monthly=r.monthly, weekly=r.weekly, category=r.category,
+                    note=r.note, amount=r.amount, deleted=True)
 
             # Now apply edit operations on the current recurrence
-            e.amount = parsers.amount(form.d.amount)
-            e.category = form.d.category
-            e.note = form.d.note
-            e.date = parsers.date_us(form.d.date)
-            if attachment:
-                e.attachment = url
+            r.yearly = parsers.yearday(form.d.yearly)
+            r.monthly = parsers.monthday(form.d.monthly)
+            r.weekly = parsers.weekday(form.d.weekly)
+            r.category = form.d.category
+            r.note = form.d.note
+            r.amount = parsers.amount(form.d.amount)
 
             # Bulk add
-            web.ctx.orm.add_all([deleted, e])
-            e = web.ctx.orm.merge(e)
+            web.ctx.orm.add_all([deleted, r])
+            r = web.ctx.orm.merge(r)
 
             return jsonify(success=True,
-                    recurrence=RecurrenceWrapper(e, self.current_user().currency))
+                    recurrence=RecurrenceWrapper(r, self.current_user().currency))
 
 
 class RecurrencesDeleteHandler(BaseHandler):

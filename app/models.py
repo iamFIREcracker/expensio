@@ -76,10 +76,15 @@ class Expense(Base):
         return '<Expense %r, %f>' % (self.category, self.amount)
 
 
+def recurrenceid(context):
+    return context.current_parameters['id']
+
+
 class Recurrence(Base):
     __tablename__ = 'recurrence'
 
     id = Column(String, default=_uuid, primary_key=True)
+    original_id = Column(String, ForeignKey('recurrence.id'), default=recurrenceid)
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     user_id = Column(String, ForeignKey('user.id'))
