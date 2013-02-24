@@ -144,10 +144,10 @@ class RecurrencesDeleteHandler(BaseHandler):
     @owner(Recurrence)
     @active
     def POST(self, id):
-        e = self.current_item()
-        e.deleted = True
-        web.ctx.orm.add(e)
-        e = web.ctx.orm.merge(e)
+        r = self.current_item()
+        r.deleted = True
+        web.ctx.orm.add(r)
+        r = web.ctx.orm.merge(r)
 
         return jsonify(success=True,
-                recurrence=RecurrenceWrapper(e, self.current_user().currency))
+                recurrence=RecurrenceWrapper(r, self.current_user().currency))

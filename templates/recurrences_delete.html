@@ -1,0 +1,17 @@
+{% from "_formhelpers.html" import render_field %}
+<p>You are about to delete the following recurrence:</p>
+<ul>
+    <li><strong>Yearly</strong>: {{ recurrence.weekly }}</li>
+    <li><strong>Monthly</strong>: {{ recurrence.monthly }}</li>
+    <li><strong>Weekly</strong>: {{ recurrence.weekly }}</li>
+    <li><strong>Category</strong>: {{ recurrence.category }}</li>
+    <li><strong>Note</strong>:  {{ recurrence.note }}</li>
+    <li><strong>Amount</strong>: {{ recurrence.amount }}</li>
+</ul>
+<form id="rec_delete" class="form" enctype="multipart/form-data" method="post">
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-danger pull-right">Continue</button>
+        </div>
+    </div>
+</form>
