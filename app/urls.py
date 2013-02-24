@@ -26,6 +26,7 @@ from .controllers.general import ExportHandler
 from .controllers.general import ImportHandler
 from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
+from .controllers.general import RecurrencesHandler
 from .controllers.general import StatsHandler
 from .controllers.general import UsersDeactivateHandler
 from .controllers.general import UsersProfileHandler
@@ -86,5 +87,6 @@ URLS = (
     '/deactivate', UsersDeactivateHandler,
     '/import', ImportHandler,
     '/export', ExportHandler,
+    '/recurrences', RecurrencesHandler,
     '/stats/(quadrimester|year|life)', StatsHandler,
 )

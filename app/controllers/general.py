@@ -87,6 +87,13 @@ class ExportHandler(BaseHandler):
                 current='export', expenses_export=expenses_export())
 
 
+class RecurrencesHandler(BaseHandler):
+    @protected
+    def GET(self):
+        return web.ctx.render.recurrences(user=self.current_user(),
+                current='recurrences')
+
+
 class StatsHandler(BaseHandler):
     days = {'quadrimester': 120, 'year': 365, 'life': 1000}
 
