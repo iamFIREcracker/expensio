@@ -103,7 +103,7 @@ var ExpensesUI = (function() {
             currency = this.currency;
         });
 
-        $title.text(sprintf("Total: %s", formatter.amount(overall, currency)));
+        $title.text(sprintf("Net: %s", formatter.amount(overall, currency)));
     };
 
     return {
