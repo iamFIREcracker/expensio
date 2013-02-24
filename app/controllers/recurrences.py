@@ -15,7 +15,6 @@ from app.utils import active
 from app.utils import owner
 from app.utils import protected
 from app.utils import jsonify
-from app.utils import parsedateparams
 from app.utils import BaseHandler
 
 
@@ -30,12 +29,14 @@ class RecurrenceWrapper(object):
             'weekly': lambda o: o.r.weekly,
             'category': lambda o: o.r.category,
             'amount': lambda o: formatters.amount(o.r.amount),
+            'currency': lambda o: o.currency,
             'note': lambda o: o.r.note,
             'deleted': lambda o: bool(o.r.deleted),
             }
 
-    def __init__(self, recurrence):
+    def __init__(self, recurrence, currency):
         self.r = recurrence
+        self.currency = currency
 
 
 def RecurrencesInBetween(user_id, since, to):
@@ -61,12 +62,10 @@ def LatestRecurrencesInBetween(user_id, since, to, latest):
 class RecurrencesHandler(BaseHandler):
     @protected
     def GET(self):
-        since, to, latest = parsedateparams()
-
-        recurrences = (
-                LatestRecurrencesInBetween(
-                    self.current_user().id, since, to, latest)
-                .order_by(Recurrence.date.desc())
+        recurrences = (web.ctx.orm.query(Recurrence)
+                .filter_by(user_id=self.current_user().id)
+                .filter(Recurrence.deleted == False)
+                .order_by(Recurrence.created.desc())
                 .all())
 
         return jsonify(
@@ -98,7 +97,8 @@ class RecurrencesAddHandler(BaseHandler):
             web.ctx.orm.add(r)
             r = web.ctx.orm.merge(r)
 
-            return jsonify(success=True, recurrence=RecurrenceWrapper(r))
+            return jsonify(success=True,
+                    recurrence=RecurrenceWrapper(r, self.current_user().currency))
 
 
 class RecurrencesEditHandler(BaseHandler):

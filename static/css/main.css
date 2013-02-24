@@ -35,7 +35,7 @@
 }
 
 
-.exp {
+.exp, .rec {
     width: 100%;
     padding: 5px;
     clear: both;
@@ -47,6 +47,12 @@
     width: 14%;
 }
 
+.rec_when {
+    margin-left: 2%;
+    display: inline-block;
+    width: 28%;
+}
+
 .exp_inner {
     margin-left: 3%;
     white-space: nowrap;
@@ -54,12 +60,19 @@
     width: 51%;
 }
 
-.exp_category {
+.rec_inner {
+    margin-left: 3%;
+    white-space: nowrap;
+    display: inline-block;
+    width: 41%;
+}
+
+.exp_category, .rec_category {
     display: inline-block;
     padding: 2px;
 }
 
-.exp_note {
+.exp_note, .rec_note {
     margin-left: 2%;
     color: #888;
     display: inline-block;
@@ -69,14 +82,14 @@
     width: inherit;
 }
 
-.exp_amount {
+.exp_amount, .rec_amount {
     margin-left: 1%;
     display: inline-block;
     width: 14%;
     text-align: right;
 }
 
-.exp_attach {
+.exp_attach, .rec_edit {
     margin-left: 3%;
     width: 14px;
     display: inline-block;
@@ -87,22 +100,21 @@
     display: inline-block;
 }
 
-.exp_delete {
-    margin-bottom: 0px;
+.exp_delete, .rec_delete {
     margin-left: 2%;
     display: inline-block;
 }
 
-.exp:nth-child(1) {
+.exp:nth-child(1), .rec:nth-child(1) {
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }
 
-.exp + .exp {
+.exp + .exp, .rec + .rec {
     border-bottom: 1px solid #ddd;
 }
 
-.exp:hover {
+.exp:hover, .rec:hover {
     background-color: #f5f5f5;
 }
 

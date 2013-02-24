@@ -1,7 +1,4 @@
 var RecurrencesUI = (function() {
-    var __beforeanimatetimeout = 200;
-    var __animationtimeout = 200; // milliseconds
-
     var formatter = null;
     var palette = null;
     var $help = null;
@@ -19,32 +16,18 @@ var RecurrencesUI = (function() {
     };
 
     var updateRecurrence = function(obj) {
-        var newrec = Recurrence(obj.id, obj.amount, obj.currency,
-                obj.category, obj.note, obj.date, obj.attachment);
-
-        for (var id in recurrences) {
-            var currec = recurrences[id];
-
-            if (newrec.date > currec.date) {
-                newrec.$elem.insertBefore(currec.$elem);
-                recurrences[newrec.id] = newrec;
-                break;
-            }
-        }
-        if (!(newrec.id in recurrences)) {
-            $inner.append(newrec.$elem);
-            recurrences[newrec.id] = newrec;
-        }
+        var newrec = Recurrence(
+            obj.id, obj.yearly, obj.monthly, obj.weekly, obj.category,
+            obj.note, obj.amount, obj.currency);
+        $inner.append(newrec.$elem);
+        recurrences[newrec.id] = newrec;
 
         /*
          * Trigger animations and notify listeners
          */
-        newrec.flash();
         $.each(addrecurrencelisteners, function(index, func) {
             func(newrec);
-        })
-
-        return true;
+        });
     };
 
     return {
@@ -64,8 +47,6 @@ var RecurrencesUI = (function() {
             if ($loading.length) {
                 $loading.remove();
             }
-
-            $inner.empty();
 
             _.map(data.recurrences, updateRecurrence);
 
@@ -121,39 +102,42 @@ var RecurrencesUI = (function() {
         },
 
         addRecurrence: function(func) {
-            addrecurrencelisteners.push(func)
+            addrecurrencelisteners.push(func);
         },
     };
-})();
+}());
 
 
-var Recurrence = function(ui, palette, formatter) {
-    return function(id, amount, currency, category, note, date, attachment) {
-        var addAttachment = function(attachment, note) {
-            if (attachment == null)
-                return '' +
-'<span class="rec_attach">' +
-'</span>';
-            else
-                return '' +
-'<span class="rec_attach">' +
-    '<a href="' + attachment + '" rel="lightbox" title="' + note + '">' +
-        '<i class="icon-file"></i>' +
-    '</a>' +
-'</span>';
+var Recurrence = (function(ui, palette, formatter) {
+    return function(id, yearly, monthly, weekly, category, note, amount, currency) {
+        var when = function(yearly, monthly, weekly) {
+            var msg;
+
+            if (yearly) {
+                msg = sprintf("Every <strong>%s</strong>", formatter.yearly(yearly));
+            } else if (monthly) {
+                msg = sprintf("The <strong>%s</strong> of the month", formatter.monthly(monthly));
+            } else if (weekly){
+                msg = sprintf("On <strong>%s</strong>", weekly);
+            } else {
+                msg = "‒";
+            }
+
+            return '<span class="rec_when">' + msg + '</span>';
         };
 
         return {
             id: id,
-            amount: amount,
-            currency: currency,
+            yearly: yearly,
+            monthly: monthly,
+            weekly: weekly,
             category: category,
             note: note,
-            date: date,
-            attachment: attachment,
-            $elem: $('' +
+            amount: amount,
+            currency: currency,
+            $elem: $(
 '<div class="rec">' +
-    '<span class="rec_date">' + formatter.date(date) + '</span>' +
+    when(yearly, monthly, weekly) +
     '<span class="rec_inner">' +
         '<span class="rec_category palette" ' +
             'style="background-color: '+ palette.background(category) + '; ' +
@@ -163,7 +147,6 @@ var Recurrence = function(ui, palette, formatter) {
         '<span class="rec_note">' + note + '</span>' +
     '</span>' +
     '<span class="rec_amount">' + formatter.amount(amount, currency) + '</span>' +
-    addAttachment(attachment, note) +
     '<span class="rec_edit">' +
         '<a href="/recurrences/' + id + '/edit" title="Edit recurrence">' +
             '<i class="icon-pencil"></i>' +
@@ -176,46 +159,6 @@ var Recurrence = function(ui, palette, formatter) {
     '</span>' +
 '</div>'
                 ),
-            _timeoutid: null,
-
-
-            remove: function() {
-                this.$elem.remove();
-            },
-
-            _onGracefulRemove: function() {
-                this.$elem.fadeOut('slow', function(_this) {
-                    return function() {
-                        _this.remove();
-                    }
-                }(this));
-            },
-
-            gracefulRemove: function() {
-                if (this._timeoutid != null) {
-                    clearInterval(this._timeoutid);
-                }
-
-                this._timeoutid = setTimeout(function(_this) {
-                    _this._onGracefulRemove();
-                }, ui.__beforeanimatetimeout, this);
-            },
-
-
-            _onFlash: function() {
-                this.$elem.addClass('flash')
-                    .delay(ui.__animationtimeout).removeClass('flash', 'slow');
-            },
-
-            flash: function() {
-                if (this._timeoutid != null) {
-                    clearInterval(this._timeoutid);
-                }
-
-                this._timeoutid = setTimeout(function(_this) {
-                    _this._onFlash();
-                }, ui.__beforeanimatetimeout, this);
-            },
         };
     };
-}(RecurrencesUI, PaletteManager, Formatter);
+}(RecurrencesUI, PaletteManager, Formatter));

@@ -128,11 +128,11 @@ var RecurrencesManager = (function() {
             update();
         },
 
-        onAddRecurrence: function(exp) {
-            exp.$elem.find('.rec_edit').click(function() {
+        onAddRecurrence: function(rec) {
+            rec.$elem.find('.rec_edit').click(function() {
                 var $modal = ui.recurrencesEdit();
 
-                $modal.find('.modal-body').load('/recurrences/' + exp.id + '/edit', function() {
+                $modal.find('.modal-body').load('/recurrences/' + rec.id + '/edit', function() {
                     initWidgets($modal);
 
                     $modal.find('#rec_edit').submit(function() {
@@ -140,7 +140,7 @@ var RecurrencesManager = (function() {
 
                         $form.ajaxSubmit({
                             dataType: 'json',
-                            url: '/recurrences/' + exp.id + '/edit',
+                            url: '/recurrences/' + rec.id + '/edit',
                             success: onEditSubmitSuccess,
                             error: onEditSubmitError,
                         });
@@ -152,16 +152,16 @@ var RecurrencesManager = (function() {
                 return false;
             });
 
-            exp.$elem.find('.rec_delete').click(function() {
+            rec.$elem.find('.rec_delete').click(function() {
                 var $modal = ui.recurrencesDelete();
 
-                $modal.find('.modal-body').load('/recurrences/' + exp.id + '/delete', function() {
+                $modal.find('.modal-body').load('/recurrences/' + rec.id + '/delete', function() {
                     $modal.find('#rec_delete').submit(function() {
                         var $form = $(this);
 
                         $form.ajaxSubmit({
                             dataType: 'json',
-                            url: '/recurrences/' + exp.id + '/delete',
+                            url: '/recurrences/' + rec.id + '/delete',
                             success: onDeleteSubmitSuccess,
                             error: onDeleteSubmitError,
                         });

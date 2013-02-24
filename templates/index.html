@@ -43,6 +43,7 @@ PaletteManager.onReady(Logger, function() {
     });
 
     ExpensesManager.addSubmit(function() {
+        /* why not call the global manager here? */
         ExpensesManager.onUpdate();
         CategoriesManager.onUpdate();
     })
