@@ -85,6 +85,7 @@ class RecurrencesAddHandler(BaseHandler):
 
         if not form.validates():
             return jsonify(success=False,
+                    reason=form.note,
                     errors=dict((i.name, i.note) for i in form.inputs
                         if i.note is not None))
         else:

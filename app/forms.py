@@ -100,6 +100,9 @@ validmonthday = form.Validator('1, 2 ..',
         lambda v: not v or parsers.monthday(v))
 validweekday = form.Validator('Monday ..',
         lambda v: not v or parsers.weekday(v))
+validrepeat = form.Validator(
+        "Only one repeat rule should be set.",
+        lambda i: 1 == sum(map(bool, [i.yearly, i.monthly, i.weekly])))
 
 users_avatar = form.Form(
         form.Hidden('id'),
@@ -169,5 +172,6 @@ recurrences_add = form.Form(
         form.Textbox('category', form.notnull, description='Category', placeholder='bar'),
         form.Textbox('note', description='Note', placeholder='coffe with mom'),
         form.Textbox('amount', validamount, description='Amount', placeholder='1.00'),
+        validators=[validrepeat]
     )
 
