@@ -76,7 +76,7 @@ class StatsCategoriesHandler(BaseHandler):
         # between `since` and `to` having one of the extracted categories.
         expenses = [] if not updated else (
                 ExpensesInBetween(self.current_user().id, since, to)
-                .filter(Expense.category.in_(set(e.category for e in updated)))
+                .filter(Expense.category.in_((e.category for e in updated)))
                 .order_by(Expense.category.asc())
                 .all())
 
@@ -164,16 +164,17 @@ class StatsDaysHandler(BaseHandler):
         expenses = [] if not updated else (
                 ExpensesInBetween(self.current_user().id, since, to)
                 .filter(extract('year', Expense.date)
-                    .in_(set(e.date.year for e in updated)))
+                    .in_(e.date.year for e in updated))
                 .filter(extract('month', Expense.date)
-                    .in_(set(e.date.month for e in updated)))
+                    .in_(e.date.month for e in updated))
                 .filter(extract('day', Expense.date)
-                    .in_(set(e.date.day for e in updated)))
+                    .in_(e.date.day for e in updated))
                 .order_by(Expense.date.asc())
                 .all())
 
         days = [ComputeDayAggregate(group)
-                    for (key, group) in groupby(expenses, key=PlainDate)]
+                    for (key, group) in groupby(
+                        expenses, key=PlainDate)]
 
         return jsonify(
                 stats=dict(

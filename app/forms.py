@@ -117,7 +117,9 @@ users_edit = form.Form(
     )
 
 users_connect = form.Form(
-        Connect('fake', description='Fake', class_='btn btn-inverse'),
+        Connect('google', description='Google', class_='btn btn-warning'),
+        Connect('facebook', description='Facebook', class_='btn btn-info'),
+        Connect('twitter', description='Twitter', class_='btn btn-success'),
         validators=[validaccounts]
     )
 
