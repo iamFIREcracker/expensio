@@ -1,7 +1,6 @@
 var RecurrencesManager = (function() {
     var logger = null;
     var ui = null;
-    var date = null;
     var addsubmitlisteners = Array();
 
 
@@ -164,10 +163,9 @@ var RecurrencesManager = (function() {
 
 
     return {
-        onReady: function(logger_, ui_, date_) {
+        onReady: function(logger_, ui_) {
             logger = logger_;
             ui = ui_;
-            date = date_;
 
             $('#rec_new').click(function() {
                 var $modal = ui.recurrencesAdd();

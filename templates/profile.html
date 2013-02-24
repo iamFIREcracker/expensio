@@ -10,6 +10,8 @@ ExpensesUI.onReady(
         Formatter, PaletteManager, $('#current_month_overall'),
         $('#expenses'));
 ExpensesManager.onReady(Logger, ExpensesUI);
+RecurrencesUI.onReady(Formatter, PaletteManager, $('#recurrences'));
+RecurrencesManager.onReady(Logger, RecurrencesUI);
 UsersManager.onReady(Logger, UsersUI);
 {% endblock %}
 

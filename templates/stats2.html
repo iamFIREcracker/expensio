@@ -23,6 +23,8 @@ PaletteManager.onReady(Logger, function() {
             Formatter, PaletteManager, $('#current_month_overall'),
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
+    RecurrencesUI.onReady(Formatter, PaletteManager, $('#recurrences'));
+    RecurrencesManager.onReady(Logger, RecurrencesUI);
     DaysUI.onReady({{ ndays }}, Formatter, PaletteManager, $('#days'));
     DaysManager.onReady(Logger, DaysUI, ParamsManager(DateManager, DaysUI, 'days', {{ ndays }}));
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));

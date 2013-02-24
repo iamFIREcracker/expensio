@@ -25,9 +25,8 @@ PaletteManager.onReady(Logger, function() {
             Formatter, PaletteManager, $('#current_month_overall'),
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
-    RecurrencesUI.onReady(
-            Formatter, PaletteManager, $('#recurrences'));
-    RecurrencesManager.onReady(Logger, RecurrencesUI, DateManager);
+    RecurrencesUI.onReady(Formatter, PaletteManager, $('#recurrences'));
+    RecurrencesManager.onReady(Logger, RecurrencesUI);
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
     CategoriesManager.onReady(Logger, CategoriesUI, ParamsManager(DateManager, CategoriesUI, 'period'));
     Manager.onReady(Logger, DateManager, 30000);
