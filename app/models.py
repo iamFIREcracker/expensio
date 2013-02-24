@@ -7,6 +7,7 @@ from datetime import datetime
 from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
+from sqlalchemy import Integer
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
@@ -67,8 +68,30 @@ class Expense(Base):
     category = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
     note = Column(String)
+    recurrence_id = Column(String, ForeignKey('recurrence.id'))
     deleted = Column(Boolean, default=False, nullable=False)
     attachment = Column(String)
 
     def __repr__(self):
         return '<Expense %r, %f>' % (self.category, self.amount)
+
+
+class Recurrence(Base):
+    __tablename__ = 'recurrence'
+
+    id = Column(String, default=_uuid, primary_key=True)
+    created = Column(DateTime, default=datetime.now)
+    updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+    user_id = Column(String, ForeignKey('user.id'))
+    yearly = Column(DateTime)
+    monthly = Column(Integer)
+    weekly = Column(String)
+    category = Column(String, nullable=False)
+    amount = Column(Float, nullable=False)
+    note = Column(String)
+    disabled = Column(Boolean, default=False, nullable=False)
+    deleted = Column(Boolean, default=False, nullable=False)
+
+    def __repr__(self):
+        return '<Recurrence %d, %d, %r, %r, %f>' % (
+                self.dow, self.dom, self.doy, self.category, self.amount)
