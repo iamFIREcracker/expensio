@@ -87,7 +87,7 @@ class ExportHandler(BaseHandler):
                 current='export', expenses_export=expenses_export())
 
 
-class RecurrencesHandler(BaseHandler):
+class RecurringHandler(BaseHandler):
     @protected
     def GET(self):
         return web.ctx.render.recurrences(user=self.current_user(),
