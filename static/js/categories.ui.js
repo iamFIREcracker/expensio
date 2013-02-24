@@ -81,9 +81,11 @@
 
     var prepareData = function(categories) {
         return (
-            _.map(
-                _.zip(_.range(1, _.size(categories) + 1), _.values(categories)),
-                preparePoint));
+            _.filter(
+                _.map(
+                    _.zip(_.range(1, _.size(categories) + 1), _.values(categories)),
+                    preparePoint),
+                function(p) { return p.y > 0; }));
     };
 
     var addPoint = function(_) {
