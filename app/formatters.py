@@ -28,7 +28,7 @@ def period(value):
 
 def yearday(value):
     if value:
-        return period(value)
+        return datetime_.strftime(value, config.YEARLY_FORMAT)
 
 def monthday(value):
     if value:
