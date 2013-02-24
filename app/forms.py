@@ -94,7 +94,12 @@ validformat = form.Validator('tsv, csv ..', parsers.format)
 validamount = form.Validator('Invalid (e.g. 1.00)', parsers.amount)
 validdate = form.Validator('Invalid (e.g. 1/22/2013)', parsers.date_us)
 validimportdata = form.Validator('Invalid format', parsers.expenses)
-
+validyearday = form.Validator('Invalid (e.g. 1/22/2013)',
+        lambda v: not v or parsers.yearday(v))
+validmonthday = form.Validator('1, 2 ..',
+        lambda v: not v or parsers.monthday(v))
+validweekday = form.Validator('Monday ..',
+        lambda v: not v or parsers.weekday(v))
 
 users_avatar = form.Form(
         form.Hidden('id'),
@@ -112,9 +117,7 @@ users_edit = form.Form(
     )
 
 users_connect = form.Form(
-        Connect('google', description='Google', class_='btn btn-warning'),
-        Connect('facebook', description='Facebook', class_='btn btn-info'),
-        Connect('twitter', description='Twitter', class_='btn btn-success'),
+        Connect('fake', description='Fake', class_='btn btn-inverse'),
         validators=[validaccounts]
     )
 
@@ -152,3 +155,17 @@ expenses_import = form.Form(
             class_="span12", rows=24,
             placeholder="1/22/2013	bar	1.00	coffe with mom")
     )
+
+
+recurrences_add = form.Form(
+        form.Textbox('yearly', validyearday, description='Yearly',
+            placeholder='1/22/2013'),
+        form.Dropdown('monthly', zip(*tee([''] + utils.monthdays())),
+            validmonthday, description='Monthly'),
+        form.Dropdown('weekly', zip(*tee([''] + utils.weekdays())),
+            validweekday, description='Weekly'),
+        form.Textbox('category', form.notnull, description='Category', placeholder='bar'),
+        form.Textbox('note', description='Note', placeholder='coffe with mom'),
+        form.Textbox('amount', validamount, description='Amount', placeholder='1.00'),
+    )
+

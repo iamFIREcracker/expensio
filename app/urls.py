@@ -21,6 +21,7 @@ from .controllers.expenses import ExpensesHandler
 from .controllers.expenses import ExpensesExportHandler
 from .controllers.expenses import ExpensesExportTSVStatusHandler
 from .controllers.expenses import ExpensesImportHandler
+from .controllers.recurrences import RecurrencesAddHandler
 from .controllers.general import ExportHandler
 from .controllers.general import ImportHandler
 from .controllers.general import LogoutHandler
@@ -68,6 +69,14 @@ URLS = (
     '/expenses/import', ExpensesImportHandler,
     '/expenses/export', ExpensesExportHandler,
     '/expenses/export/tsv/status/(.+)', ExpensesExportTSVStatusHandler,
+
+    #'/expenses', ExpensesHandler,
+    '/recurrences/add', RecurrencesAddHandler,
+    #'/expenses/(.+)/edit', ExpensesEditHandler,
+    #'/expenses/(.+)/delete', ExpensesDeleteHandler,
+    #'/expenses/import', ExpensesImportHandler,
+    #'/expenses/export', ExpensesExportHandler,
+    #'/expenses/export/tsv/status/(.+)', ExpensesExportTSVStatusHandler,
 
     '/categories/names', CategoriesNamesHandler,
 
