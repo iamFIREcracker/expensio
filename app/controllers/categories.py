@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from itertools import groupby
+
 from sqlalchemy.sql import distinct
 from sqlalchemy.sql import func
 
@@ -32,7 +34,6 @@ class CategoriesNamesHandler(BaseHandler):
                 .group_by(Recurrence.category)
                 .order_by(Recurrence.created)
                 .all())
-        categories = sorted(categories1 + categories2,
-                            key=lambda c: c[1])
         return jsonify(
-                categories=sorted([c[0] for c in categories]))
+                categories=[key for (key, group) in groupby(sorted(categories1 + categories2),
+                                                            key=lambda c: c[0])])
