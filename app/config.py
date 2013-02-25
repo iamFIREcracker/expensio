@@ -12,7 +12,7 @@ PERIOD_FORMAT = '%Y-%m'
 DATE_FORMAT = '%Y-%m-%d'
 DATE_US_FORMAT = '%m/%d/%Y'
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
-YEARLY_FORMAT = '%m-%d'
+YEARLY_FORMAT = '%m/%d'
 
 UPLOAD_DIR = 'static/uploads'
 AVATAR_DIR = 'static/avatars'

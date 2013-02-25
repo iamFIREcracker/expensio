@@ -32,7 +32,7 @@ var Formatter = (function() {
         },
 
         yearly: function(datestring) {
-            return this.date(sprintf("%d-%s", new Date().getYear() + 1900, datestring));
+            return this.date(sprintf("%s/%d", datestring, new Date().getYear() + 1900));
         },
 
         monthly: function(monthly) {

@@ -94,7 +94,7 @@ validformat = form.Validator('tsv, csv ..', parsers.format)
 validamount = form.Validator('Invalid (e.g. 1.00)', parsers.amount)
 validdate = form.Validator('Invalid (e.g. 1/22/2013)', parsers.date_us)
 validimportdata = form.Validator('Invalid format', parsers.expenses)
-validyearday = form.Validator('Invalid (e.g. 1/22/2013)',
+validyearday = form.Validator('Invalid (e.g. 1/22)',
         lambda v: not v or parsers.yearday(v))
 validmonthday = form.Validator('1, 2 ..',
         lambda v: not v or parsers.monthday(v))
@@ -164,7 +164,7 @@ expenses_import = form.Form(
 
 recurrences_add = form.Form(
         form.Textbox('yearly', validyearday, description='Yearly',
-            placeholder='1/22/2013'),
+            placeholder='1/22'),
         form.Dropdown('monthly', zip(*tee([''] + utils.monthdays())),
             validmonthday, description='Monthly'),
         form.Dropdown('weekly', zip(*tee([''] + utils.weekdays())),
@@ -178,7 +178,7 @@ recurrences_add = form.Form(
 recurrences_edit = form.Form(
         form.Hidden('id'),
         form.Textbox('yearly', validyearday, description='Yearly',
-            placeholder='1/22/2013'),
+            placeholder='1/22'),
         form.Dropdown('monthly', zip(*tee([''] + utils.monthdays())),
             validmonthday, description='Monthly'),
         form.Dropdown('weekly', zip(*tee([''] + utils.weekdays())),

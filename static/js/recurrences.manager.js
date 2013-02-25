@@ -8,6 +8,7 @@ var RecurrencesManager = (function() {
         var $date = $context.find('#yearly');
         if ($date.length) {
             $date.datepicker({
+                format: 'mm/dd',
                 autoclose: true,
             });
         }

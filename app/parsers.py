@@ -26,7 +26,7 @@ def format(value):
 
 def yearday(value):
     if value:
-        return date_us(value)
+        return datetime_.strptime(value, config.YEARLY_FORMAT)
 
 def monthday(value):
     if value:
