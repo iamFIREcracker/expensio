@@ -28,10 +28,9 @@ def expenses(data):
     expenses = []
 
     for line in data.split('\n'):
-        (date_, category_, amount_, note_) = line.split('\t')
-
-        web.debug(date_, category_, amount_, note_)
-        expenses.append(( date_us(date_), category_, amount(amount_), note_,))
+        if line:
+            (date_, category_, amount_, note_) = line.split('\t')
+            expenses.append(( date_us(date_), category_, amount(amount_), note_,))
     return expenses
 
 def date(value):
