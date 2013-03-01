@@ -88,13 +88,11 @@ class ExportHandler(BaseHandler):
 
 
 class StatsHandler(BaseHandler):
-    days = {'quadrimester': 120, 'year': 365, 'life': 1000}
-
     @protected
     def GET(self, mode=None):
+        # Mode is validated from the url parser (regexp)
         today = datetime.today()
         year = today.year
         month = today.month
         return web.ctx.render.stats2(user=self.current_user(),
-                                     year=year, month=month, current=mode,
-                                     ndays=self.days[mode])
+                                     year=year, month=month, current=mode)
