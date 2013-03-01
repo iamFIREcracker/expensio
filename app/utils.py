@@ -33,6 +33,13 @@ def formats():
     return _FORMATS
 
 
+def compose(*funcs):
+    """Compose functions, left to right"""
+    def _compose(g, f):
+        return  lambda *args, **kwargs: g(f(*args, **kwargs))
+    return reduce(_compose, funcs)
+
+
 def jsonify(*args, **kwargs):
     web.header('Content-Type', 'application/json')
 
