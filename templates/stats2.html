@@ -24,9 +24,9 @@ PaletteManager.onReady(Logger, function() {
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
     DaysUI.onReady(30, Formatter, PaletteManager, $('#days'));
-    DaysManager.onReady(Logger, DaysUI, ParamsManager(DateManager, DaysUI, 'days', '{{ current }}'));
+    DaysManager.onReady(Logger, DaysUI, DaysParamsManager(DateManager, 'days', '{{ current }}'));
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
-    CategoriesManager.onReady(Logger, CategoriesUI, ParamsManager(DateManager, CategoriesUI, 'days', '{{ current }}'));
+    CategoriesManager.onReady(Logger, CategoriesUI, DaysParamsManager(DateManager, 'days', '{{ current }}'));
 
     DaysManager.onUpdate();
     CategoriesManager.onUpdate();
