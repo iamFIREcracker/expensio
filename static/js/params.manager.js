@@ -1,4 +1,4 @@
-var ParamsManager = function(date, ui, mode, optionaldays) {
+var ParamsManager = function(date, ui, mode, submode) {
     var params = {
         'period': function() { return period(); },
         'days': function() { return days(); },
@@ -19,17 +19,12 @@ var ParamsManager = function(date, ui, mode, optionaldays) {
     };
 
     var days = function() {
-        var data = {
-            since: date.ndaysback(optionaldays - 1),
-            to: date.today(),
-        };
-        var latest = ui.getLatest();
+        var since = (submode === 'life') ? date.epoch() :
+                    (submode === 'year') ? date.ndaysback(365 - 1) :
+                                           date.ndaysback(365 - 1);
+        var to = date.today();
 
-        if (latest) {
-            data.latest = latest;
-        }
-
-        return data;
+        return {since: since, to: to};
     };
 
     return {
