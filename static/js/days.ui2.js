@@ -27,7 +27,7 @@ var DaysUI = (function() {
             chart: {
                 renderTo: $chart[0].id,
                 animation: false,
-                type: 'spline'
+                type: 'areaspline'
             },
             title: {
                 text: null,
@@ -36,7 +36,7 @@ var DaysUI = (function() {
                 text: null,
             },
             xAxis: {
-                categories: null,
+                categories: categories,
                 title: {
                     text: null
                 },
