@@ -42,6 +42,9 @@ var DateManager = (function() {
             _init();
         },
 
+        epoch: function() {
+            return "1970-01-01";
+        },
 
         today: function() {
             return sprintf(
@@ -80,4 +83,4 @@ var DateManager = (function() {
         },
     };
 
-})();
+}());
