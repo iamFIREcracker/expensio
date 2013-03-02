@@ -1,18 +1,21 @@
 var TotalManager = (function() {
     var formatter = null;
     var $total = null;
-    var total = null;
+    var outcome = null;
+    var income = null;
 
     var init = function() {
-        total = 0.0;
+        outcome = 0.0;
+        income = 0.0;
 
-        update(total);
+        update(outcome, income);
     };
 
-    var update = function(amount) {
-        total = amount;
+    var update = function(outcome_, income_) {
+        outcome = outcome_;
+        income = income_;
 
-        $total.text(sprintf("%s", formatter.amount(total, currency)));
+        $total.text(sprintf("%s", formatter.amount(outcome, currency)));
     };
 
     return {
@@ -31,13 +34,17 @@ var TotalManager = (function() {
 
         onAddAmount: function(amount) {
             if (amount > 0) {
-                update(total + amount);
+                update(outcome + amount, income);
+            } else if (amount < 0) {
+                update(outcome, income + amount);
             }
         },
 
         onRemAmount: function(amount) {
             if (amount > 0) {
-                update(total - amount);
+                update(outcome - amount);
+            } else if (amount < 0) {
+                update(outcome, income - amount);
             }
         }
 
