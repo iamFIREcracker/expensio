@@ -95,6 +95,6 @@ class StatsHandler(BaseHandler):
         today = datetime.today()
         year = today.year
         month = today.month
-        return web.ctx.render.stats2(user=self.current_user(),
-                                     year=year, month=month, current=mode,
-                                     bins=config.DEFAULT_STATS_BINS)
+        return web.ctx.render.stats(user=self.current_user(),
+                                    year=year, month=month, current=mode,
+                                    bins=config.DEFAULT_STATS_BINS)
