@@ -7,8 +7,8 @@ var PaletteManager = (function() {
     var chart = '#555555';
     var palette = [
         {bg: '#333',    fg: '#ffe',}, // default
-        {bg: '#3366CC', fg: '#ffe',}, // red
-        {bg: '#dc3912', fg: '#222',}, // orange
+        {bg: '#3366CC', fg: '#ffe',}, // blue
+        {bg: '#dc3912', fg: '#222',}, // red
         {bg: '#ff9900', fg: '#222',}, // yellow
         {bg: '#109618', fg: '#ffe',}, // blue
         {bg: '#990099', fg: '#ffe',},

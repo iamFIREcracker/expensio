@@ -2,6 +2,14 @@
     text-align: center;
 }
 
+.in {
+    color: #dc3912;
+}
+
+.out {
+    color: #3366cc;
+}
+
 .loading {
     margin-top: 30px;
     text-align: center;
