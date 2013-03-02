@@ -16,7 +16,7 @@ var PeriodParamsManager = function(date, ui) {
     };
 };
 
-var DaysParamsManager = function(date, mode, submode) {
+var DaysParamsManager = function(date, mode, bins, submode) {
     return {
         get: function() {
             var since;
@@ -29,7 +29,7 @@ var DaysParamsManager = function(date, mode, submode) {
                 since = date.ndaysback(120 - 1);
             }
 
-            return {since: since, to: date.today()};
+            return {since: since, to: date.today(), bins: bins};
         }
     };
 }

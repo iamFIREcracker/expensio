@@ -5,6 +5,7 @@ from datetime import datetime
 
 import web
 
+import app.config as config
 import app.formatters as formatters
 import app.parsers as parsers
 from app.forms import expenses_import
@@ -95,4 +96,5 @@ class StatsHandler(BaseHandler):
         year = today.year
         month = today.month
         return web.ctx.render.stats2(user=self.current_user(),
-                                     year=year, month=month, current=mode)
+                                     year=year, month=month, current=mode,
+                                     bins=config.DEFAULT_STATS_BINS)

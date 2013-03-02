@@ -23,10 +23,10 @@ PaletteManager.onReady(Logger, function() {
             Formatter, PaletteManager, $('#current_month_overall'),
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
-    DaysUI.onReady(30, Formatter, PaletteManager, $('#days'));
-    DaysManager.onReady(Logger, DaysUI, DaysParamsManager(DateManager, 'days', '{{ current }}'));
+    DaysUI.onReady({{ bins }}, Formatter, PaletteManager, $('#days'));
+    DaysManager.onReady(Logger, DaysUI, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
-    CategoriesManager.onReady(Logger, CategoriesUI, DaysParamsManager(DateManager, 'days', '{{ current }}'));
+    CategoriesManager.onReady(Logger, CategoriesUI, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
 
     DaysManager.onUpdate();
     CategoriesManager.onUpdate();
