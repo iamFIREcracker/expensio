@@ -6,17 +6,16 @@ var DaysUI = (function() {
     var palette = null;
     var $days = null;
     var $chart = null;
-    //var chart = null;
+    var chart = null;
     var days = null;
-    var latest = null;
+    var addamountlisteners = [];
 
     var init = function() {
         $chart.empty().hide();
         $days.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
         $help.hide();
         chart = null;
-        days = Object();
-        latest = '';
+        days = {};
 
         _.map(_.range(ndays), function(i) { days[i] = null; });
     };
@@ -26,8 +25,8 @@ var DaysUI = (function() {
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: $chart[0].id,
-                type: 'column',
                 animation: false,
+                type: 'areaspline'
             },
             title: {
                 text: null,
@@ -59,23 +58,21 @@ var DaysUI = (function() {
             },
             tooltip: {
                 formatter: function() {
-                    if (!this.y)
+                    if (!this.y) {
                         return false;
+                    }
 
                     var d = this.point.obj;
                     return sprintf(
-                        "Amount: %s", formatter.amount(d.amount, d.currency))
+                        "<strong>Date</strong>: %s <strong>Amount</strong>: %s",
+                        formatter.date(d.date),
+                        formatter.amount(d.amount, d.currency));
                 },
                 style: {
                     fontFamily: fontFamily,
                 },
             },
             plotOptions: {
-                bar: {
-                    dataLabels: {
-                        enabled: false
-                    }
-                },
             },
             legend: {
                 enabled: false
@@ -86,6 +83,10 @@ var DaysUI = (function() {
             series: [{
                 name: 'Amount',
                 data: data,
+                color: palette.chart(),
+                marker : {
+                    enabled : false,
+                },
             }],
         });
     };
@@ -122,43 +123,37 @@ var DaysUI = (function() {
         var categories = _.map(days, prepareLabel);
 
         // Lazy initialization
-        if (chart == null) {
+        if (chart === null) {
             initChart(data, categories); // Call this when the container is *visible*!
         } else {
             _.map(_.zip(_.range(data.length), data), updatePoint);
             chart.xAxis[0].setCategories(categories);
         }
 
-    }
+    };
 
     var updateDay = function(obj) {
         var i = obj.delta + ndays - 1;
         var prev = days[i];
 
         /*
-         * Update the variable containing the date of the latest update.
-         * This operation should be done on all received updates, even those
-         * representing deleted items.
-         */
-        if (obj.updated > latest) {
-            latest = obj.updated;
-        }
-
-        /*
          * The current day has no expenses (amount equal 0.0).  Check
          * for a previously received update: if present, issue a graceful
          * remove, otherwise return.
          */
-        if (obj.amount == 0.0) {
+        if (obj.amount === 0.0) {
             if (prev === null) {
                 return false;
-            } else {
-                days[i] = null;
-                return true;
             }
+
+            days[i] = null;
+            return true;
         }
 
         days[i] = obj;
+        $.each(addamountlisteners, function(index, func) {
+            func(obj.amount);
+        });
         return true;
     };
 
@@ -183,7 +178,7 @@ var DaysUI = (function() {
 
             _.map(data.stats.days, updateDay);
 
-            if (_.any(days) == false) {
+            if (_.any(days) === false) {
                 $chart.hide();
                 $help.show();
             } else {
@@ -193,8 +188,10 @@ var DaysUI = (function() {
             }
         },
 
-        getLatest: function() {
-            return latest;
+
+        addAmount: function(func) {
+            addamountlisteners.push(func);
         },
+
     };
-})();
+}());

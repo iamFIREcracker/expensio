@@ -1,4 +1,4 @@
-{% extends 'base_2col.html' %}
+{% extends 'base_enhanced.html' %}
 
 {% block css %}
 <link href="/static/lightbox/css/lightbox.css" rel="stylesheet" />
@@ -6,10 +6,10 @@
 
 {% block js %}
 <script src="/static/highcharts/js/highcharts.js"></script>
-<script src="/static/js/manager.js"></script>
 <script src="/static/js/date.manager.js"></script>
 <script src="/static/js/users.manager.js"></script>
 <script src="/static/js/params.manager.js"></script>
+<script src="/static/js/total.manager.js"></script>
 <script src="/static/js/days.ui.js"></script>
 <script src="/static/js/days.manager.js"></script>
 <script src="/static/js/categories.ui.js"></script>
@@ -24,47 +24,58 @@ PaletteManager.onReady(Logger, function() {
             Formatter, PaletteManager, $('#current_month_overall'),
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
-    DaysUI.onReady({{ ndays }}, Formatter, PaletteManager, $('#days'));
-    DaysManager.onReady(Logger, DaysUI, ParamsManager(DateManager, DaysUI, 'days', {{ ndays }}));
+    DaysUI.onReady({{ bins }}, Formatter, PaletteManager, $('#days'));
+    DaysManager.onReady(Logger, DaysUI, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
-    CategoriesManager.onReady(Logger, CategoriesUI, ParamsManager(DateManager, CategoriesUI, 'days', {{ ndays }}));
-    Manager.onReady(Logger, DateManager, 30000);
+    CategoriesManager.onReady(Logger, CategoriesUI, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
+    TotalManager.onReady(Formatter, $('#total'), '{{ user.currency }}');
 
-    Manager.update(function() {
-        DaysManager.onUpdate();
-        CategoriesManager.onUpdate();
+    DaysUI.addAmount(function(amount) {
+        TotalManager.onAddAmount(amount);
     });
 
-    ExpensesManager.addSubmit(function() {
-        DaysManager.onUpdate();
-        CategoriesManager.onUpdate();
-    })
-
-    Manager.onUpdate(0);
+    DaysManager.onUpdate();
+    CategoriesManager.onUpdate();
 });
 {% endblock %}
 
-{% block pre_row1 %}
+{% block container %}
+<span class="spacer20"></span>
 <div class="row-fluid">
-    <h2 class="center">Last Week</h2>
-</div>
-
-<div class="row-fluid">
-    <h3 class="center">Amounts By Date</h3>
-    <div id="days">
-        <div class="alert alert-info" style="display: none">
-            {% block days_desc %}{% endblock %}
+    <div class="span3">
+        <div class="well">
+            <ul class="nav nav-list">
+                <li class="nav-header">Stats</li>
+                <li {{ 'class="active"' if current == 'quadrimester' }}><a href="/stats/quadrimester ">Last Quadrimester</a></li>
+                <li {{ 'class="active"' if current == 'year' }}><a href="/stats/year">Last Year</a></li>
+                <li {{ 'class="active"' if current == 'life' }}><a href="/stats/life">Lifetime</a></li>
+            </ul>
         </div>
-        <div id="days-chart" style="height: 275px; margin: 0 auto"></div>
     </div>
-</div>
-<div class="row-fluid">
-    <h3 class="center">Summary</h3>
-    <div id="categories">
-        <div class="alert alert-info" style="display: none">
-            {% block categories_desc %}{% endblock %}
+    <div class="offset1 span7">
+        <div class="row-fluid">
+            <h3 class="center">Total</h3>
+            <div id="total" class="center"></div>
         </div>
-        <div id="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+        <div class="row-fluid">
+            <h3 class="center">Amounts By Date</h3>
+            <div id="days">
+                <div class="alert alert-info" style="display: none">
+                    {% block days_desc %}{% endblock %}
+                </div>
+                <div id="days-chart" style="height: 275px; margin: 0 auto"></div>
+            </div>
+        </div>
+        <span class="spacer20"></span>
+        <div class="row-fluid">
+            <h3 class="center">Amounts By Category</h3>
+            <div id="categories">
+                <div class="alert alert-info" style="display: none">
+                    {% block categories_desc %}{% endblock %}
+                </div>
+                <div id="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
