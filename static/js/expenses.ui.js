@@ -4,7 +4,6 @@ var ExpensesUI = (function() {
 
     var formatter = null;
     var palette = null;
-    var $title = null;
     var $help = null;
     var $expenses = null;
     var $inner = null;
@@ -14,7 +13,6 @@ var ExpensesUI = (function() {
 
 
     var init = function() {
-        $title.html("&nbsp");
         $inner.empty();
         $expenses.append('<div class="loading"><img src="/static/images/loading.gif" /></div>')
         $help.hide();
@@ -94,23 +92,10 @@ var ExpensesUI = (function() {
         return true;
     };
 
-    var updateTitle = function() {
-        var overall = 0.0;
-        var currency = '';
-
-        $.each(expenses, function() {
-            overall += this.amount;
-            currency = this.currency;
-        });
-
-        $title.text(sprintf("Total: %s", formatter.amount(overall, currency)));
-    };
-
     return {
-        onReady: function(formatter_, palette_, $title_, $expenses_) {
+        onReady: function(formatter_, palette_, $expenses_) {
             formatter = formatter_;
             palette = palette_;
-            $title = $title_;
             $expenses = $expenses_;
             $inner = $expenses.find('#expenses-inner');
             $help = $expenses.find('.alert');
@@ -130,7 +115,6 @@ var ExpensesUI = (function() {
             }
 
             _.map(data.expenses, updateExpense);
-            updateTitle();
 
             if (_.any(expenses) == false) {
                 $inner.hide();
