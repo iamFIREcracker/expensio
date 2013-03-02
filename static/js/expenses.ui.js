@@ -9,14 +9,15 @@ var ExpensesUI = (function() {
     var $inner = null;
     var expenses = null;
     var latest = null;
-    var addexpenselisteners = Array();
+    var addexpenselisteners = [];
+    var remexpenselisteners = [];
 
 
     var init = function() {
         $inner.empty();
-        $expenses.append('<div class="loading"><img src="/static/images/loading.gif" /></div>')
+        $expenses.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
         $help.hide();
-        expenses = Object();
+        expenses = {};
         latest = '';
     };
 
@@ -40,11 +41,15 @@ var ExpensesUI = (function() {
         if (obj.deleted === true) {
             if (prev === undefined) {
                 return false;
-            } else {
-                prev.gracefulRemove();
-                delete expenses[obj.id];
-                return true;
             }
+            prev.gracefulRemove();
+            delete expenses[obj.id];
+
+            $.each(remexpenselisteners, function(index, func) {
+                func(prev);
+            });
+
+            return true;
         }
 
         /*
@@ -87,7 +92,7 @@ var ExpensesUI = (function() {
         newexp.flash();
         $.each(addexpenselisteners, function(index, func) {
             func(newexp);
-        })
+        });
 
         return true;
     };
@@ -169,6 +174,10 @@ var ExpensesUI = (function() {
 
         addExpense: function(func) {
             addexpenselisteners.push(func)
+        },
+
+        remExpense: function(func) {
+            remexpenselisteners.push(func)
         },
 
         getLatest: function() {
