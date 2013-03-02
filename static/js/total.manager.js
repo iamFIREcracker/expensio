@@ -17,7 +17,7 @@ var TotalManager = (function() {
         income = income_;
 
         $total.find('.income').text(income !== 0 ? formatter.amount(income) : '-');
-        $total.find('.outcome').text(outcome !== 0 ? formatter.amount(outcome) : '-');
+        $total.find('.outcome').text(outcome !== 0 ? '+' + formatter.amount(outcome) : '-');
         $total.find('.currency').text(currency);
     };
 
