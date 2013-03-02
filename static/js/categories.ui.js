@@ -35,21 +35,21 @@
                 text: null,
             },
             tooltip: {
-                enabled: false
+                formatter: function() {
+                    var c = this.point.obj;
+                    return sprintf(
+                        "<strong>%s</strong>: %s",
+                        c.name, formatter.amount(c.amount, c.currency));
+                },
             },
             plotOptions: {
                 pie: {
                     allowPointSelect: false,
                     cursor: 'pointer',
                     dataLabels: {
-                        formatter: function() {
-                            var obj = this.point.obj;
-
-                            return sprintf("<b>%s</b>: %s",
-                                    obj.name,
-                                    formatter.amount(obj.amount, obj.currency));
-                        }
+                        enabled: false
                     },
+                    showInLegend: true,
                 },
             },
             credits: {
