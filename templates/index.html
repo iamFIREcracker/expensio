@@ -12,6 +12,7 @@
 <script src="/static/js/date.manager.js"></script>
 <script src="/static/js/users.manager.js"></script>
 <script src="/static/js/params.manager.js"></script>
+<script src="/static/js/total.manager.js"></script>
 <script src="/static/js/categories.ui.js"></script>
 <script src="/static/js/categories.manager.js"></script>
 {% endblock %}
@@ -22,9 +23,9 @@ PaletteManager.onReady(Logger, function() {
     HistoryManager.onReady(DateManager);
     UsersManager.onReady(Logger);
     ExpensesUI.onReady(
-            Formatter, PaletteManager, $('#current_month_overall'),
-            $('#expenses'));
+            Formatter, PaletteManager, $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
+    TotalManager.onReady(Formatter, $('#total'), '{{ user.currency }}');
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
     CategoriesManager.onReady(Logger, CategoriesUI, PeriodParamsManager(DateManager, CategoriesUI, 'period'));
     Manager.onReady(Logger, DateManager, 30000);
@@ -43,9 +44,13 @@ PaletteManager.onReady(Logger, function() {
     ExpensesManager.addSubmit(function() {
         ExpensesManager.onUpdate();
         CategoriesManager.onUpdate();
-    })
+    });
     ExpensesUI.addExpense(function(exp) {
         ExpensesManager.onAddExpense(exp);
+        TotalManager.onAddAmount(exp.amount);
+    });
+    ExpensesUI.remExpense(function(exp) {
+        TotalManager.onRemAmount(exp.amount);
     })
     Manager.onUpdate(0);
 });
@@ -55,24 +60,28 @@ PaletteManager.onReady(Logger, function() {
 <div class="row-fluid">
     <div class="span12">
         <h2 class="center"><span id="current_month"></span></h2>
-        <div class="center"><span id="current_month_overall"></span></div>
         <ul class="nav nav-pills">
             <li class="pull-left"><a id="prev_month" href="#">&laquo; Previous Month</a>
             <li class="pull-right"><a id="next_month" href="#">Next Month &raquo;</a>
         </ul>
     </div>
 </div>
-
 <div class="row-fluid">
     <div class="span6 pull-right">
-        <h3 class="center">Summary</h3>
-        <div id="categories">
-            <div class="alert alert-info" style="display: none">
-                Want to know how much did you spent in the current month for each
-                expense category?  You are looking in the right place!  See the
-                chart populating as as soon as you track expenses...
+        <div class="row-fluid">
+            <h3 class="center">Total</h3>
+            <div id="total" class="center"></div>
+        </div>
+        <div class="row-fluid">
+            <h3 class="center">By Category</h3>
+            <div id="categories">
+                <div class="alert alert-info" style="display: none">
+                    Want to know how much did you spent in the current month for each
+                    expense category?  You are looking in the right place!  See the
+                    chart populating as as soon as you track expenses...
+                </div>
+                <div id="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
             </div>
-            <div id="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
         </div>
     </div>
     <div class="span6">
