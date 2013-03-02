@@ -59,6 +59,10 @@ var ExpensesUI = (function() {
         if (prev !== undefined) {
             prev.remove();
             delete expenses[prev.id];
+
+            $.each(remexpenselisteners, function(index, func) {
+                func(prev);
+            });
         }
 
         if ($expenses.find('.help').length) {
