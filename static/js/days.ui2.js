@@ -8,15 +8,14 @@ var DaysUI = (function() {
     var $chart = null;
     //var chart = null;
     var days = null;
-    var latest = null;
+    var addamountlisteners = [];
 
     var init = function() {
         $chart.empty().hide();
         $days.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
         $help.hide();
         chart = null;
-        days = Object();
-        latest = '';
+        days = {};
 
         _.map(_.range(ndays), function(i) { days[i] = null; });
     };
@@ -137,15 +136,6 @@ var DaysUI = (function() {
         var prev = days[i];
 
         /*
-         * Update the variable containing the date of the latest update.
-         * This operation should be done on all received updates, even those
-         * representing deleted items.
-         */
-        if (obj.updated > latest) {
-            latest = obj.updated;
-        }
-
-        /*
          * The current day has no expenses (amount equal 0.0).  Check
          * for a previously received update: if present, issue a graceful
          * remove, otherwise return.
@@ -160,6 +150,9 @@ var DaysUI = (function() {
         }
 
         days[i] = obj;
+        $.each(addamountlisteners, function(index, func) {
+            func(obj.amount);
+        });
         return true;
     };
 
@@ -194,8 +187,10 @@ var DaysUI = (function() {
             }
         },
 
-        getLatest: function() {
-            return latest;
+
+        addAmount: function(func) {
+            addamountlisteners.push(func);
         },
+
     };
 })();

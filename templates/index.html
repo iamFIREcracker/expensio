@@ -25,9 +25,9 @@ PaletteManager.onReady(Logger, function() {
     ExpensesUI.onReady(
             Formatter, PaletteManager, $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
-    TotalManager.onReady(Formatter, $('#total'), '{{ user.currency }}');
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
     CategoriesManager.onReady(Logger, CategoriesUI, PeriodParamsManager(DateManager, CategoriesUI, 'period'));
+    TotalManager.onReady(Formatter, $('#total'), '{{ user.currency }}');
     Manager.onReady(Logger, DateManager, 30000);
 
     Manager.update(function() {

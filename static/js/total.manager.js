@@ -4,8 +4,9 @@ var TotalManager = (function() {
     var total = null;
 
     var init = function() {
-        $total.html("&nbsp");
         total = 0.0;
+
+        update(total);
     };
 
     var update = function(amount) {

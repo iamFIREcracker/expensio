@@ -9,6 +9,7 @@
 <script src="/static/js/date.manager.js"></script>
 <script src="/static/js/users.manager.js"></script>
 <script src="/static/js/params.manager.js"></script>
+<script src="/static/js/total.manager.js"></script>
 <script src="/static/js/days.ui2.js"></script>
 <script src="/static/js/days.manager.js"></script>
 <script src="/static/js/categories.ui.js"></script>
@@ -27,6 +28,11 @@ PaletteManager.onReady(Logger, function() {
     DaysManager.onReady(Logger, DaysUI, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
     CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
     CategoriesManager.onReady(Logger, CategoriesUI, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
+    TotalManager.onReady(Formatter, $('#total'), '{{ user.currency }}');
+
+    DaysUI.addAmount(function(amount) {
+        TotalManager.onAddAmount(amount);
+    });
 
     DaysManager.onUpdate();
     CategoriesManager.onUpdate();
@@ -47,6 +53,10 @@ PaletteManager.onReady(Logger, function() {
         </div>
     </div>
     <div class="offset1 span7">
+        <div class="row-fluid">
+            <h3 class="center">Total</h3>
+            <div id="total" class="center"></div>
+        </div>
         <div class="row-fluid">
             <h3 class="center">Amounts By Date</h3>
             <div id="days">
