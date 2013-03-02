@@ -8,6 +8,7 @@ from operator import attrgetter
 
 import web
 
+import app.config as config
 import app.formatters as formatters
 from app.models import Expense
 from app.utils import jsonify
@@ -129,7 +130,6 @@ def ComputeDayAggregate(delta, expenses):
     day, and what is the time delta (in days) between the day under process and
     today.
     """
-    web.debug(delta)
     (name, amount, updated) = reduce(
             AccumulateDayAggregate, expenses, (None, 0, None))
     return name, updated, amount, delta
@@ -147,7 +147,7 @@ class StatsDaysHandler(BaseHandler):
     def GET(self):
         since, to, _ = parsedateparams()
         sincenewest = days_since(to)
-        bins = int(web.input(bins=30).bins)
+        bins = int(web.input(bins=config.DEFAULT_STATS_BINS).bins)
 
         expenses = (
                 Expenses()
@@ -159,10 +159,6 @@ class StatsDaysHandler(BaseHandler):
 
         deltas = sincenewest(expenses[0].date) + 1 # Take `to` into account
         expensesperbean = deltas / bins
-        web.debug(sincenewest(expenses[0].date))
-        web.debug(deltas)
-        web.debug(expensesperbean)
-        web.debug('===========')
 
         days = [ComputeDayAggregate(key, group)
                    for key, group in groupby(expenses,
