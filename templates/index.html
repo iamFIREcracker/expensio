@@ -61,9 +61,10 @@ PaletteManager.onReady(Logger, function() {
 {% endblock %}
 
 {% block container %}
+<span class="spacer20"></span>
 <div class="row-fluid">
     <div class="span12">
-        <h2 class="center"><span id="current_month"></span></h2>
+        <h2 class="text-center"><span id="current_month"></span></h2>
         <ul class="nav nav-pills">
             <li class="pull-left"><a id="prev_month" href="#">&laquo; Previous Month</a>
             <li class="pull-right"><a id="next_month" href="#">Next Month &raquo;</a>
@@ -73,11 +74,11 @@ PaletteManager.onReady(Logger, function() {
 <div class="row-fluid">
     <div class="span6 pull-right">
         <div class="row-fluid">
-            <h3 class="center">Total</h3>
+            <h3 class="text-center">Total</h3>
             {% include 'elements/total.html' %}
         </div>
         <div class="row-fluid">
-            <h3 class="center">By Category</h3>
+            <h3 class="text-center">By Category</h3>
             <div id="categories">
                 <div class="alert alert-info" style="display: none">
                     Want to know how much did you spent in the current month for each
@@ -89,7 +90,7 @@ PaletteManager.onReady(Logger, function() {
         </div>
     </div>
     <div class="span6">
-        <h3 class="center">By Date</h3>
+        <h3 class="text-center">By Date</h3>
         <div id="expenses">
             <div class="alert alert-info" style="display: none">
                 All the tracked expenses for the current month will be listed here,

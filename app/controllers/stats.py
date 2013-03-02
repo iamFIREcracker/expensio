@@ -98,8 +98,9 @@ class DayWrapper(object):
     __serializable__ = {
             'date': lambda o: formatters.date(o.d[0]),
             'updated': lambda o: formatters.datetime(o.d[1]),
-            'amount': lambda o: formatters.amount(o.d[2]),
-            'delta': lambda o: int(o.d[3]),
+            'income': lambda o: formatters.amount(o.d[2]),
+            'outcome': lambda o: formatters.amount(o.d[3]),
+            'delta': lambda o: int(o.d[4]),
             'currency': lambda o: o.currency,
             }
 
@@ -108,7 +109,7 @@ class DayWrapper(object):
         self.currency = currency
 
 
-def AccumulateDayAggregate((date, amount, updated), expense):
+def AccumulateDayAggregate((date, income, outcome, updated), expense):
     """
     Function to be used together with `reduce` to compute aggregate
     information of a `day` object (i.e. date, amount per day, last modified
@@ -118,7 +119,8 @@ def AccumulateDayAggregate((date, amount, updated), expense):
     """
     return (
             expense.date,
-            amount + expense.amount if not expense.deleted else amount,
+            income + expense.amount if expense.amount < 0 else income,
+            outcome + expense.amount if expense.amount > 0 else outcome,
             expense.updated if updated is None or expense.updated > updated
                     else updated)
 
@@ -130,9 +132,11 @@ def ComputeDayAggregate(delta, expenses):
     day, and what is the time delta (in days) between the day under process and
     today.
     """
-    (name, amount, updated) = reduce(
-            AccumulateDayAggregate, expenses, (None, 0, None))
-    return name, updated, amount, delta
+    (name, income, outcome, updated) = reduce(
+            AccumulateDayAggregate,
+            filter(lambda e: not e.deleted, expenses),
+            (None, 0, 0, None))
+    return name, updated, income, outcome, delta
 
 
 def days_since(reference):
@@ -141,6 +145,7 @@ def days_since(reference):
     def inner(current):
         return (reference.date() - current.date()).days
     return inner
+
 
 class StatsDaysHandler(BaseHandler):
     @protected

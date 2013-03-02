@@ -26,7 +26,7 @@ var DaysUI = (function() {
             chart: {
                 renderTo: $chart[0].id,
                 animation: false,
-                type: 'areaspline'
+                type: 'area'
             },
             title: {
                 text: null,
@@ -66,7 +66,7 @@ var DaysUI = (function() {
                     return sprintf(
                         "<strong>Date</strong>: %s <strong>Amount</strong>: %s",
                         formatter.date(d.date),
-                        formatter.amount(d.amount, d.currency));
+                        formatter.amount(d.outcome, d.currency));
                 },
                 style: {
                     fontFamily: fontFamily,
@@ -97,7 +97,7 @@ var DaysUI = (function() {
         }
 
         return {
-            y: day.amount,
+            y: day.outcome,
             color: palette.chart(),
             obj: day
         };
@@ -152,7 +152,8 @@ var DaysUI = (function() {
 
         days[i] = obj;
         $.each(addamountlisteners, function(index, func) {
-            func(obj.amount);
+            func(obj.income);
+            func(obj.outcome);
         });
         return true;
     };
