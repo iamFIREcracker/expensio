@@ -1,4 +1,4 @@
-{% extends 'base_2col.html' %}
+{% extends 'base_enhanced.html' %}
 
 {% block css %}
 <link href="/static/lightbox/css/lightbox.css" rel="stylesheet" />
@@ -51,7 +51,7 @@ PaletteManager.onReady(Logger, function() {
 });
 {% endblock %}
 
-{% block pre_row1 %}
+{% block container %}
 <div class="row-fluid">
     <div class="span12">
         <h2 class="center"><span id="current_month"></span></h2>
@@ -87,4 +87,3 @@ PaletteManager.onReady(Logger, function() {
     </div>
 </div>
 {% endblock %}
-
