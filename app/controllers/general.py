@@ -5,6 +5,7 @@ from datetime import datetime
 
 import web
 
+import app.config as config
 import app.formatters as formatters
 import app.parsers as parsers
 from app.forms import expenses_import
@@ -95,13 +96,12 @@ class ExportHandler(BaseHandler):
 
 
 class StatsHandler(BaseHandler):
-    days = {'quadrimester': 120, 'year': 365, 'life': 1000}
-
     @protected
     def GET(self, mode=None):
+        # Mode is validated from the url parser (regexp)
         today = datetime.today()
         year = today.year
         month = today.month
-        return web.ctx.render.stats2(user=self.current_user(),
-                                     year=year, month=month, current=mode,
-                                     ndays=self.days[mode])
+        return web.ctx.render.stats(user=self.current_user(),
+                                    year=year, month=month, current=mode,
+                                    bins=config.DEFAULT_STATS_BINS)

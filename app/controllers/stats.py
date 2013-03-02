@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from __future__ import division
+
 from itertools import groupby
 from operator import attrgetter
 
-from sqlalchemy.sql import extract
+import web
 
+import app.config as config
 import app.formatters as formatters
 from app.models import Expense
-from app.utils import protected
 from app.utils import jsonify
 from app.utils import parsedateparams
+from app.utils import protected
 from app.utils import BaseHandler
+from app.query import Expenses
 from .expenses import LatestExpensesInBetween
 from .expenses import ExpensesInBetween
 
@@ -76,7 +79,7 @@ class StatsCategoriesHandler(BaseHandler):
         # between `since` and `to` having one of the extracted categories.
         expenses = [] if not updated else (
                 ExpensesInBetween(self.current_user().id, since, to)
-                .filter(Expense.category.in_((e.category for e in updated)))
+                .filter(Expense.category.in_(set(e.category for e in updated)))
                 .order_by(Expense.category.asc())
                 .all())
 
@@ -105,76 +108,61 @@ class DayWrapper(object):
         self.currency = currency
 
 
-def AccumulateDayAggregate(today):
+def AccumulateDayAggregate((date, amount, updated), expense):
     """
-    Factory of functions to be used to compute per-day aggregation
+    Function to be used together with `reduce` to compute aggregate
+    information of a `day` object (i.e. date, amount per day, last modified
+    date and time difference in respect of today).
+
+    The function returns a inner function
     """
-    def inner((date, amount, updated, delta), expense):
-        """
-        Function to be used together with `reduce` to compute aggregate
-        information of a `day` object (i.e. date, amount per day, last modified
-        date and time difference in respect of today).
-
-        The function returns a inner function
-        """
-        return (
-                expense.date,
-                amount + expense.amount if not expense.deleted else amount,
-                expense.updated if updated is None or expense.updated > updated
-                        else updated,
-                (expense.date.date() - today.date()).days)
-    return inner
+    return (
+            expense.date,
+            amount + expense.amount if not expense.deleted else amount,
+            expense.updated if updated is None or expense.updated > updated
+                    else updated)
 
 
-def ComputeDayAggregate(expenses):
+def ComputeDayAggregate(delta, expenses):
     """
     Iterate all the expenses and compute, for each day, how much have been
     spent, when is the last time a new expense has been created for a certain
     day, and what is the time delta (in days) between the day under process and
     today.
     """
-    today = datetime.today()
-    (name, amount, updated, delta) = reduce(
-            AccumulateDayAggregate(today), expenses, (None, 0, None, -99999))
+    (name, amount, updated) = reduce(
+            AccumulateDayAggregate, expenses, (None, 0, None))
     return name, updated, amount, delta
 
 
-def PlainDate(expense):
-    """
-    Get the day in which the expense has been created (info regarding time is
-    not taken into consideration).
-    """
-    return formatters.date(expense.date)
-
+def days_since(reference):
+    """Return a function returning the difference in days between `reference`
+    and another possible date."""
+    def inner(current):
+        return (reference.date() - current.date()).days
+    return inner
 
 class StatsDaysHandler(BaseHandler):
     @protected
     def GET(self):
-        since, to, latest = parsedateparams()
+        since, to, _ = parsedateparams()
+        sincenewest = days_since(to)
+        bins = int(web.input(bins=config.DEFAULT_STATS_BINS).bins)
 
-        # Find all the expenses changed after `latest` and created between
-        # `since` and `to`
-        updated = (
-                LatestExpensesInBetween(
-                    self.current_user().id, since, to, latest)
-                .order_by(Expense.date.asc())
-                .all())
+        expenses = (
+                Expenses()
+                    .mine(self.current_user().id)
+                    .active()
+                    .in_between(since, to)
+                    .ordered_by(Expense.date.asc())
+                    .all())
 
-        # Of theses, extract all the 
-        expenses = [] if not updated else (
-                ExpensesInBetween(self.current_user().id, since, to)
-                .filter(extract('year', Expense.date)
-                    .in_(e.date.year for e in updated))
-                .filter(extract('month', Expense.date)
-                    .in_(e.date.month for e in updated))
-                .filter(extract('day', Expense.date)
-                    .in_(e.date.day for e in updated))
-                .order_by(Expense.date.asc())
-                .all())
+        deltas = sincenewest(expenses[0].date) + 1 # Take `to` into account
+        expensesperbean = deltas / bins
 
-        days = [ComputeDayAggregate(group)
-                    for (key, group) in groupby(
-                        expenses, key=PlainDate)]
+        days = [ComputeDayAggregate(key, group)
+                   for key, group in groupby(expenses,
+                           key=lambda e: -(sincenewest(e.date) // expensesperbean))]
 
         return jsonify(
                 stats=dict(

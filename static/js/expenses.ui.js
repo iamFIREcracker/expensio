@@ -4,21 +4,20 @@ var ExpensesUI = (function() {
 
     var formatter = null;
     var palette = null;
-    var $title = null;
     var $help = null;
     var $expenses = null;
     var $inner = null;
     var expenses = null;
     var latest = null;
-    var addexpenselisteners = Array();
+    var addexpenselisteners = [];
+    var remexpenselisteners = [];
 
 
     var init = function() {
-        $title.html("&nbsp");
         $inner.empty();
-        $expenses.append('<div class="loading"><img src="/static/images/loading.gif" /></div>')
+        $expenses.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
         $help.hide();
-        expenses = Object();
+        expenses = {};
         latest = '';
     };
 
@@ -42,11 +41,15 @@ var ExpensesUI = (function() {
         if (obj.deleted === true) {
             if (prev === undefined) {
                 return false;
-            } else {
-                prev.gracefulRemove();
-                delete expenses[obj.id];
-                return true;
             }
+            prev.gracefulRemove();
+            delete expenses[obj.id];
+
+            $.each(remexpenselisteners, function(index, func) {
+                func(prev);
+            });
+
+            return true;
         }
 
         /*
@@ -56,6 +59,10 @@ var ExpensesUI = (function() {
         if (prev !== undefined) {
             prev.remove();
             delete expenses[prev.id];
+
+            $.each(remexpenselisteners, function(index, func) {
+                func(prev);
+            });
         }
 
         if ($expenses.find('.help').length) {
@@ -89,28 +96,15 @@ var ExpensesUI = (function() {
         newexp.flash();
         $.each(addexpenselisteners, function(index, func) {
             func(newexp);
-        })
+        });
 
         return true;
     };
 
-    var updateTitle = function() {
-        var overall = 0.0;
-        var currency = '';
-
-        $.each(expenses, function() {
-            overall += this.amount;
-            currency = this.currency;
-        });
-
-        $title.text(sprintf("Net: %s", formatter.amount(overall, currency)));
-    };
-
     return {
-        onReady: function(formatter_, palette_, $title_, $expenses_) {
+        onReady: function(formatter_, palette_, $expenses_) {
             formatter = formatter_;
             palette = palette_;
-            $title = $title_;
             $expenses = $expenses_;
             $inner = $expenses.find('#expenses-inner');
             $help = $expenses.find('.alert');
@@ -130,7 +124,6 @@ var ExpensesUI = (function() {
             }
 
             _.map(data.expenses, updateExpense);
-            updateTitle();
 
             if (_.any(expenses) == false) {
                 $inner.hide();
@@ -185,6 +178,10 @@ var ExpensesUI = (function() {
 
         addExpense: function(func) {
             addexpenselisteners.push(func)
+        },
+
+        remExpense: function(func) {
+            remexpenselisteners.push(func)
         },
 
         getLatest: function() {

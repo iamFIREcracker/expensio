@@ -29,9 +29,11 @@
 }
 
 
-#current_month_overall {
+#total {
     color: #888;
-    text-shadow: none;
+    font-size: 400%;
+    margin-bottom: 40px;
+    margin-top: 20px;
 }
 
 
