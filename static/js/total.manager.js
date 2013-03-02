@@ -3,6 +3,7 @@ var TotalManager = (function() {
     var $total = null;
     var outcome = null;
     var income = null;
+    var currency = null;
 
     var init = function() {
         outcome = 0.0;
@@ -15,7 +16,9 @@ var TotalManager = (function() {
         outcome = outcome_;
         income = income_;
 
-        $total.text(sprintf("%s", formatter.amount(outcome, currency)));
+        $total.find('.income').text(income !== 0 ? formatter.amount(income) : '-');
+        $total.find('.outcome').text(outcome !== 0 ? formatter.amount(outcome) : '-');
+        $total.find('.currency').text(currency);
     };
 
     return {
