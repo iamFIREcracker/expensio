@@ -13,6 +13,44 @@
     text-align: center;
 }
 
+
+.btn-connect {
+    display: inline-block;
+    line-height: 20px;
+    padding: 4px 12px;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 4px 4px 4px 4px;
+}
+
+.btn-connect, .btn-connect:hover {
+    color: white;
+    background-color: orange;
+    text-decoration: none;
+}
+
+.btn-connect-google {
+    background-color: #D65236;
+}
+.btn-connect-google:hover {
+    background-color: #C94D33;
+}
+
+.btn-connect-facebook {
+    background-color: #4963A1;
+}
+.btn-connect-facebook:hover {
+    background-color: #425991;
+}
+
+.btn-connect-twitter {
+    background-color: #5DD7FC;
+}
+.btn-connect-twitter:hover {
+    background-color: #55C4E6;
+}
+
+
 .palette {
     padding-left: 4px !important;
     padding-right: 4px !important;

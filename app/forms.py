@@ -112,9 +112,12 @@ users_edit = form.Form(
     )
 
 users_connect = form.Form(
-        Connect('google', description='Google', class_='btn btn-warning'),
-        Connect('facebook', description='Facebook', class_='btn btn-info'),
-        Connect('twitter', description='Twitter', class_='btn btn-success'),
+        Connect('google', description='Google',
+            class_='btn-connect btn-connect-google'),
+        Connect('facebook', description='Facebook',
+            class_='btn-connect btn-connect-facebook'),
+        Connect('twitter', description='Twitter',
+            class_='btn-connect btn-connect-twitter'),
         validators=[validaccounts]
     )
 
