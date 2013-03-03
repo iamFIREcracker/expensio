@@ -67,6 +67,22 @@ def parsedateparams():
     return (since, to, latest)
 
 
+def input_(**transformers):
+    """Wrapper of `web.input` enabling users to execute validation and
+    transformation of input data.
+    """
+    defaults = dict((name, None) for name in transformers.iterkeys())
+    storage = web.input(**defaults)
+
+    def transform(name, value, func):
+        return func(value)
+
+    [setattr(storage, name, transform(name, storage[name], transformers[name]))
+            for (name, value) in storage.iteritems()]
+
+    return storage
+    
+
 def api(func):
     def inner(self, *args, **kwargs):
         accept = web.ctx.environ.get('HTTP_ACCEPT', '').split(',')
