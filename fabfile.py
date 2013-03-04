@@ -238,6 +238,12 @@ def prerequisites():
 
 
 @task
+def compile():
+    ''' Compile all the dynamic resources (e.g. png from svg). '''
+    with cd(env.site_path):
+        run("find static/images/ -iname '*svg' -exec convert -background none {} {}.png \;")
+
+@task
 def bootstrap():
     ''' Configure the app '''
     print(cyan("Prerequisites..."))
@@ -256,8 +262,9 @@ def bootstrap():
     print(cyan('Initialize database...'))
     dbupdate()
 
-    # While we applied the puppet manifest, the virtualenv was not initialized
-    # yet, consiquently gunicorn for sure failed to start.  Try again now.
+    print(cyan('Compiling stuff...'))
+    compile()
+
     restart()
 
 @task
@@ -276,6 +283,9 @@ def update():
     print(cyan('Updating database...'))
     dbupdate()
 
+    print(cyan('Compiling stuff...'))
+    compile()
+
     restart()
 
 
@@ -290,6 +300,7 @@ def restart():
 
     print(cyan("Restarting gunicorn..."))
     cmd("sudo supervisorctl restart gunicorn")
+
 
 @task
 def pull_uploads():
