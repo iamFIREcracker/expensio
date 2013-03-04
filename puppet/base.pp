@@ -1,3 +1,4 @@
+include imagemagick
 include mercurial
 include mysql
 include nginx
