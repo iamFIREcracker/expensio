@@ -44,7 +44,7 @@ class LoginFakeAuthorizedHandler(BaseHandler):
                                        Her market damages the disposable anarchy.
                                        An alcoholic release mounts the preferable routine.
                                        The mighty concentrate breathes within the muddle.'''.split('\n')]
-        amounts = range(1, 40)
+        amounts = range(-10, 40)
         web.ctx.orm.add_all(
                 Expense(user_id=user.id, date=random.choice(dates),
                         category=random.choice(categories),
