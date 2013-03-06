@@ -15,7 +15,7 @@
         $categories.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
         $help.hide();
         chart = null;
-        categories = Object();
+        categories = {};
         latest = '';
     };
 
@@ -155,13 +155,12 @@
          * for a previously received update: if present, issue a graceful
          * remove, otherwise return.
          */
-        if (obj.amount == 0.0) {
+        if (obj.amount === 0.0) {
             if (prev === undefined) {
                 return false;
-            } else {
-                delete categories[obj.name];
-                return true;
             }
+            delete categories[obj.name];
+            return true;
         }
 
         categories[obj.name] = obj;
@@ -193,7 +192,7 @@
 
             _.map(data.stats.categories, updateCategory);
 
-            if (_.any(categories) == false) {
+            if (_.any(categories) === false) {
                 $chart.hide();
                 $help.show();
             } else {
@@ -208,4 +207,4 @@
             return latest;
         },
     };
-})();
+}());
