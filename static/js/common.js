@@ -48,4 +48,22 @@ var OnSubmitSuccess = function($form, data, onSuccessCallback) {
     } else {
         onSuccessCallback();
     }
+};
+
+
+/**
+ * Swap the sign of the amount of the input category.
+ */
+var SwapAmountSign = function(c) {
+  var r = $.extend({}, c);
+
+  r.amount = -r.amount;
+  return r;
+};
+
+/**
+ * Return true if the current category have a positive amount.
+ */
+var PositiveAmount = function(c) {
+    return c.amount > 0;
 }
