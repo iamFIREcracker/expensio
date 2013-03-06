@@ -102,10 +102,10 @@ var DaysUI = (function() {
     };
 
     var preparePoint = function(chosenAmount) {
-        var cum = 0.0;
+        var acc = 0.0;
         return function(day) {
             return {
-                y: cum += day[chosenAmount],
+                y: acc += day[chosenAmount],
                 color: palette[chosenAmount](),
                 obj: day
             };
