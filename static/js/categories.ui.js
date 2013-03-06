@@ -4,17 +4,29 @@ var CategoriesUI = function() {
     var $categories = null;
     var $chart = null;
     var $help = null;
+    var $total = null;
     var chart = null;
     var categories = null;
     var latest = null;
 
     var init = function() {
+        $help.hide();
+        $total.hide();
         $chart.empty().hide();
         $categories.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
-        $help.hide();
         chart = null;
         categories = {};
         latest = '';
+    };
+
+    var updateTotal = function() {
+        obj = _.reduce(categories, function(memo, category) {
+            return {
+                acc: memo.acc + category.amount,
+                currency: category.currency
+            };
+        }, { acc: 0.0, currency: '' });
+        $total.html(formatter.amount(obj.acc, obj.currency));
     };
 
     var initChart = function(data) {
@@ -146,6 +158,7 @@ var CategoriesUI = function() {
             $categories = $categories_;
             $chart = $categories.find('.categories-chart');
             $help = $categories.find('.alert');
+            $total = $categories.find('.total');
 
             init();
         },
@@ -164,10 +177,13 @@ var CategoriesUI = function() {
             _.map(data, updateCategory);
 
             if (_.any(categories) === false) {
+                $total.hide();
                 $chart.hide();
                 $help.show();
             } else {
                 $help.hide();
+                $total.show();
+                updateTotal();
                 $chart.show();
                 updateChart();
             }

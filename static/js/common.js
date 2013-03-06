@@ -65,5 +65,5 @@ var SwapAmountSign = function(c) {
  * Return true if the current category have a positive amount.
  */
 var PositiveAmount = function(c) {
-    return c.amount > 0;
+    return c.amount >= 0;
 }
