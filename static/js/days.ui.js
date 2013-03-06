@@ -21,7 +21,7 @@ var DaysUI = (function() {
         _.map(_.range(ndays), function(i) { days[i] = null; });
     };
 
-    var initChart = function(data, categories) {
+    var initChart = function(income, outcome, categories) {
         var fontFamily = $('body').css('fontFamily');
         chart = new Highcharts.Chart({
             chart: {
@@ -74,33 +74,41 @@ var DaysUI = (function() {
                 },
             },
             plotOptions: {
+                area: {
+                    marker: {
+                        enabled: false
+                    }
+                }
             },
             legend: {
-                enabled: false
+                enabled: true,
             },
             credits: {
                 enabled: false
             },
             series: [{
-                name: 'Amount',
-                data: data,
-                color: palette.chart(),
-                marker : {
-                    enabled : false,
-                },
-            }],
+                name: 'Income',
+                data: income,
+                color: palette.income()
+            },{
+                name: 'Outcome',
+                data: outcome,
+                color: palette.outcome()
+            }],
         });
     };
 
-    var preparePoint = function(day) {
-        if (day === null) {
-            return 0.0;
-        }
+    var preparePoint = function(chosenAmount) {
+        return function(day) {
+            if (day === null) {
+                return 0.0;
+            }
 
-        return {
-            y: day.outcome,
-            color: palette.chart(),
-            obj: day
+            return {
+                y: day[chosenAmount],
+                color: palette.chart(),
+                obj: day
+            };
         };
     };
 
@@ -120,17 +128,17 @@ var DaysUI = (function() {
     };
 
     var updateChart = function() {
-        var data = _.map(days, preparePoint);
+        var income = _.map(days, preparePoint('income'));
+        var outcome = _.map(days, preparePoint('outcome'));
         var categories = _.map(days, prepareLabel);
 
         // Lazy initialization
         if (chart === null) {
-            initChart(data, categories); // Call this when the container is *visible*!
+            initChart(income, outcome, categories); // Call this when the container is *visible*!
         } else {
             _.map(_.zip(_.range(data.length), data), updatePoint);
             chart.xAxis[0].setCategories(categories);
         }
-
     };
 
     var updateDay = function(obj) {
