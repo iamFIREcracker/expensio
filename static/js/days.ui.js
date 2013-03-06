@@ -6,6 +6,7 @@ var DaysUI = (function() {
     var palette = null;
     var $days = null;
     var $chart = null;
+    var $help = null;
     var chart = null;
     var days = null;
     var addamountlisteners = [];
