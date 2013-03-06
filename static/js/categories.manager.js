@@ -1,10 +1,12 @@
 var CategoriesManager = (function() {
     var logger = null;
-    var ui = null;
     var paramsFactory = null;
+    var newdatalisteners = [];
 
     var onUpdateSuccess = function(data) {
-        ui.onNewData(data);
+        $.each(newdatalisteners, function(index, func) {
+            func(data);
+        });
     };
 
     var onUpdateError = function(data) {
@@ -12,14 +14,12 @@ var CategoriesManager = (function() {
     };
 
     return {
-        onReady: function(logger_, ui_, paramsFactory_) {
+        onReady: function(logger_, paramsFactory_) {
             logger = logger_;
-            ui = ui_;
             paramsFactory = paramsFactory_;
         },
 
         onMonthChange: function(year, month) {
-            ui.onMonthChange(year, month);
             this.onUpdate();
         },
 
@@ -34,6 +34,10 @@ var CategoriesManager = (function() {
             });
 
             return false;
+        },
+
+        newData: function(func) {
+            newdatalisteners.push(func);
         },
     };
 }());
