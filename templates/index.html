@@ -19,14 +19,18 @@
 
 {% block jsready %}
 PaletteManager.onReady(Logger, function() {
+    var InCategoriesUI = CategoriesUI();
+    var OutCategoriesUI = CategoriesUI();
+
     DateManager.onReady($('#current_month'), {{ year }}, {{ month }});
     HistoryManager.onReady(DateManager);
     UsersManager.onReady(Logger);
     ExpensesUI.onReady(
             Formatter, PaletteManager, $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
-    CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
-    CategoriesManager.onReady(Logger, CategoriesUI, PeriodParamsManager(DateManager, CategoriesUI, 'period'));
+    OutCategoriesUI.onReady(Formatter, PaletteManager, $('#out-categories'));
+    InCategoriesUI.onReady(Formatter, PaletteManager, $('#in-categories'));
+    CategoriesManager.onReady(Logger, PeriodParamsManager(DateManager, InCategoriesUI, 'period'));
     TotalManager.onReady(Formatter, $('#total'), '{{ user.currency }}');
     Manager.onReady(Logger, DateManager, 30000);
 
@@ -39,6 +43,8 @@ PaletteManager.onReady(Logger, function() {
         HistoryManager.onMonthChange(year, month);
         ExpensesManager.onMonthChange(year, month);
         CategoriesManager.onMonthChange(year, month);
+        OutCategoriesUI.onMonthChange(year, month);
+        InCategoriesUI.onMonthChange(year, month);
         TotalManager.onMonthChange(year, month);
     });
 
@@ -52,7 +58,16 @@ PaletteManager.onReady(Logger, function() {
     });
     ExpensesUI.remExpense(function(exp) {
         TotalManager.onRemAmount(exp.amount);
-    })
+    });
+    
+    CategoriesManager.newData(function(data) {
+        OutCategoriesUI.onNewData(
+            _.filter(data.stats.categories, PositiveAmount));
+        InCategoriesUI.onNewData(
+            _.filter(
+                _.map(data.stats.categories, SwapAmountSign), PositiveAmount));
+    });
+
     Manager.onUpdate(0);
 });
 {% endblock %}
@@ -71,22 +86,30 @@ PaletteManager.onReady(Logger, function() {
 <div class="row-fluid">
     <div class="span6 pull-right">
         <div class="row-fluid">
-            <h3 class="text-center">Total</h3>
-            {% include 'elements/total.html' %}
+            <h3 class="text-center">Outcome</h3>
+            <div id="out-categories">
+                <div class="alert alert-info" style="display: none">
+                    Want to know how much did you spent last month for each
+                    tracked category?  You are looking in the right place!
+                    Start adding expenses and see how charts animates...
+                </div>
+                <div id="out-categories-chart" class="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+            </div>
         </div>
         <div class="row-fluid">
-            <h3 class="text-center">By Category</h3>
-            <div id="categories">
+            <h3 class="text-center">Income</h3>
+            <div id="in-categories">
                 <div class="alert alert-info" style="display: none">
-                    Want to know how much did you spent in the current month for each
-                    expense category?  You are looking in the right place!  See the
-                    chart populating as as soon as you track expenses...
+                    Want to know how much did you <strong>earn</strong> last
+                    month, category by category?  You are looking in the right
+                    place!  See the chart populating as as soon as you track
+                    expenses...
                 </div>
-                <div id="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+                <div id="in-categories-chart" class="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
             </div>
         </div>
     </div>
-    <div class="span6">
+    <div class="span6" style="margin-left: 0px">
         <h3 class="text-center">By Date</h3>
         <div id="expenses">
             <div class="alert alert-info" style="display: none">
