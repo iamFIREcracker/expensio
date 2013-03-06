@@ -5,6 +5,8 @@ var PaletteManager = (function() {
     var onReadySuccess = null;
 
     var chart = '#555555';
+    var income = '#4484ac';
+    var outcome = '#b44b4a';
     var palette = [
         {bg: '#333',    fg: '#ffe',}, // default
         {bg: '#3366CC', fg: '#ffe',}, // blue
@@ -15,7 +17,7 @@ var PaletteManager = (function() {
         {bg: '#0099c6', fg: '#ffe',},
         {bg: '#dd4477', fg: '#ffe',},
     ];
-    var mapping = Object();
+    var mapping = {};
     var warnTriggered = false;
 
     var onCategoryListSuccess = function(data) {
@@ -65,6 +67,14 @@ var PaletteManager = (function() {
             return chart;
         },
 
+        income: function() {
+            return income;
+        },
+
+        outcome: function() {
+            return outcome;
+        },
+
         foreground: function(key) {
             var i = this.get(key);
 
@@ -76,5 +86,5 @@ var PaletteManager = (function() {
 
             return palette[i].bg;
         },
-    }
-})();
+    };
+}());
