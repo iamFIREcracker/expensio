@@ -106,7 +106,7 @@ var DaysUI = (function() {
 
             return {
                 y: day[chosenAmount],
-                color: palette.chart(),
+                color: palette[chosenAmount](),
                 obj: day
             };
         };
