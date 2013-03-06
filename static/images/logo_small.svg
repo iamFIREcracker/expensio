@@ -66,7 +66,7 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="-4"
+       x="-4.1312671"
        y="1047.6122"
        id="text2987"
        sodipodi:linespacing="125%"
@@ -75,13 +75,13 @@
        inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
          id="tspan2989"
-         x="-4"
+         x="-4.1312671"
          y="1047.6122"
          style="font-size:14px" /></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="-0.27778369"
+       x="-0.4090507"
        y="1047.6724"
        id="text2991"
        sodipodi:linespacing="125%"
@@ -90,13 +90,13 @@
        inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
          id="tspan2993"
-         x="-0.27778369"
+         x="-0.4090507"
          y="1047.6724" /></text>
     <path
        inkscape:connector-curvature="0"
        id="path3774"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4484ac;fill-opacity:1;stroke:#4484ac;stroke-width:1.18197;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Sans"
-       d="m 9.146481,1042.1124 -3.1829535,-8.4092 -1.1350764,0 2.7669338,8.4092 -2.7669338,8.4088 1.1350764,0 3.1829535,-8.4088"
+       d="m 9.2777479,1042.1124 -3.1829535,-8.4092 -1.1350764,0 2.7669338,8.4092 -2.7669338,8.4088 1.1350764,0 3.1829535,-8.4088"
        sodipodi:nodetypes="ccccccc"
        inkscape:export-filename="/home/matteo/workspace/expenses/static/images/logo_small.png"
        inkscape:export-xdpi="90"
@@ -105,7 +105,7 @@
        inkscape:connector-curvature="0"
        id="path3774-4"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#b44b4a;fill-opacity:1;stroke:#b44b4a;stroke-width:1.210814;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Sans"
-       d="m 14.617941,1038.6122 3.345976,-8.3946 1.19321,0 -2.908648,8.3946 2.908648,8.3946 -1.19321,0 -3.345976,-8.3946"
+       d="m 14.486674,1038.6122 3.345976,-8.3946 1.19321,0 -2.908648,8.3946 2.908648,8.3946 -1.19321,0 -3.345976,-8.3946"
        sodipodi:nodetypes="ccccccc"
        inkscape:export-filename="/home/matteo/workspace/expenses/static/images/logo_small.png"
        inkscape:export-xdpi="90"
