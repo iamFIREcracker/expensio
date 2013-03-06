@@ -119,7 +119,7 @@ def AccumulateDayAggregate((date, income, outcome, updated), expense):
     """
     return (
             expense.date,
-            income + expense.amount if expense.amount < 0 else income,
+            income + expense.amount if expense.amount < 0 else -income,
             outcome + expense.amount if expense.amount > 0 else outcome,
             expense.updated if updated is None or expense.updated > updated
                     else updated)
