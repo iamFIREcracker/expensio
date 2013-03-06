@@ -79,27 +79,10 @@ PaletteManager.onReady(Logger, function() {
 <div class="row-fluid">
     <div class="span6 pull-right">
         <div class="row-fluid">
-            <h3 class="text-center">Income</h3>
-            <div id="in-categories">
-                <div class="alert alert-info" style="display: none">
-                    Want to know how much did you <strong>earn</strong> last
-                    month, category by category?  You are looking in the right
-                    place!  See the chart populating as as soon as you track
-                    expenses...
-                </div>
-                <div id="in-categories-chart" class="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
-            </div>
+            {% include 'elements/income.html' %}
         </div>
         <div class="row-fluid">
-            <h3 class="text-center">Outcome</h3>
-            <div id="out-categories">
-                <div class="alert alert-info" style="display: none">
-                    Want to know how much did you spent last month for each
-                    tracked category?  You are looking in the right place!
-                    Start adding expenses and see how charts animates...
-                </div>
-                <div id="out-categories-chart" class="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
-            </div>
+            {% include 'elements/outcome.html' %}
         </div>
     </div>
     <div class="span6" style="margin-left: 0px">
