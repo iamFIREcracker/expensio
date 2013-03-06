@@ -49,7 +49,6 @@ var DaysUI = (function() {
                 },
             },
             yAxis: {
-                min: 0,
                 title: {
                     text: null,
                 },
@@ -67,7 +66,7 @@ var DaysUI = (function() {
                     return sprintf(
                         "<strong>Date</strong>: %s <strong>Amount</strong>: %s",
                         formatter.date(d.date),
-                        formatter.amount(d.outcome, d.currency));
+                        formatter.amount(this.point.y, d.currency));
                 },
                 style: {
                     fontFamily: fontFamily,
