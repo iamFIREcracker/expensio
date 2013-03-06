@@ -1,6 +1,4 @@
-﻿var CategoriesUI = (function() {
-    var __animationtimeout = 200; // milliseconds
-
+var CategoriesUI = function() {
     var formatter = null;
     var palette = null;
     var $categories = null;
@@ -72,7 +70,6 @@
 
         return {
             name: category.name,
-            //legendIndex: index,
             y: category.amount,
             color: palette.background(category.name),
             obj: category,
@@ -112,29 +109,7 @@
         if (chart === null) {
             initChart(data); // Call this when the container is *visible*!
         } else {
-            // Refresh the legend
-            //chart.series[0].options.showInLegend = false;
-            //chart.series[0].legendItem = null;
-            //chart.legend.destroyItem(chart.series[0]);
-            //chart.legend.render();
-
-            var pointsDifference = data.length - chart.series[0].data.length;
-
-            // Update the length of the series dataset
-            if (pointsDifference > 0) {
-                _.times(pointsDifference, addPoint);
-            } else if (pointsDifference < 0) {
-                _.times(-pointsDifference, removePoint);
-            }
-
-            // Update each point
-            //_.map(_.zip(_.range(data.length), data), updatePoint);
             chart.series[0].setData(data);
-
-
-            //charts.series[0].options.showInLegend = true;
-            //chart.legend.renderItem(chart.series[0]);
-            //chart.legend.render();
         }
     };
 
@@ -142,30 +117,26 @@
         var prev = categories[obj.name];
 
         /*
-         * Update the variable containing the date of the latest update.
-         * This operation should be done on all received updates, even those
-         * representing deleted items.
-         */
+        * Update the variable containing the date of the latest update.
+        * This operation should be done on all received updates, even those
+        * representing deleted items.
+        */
         if (obj.updated > latest) {
             latest = obj.updated;
         }
 
         /*
-         * The current category is no more valid (amount equal 0.0).  Check
-         * for a previously received update: if present, issue a graceful
-         * remove, otherwise return.
-         */
+        * The current category is no more valid (amount equal 0.0).  Check
+        * for a previously received update: if present, issue a graceful
+        * remove, otherwise return.
+        */
         if (obj.amount === 0.0) {
-            if (prev === undefined) {
-                return false;
+            if (prev !== undefined) {
+                delete categories[obj.name];
             }
-            delete categories[obj.name];
-            return true;
+        } else {
+            categories[obj.name] = obj;
         }
-
-        categories[obj.name] = obj;
-
-        return true;
     };
 
     return {
@@ -173,7 +144,7 @@
             formatter = formatter_;
             palette = palette_;
             $categories = $categories_;
-            $chart = $categories.find('#categories-chart');
+            $chart = $categories.find('.categories-chart');
             $help = $categories.find('.alert');
 
             init();
@@ -190,7 +161,7 @@
                 $loading.remove();
             }
 
-            _.map(data.stats.categories, updateCategory);
+            _.map(data, updateCategory);
 
             if (_.any(categories) === false) {
                 $chart.hide();
@@ -207,4 +178,4 @@
             return latest;
         },
     };
-}());
+};
