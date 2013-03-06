@@ -21,7 +21,7 @@ var DaysUI = (function() {
         _.map(_.range(ndays), function(i) { days[i] = null; });
     };
 
-    var initChart = function(income, outcome, categories) {
+    var initChart = function(income, outcome, net, categories) {
         var fontFamily = $('body').css('fontFamily');
         chart = new Highcharts.Chart({
             chart: {
@@ -93,21 +93,33 @@ var DaysUI = (function() {
                 name: 'Outcome',
                 data: outcome,
                 color: palette.outcome()
+            },{
+                name: 'Net',
+                data: net,
+                color: palette.net()
             }],
         });
     };
 
     var preparePoint = function(chosenAmount) {
+        var cum = 0.0;
         return function(day) {
-            if (day === null) {
-                return 0.0;
-            }
-
             return {
-                y: day[chosenAmount],
+                y: cum += day[chosenAmount],
                 color: palette[chosenAmount](),
                 obj: day
             };
+        };
+    };
+
+    var prepareNet = function(points) {
+        var income = points[0];
+        var outcome = points[1];
+
+        return {
+            y: (points[0].y + points[1].y),
+            color: palette.net(),
+            obj: points[0].obj
         };
     };
 
@@ -129,11 +141,12 @@ var DaysUI = (function() {
     var updateChart = function() {
         var income = _.map(days, preparePoint('income'));
         var outcome = _.map(days, preparePoint('outcome'));
+        var net = _.map(_.zip(income, outcome), prepareNet);
         var categories = _.map(days, prepareLabel);
 
         // Lazy initialization
         if (chart === null) {
-            initChart(income, outcome, categories); // Call this when the container is *visible*!
+            initChart(income, outcome, net, categories); // Call this when the container is *visible*!
         } else {
             _.map(_.zip(_.range(data.length), data), updatePoint);
             chart.xAxis[0].setCategories(categories);
