@@ -18,6 +18,9 @@
 
 {% block jsready %}
 PaletteManager.onReady(Logger, function() {
+    var InCategoriesUI = CategoriesUI();
+    var OutCategoriesUI = CategoriesUI();
+
     DateManager.onReady($('#current_month'), {{ year }}, {{ month }});
     UsersManager.onReady(Logger);
     ExpensesUI.onReady(
@@ -26,12 +29,21 @@ PaletteManager.onReady(Logger, function() {
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
     DaysUI.onReady({{ bins }}, Formatter, PaletteManager, $('#days'));
     DaysManager.onReady(Logger, DaysUI, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
-    CategoriesUI.onReady(Formatter, PaletteManager, $('#categories'));
-    CategoriesManager.onReady(Logger, CategoriesUI, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
+    OutCategoriesUI.onReady(Formatter, PaletteManager, $('#out-categories'));
+    InCategoriesUI.onReady(Formatter, PaletteManager, $('#in-categories'));
+    CategoriesManager.onReady(Logger, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
     TotalManager.onReady(Formatter, $('#total'), '{{ user.currency }}');
 
     DaysUI.addAmount(function(amount) {
         TotalManager.onAddAmount(amount);
+    });
+
+    CategoriesManager.newData(function(data) {
+        OutCategoriesUI.onNewData(
+            _.filter(data.stats.categories, PositiveAmount));
+        InCategoriesUI.onNewData(
+            _.filter(
+                _.map(data.stats.categories, SwapAmountSign), PositiveAmount));
     });
 
     DaysManager.onUpdate();
@@ -54,27 +66,34 @@ PaletteManager.onReady(Logger, function() {
     </div>
     <div class="offset1 span7">
         <div class="row-fluid">
-            <h3 class="text-center">Total</h3>
-            {% include 'elements/total.html' %}
-        </div>
-        <div class="row-fluid">
-            <h3 class="text-center">Amounts By Date</h3>
+            <h3 class="text-center">By Date</h3>
             <div id="days">
                 <div class="alert alert-info" style="display: none">
-                    {% block days_desc %}{% endblock %}
+                    Lorem ipsum
                 </div>
                 <div id="days-chart" style="height: 275px; margin: 0 auto"></div>
             </div>
         </div>
         <span class="spacer20"></span>
         <div class="row-fluid">
-            <h3 class="text-center">Amounts By Category</h3>
-            <div id="categories">
+          <div class="span6">
+            <h3 class="text-center">Outcome</h3>
+            <div id="out-categories">
                 <div class="alert alert-info" style="display: none">
-                    {% block categories_desc %}{% endblock %}
+                    Lorem ipsum
                 </div>
-                <div id="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+                <div id="out-categories-chart" class="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
             </div>
+          </div>
+          <div class="span6">
+            <h3 class="text-center">Income</h3>
+            <div id="in-categories">
+                <div class="alert alert-info" style="display: none">
+                    Lorem ipsum
+                </div>
+                <div id="in-categories-chart" class="categories-chart" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+            </div>
+          </div>
         </div>
     </div>
 </div>
