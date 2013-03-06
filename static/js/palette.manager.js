@@ -4,9 +4,10 @@ var PaletteManager = (function() {
     var logger = null;
     var onReadySuccess = null;
 
-    var chart = '#555555';
     var income = '#4484ac';
     var outcome = '#b44b4a';
+    var net = '#F89406';
+
     var palette = [
         {bg: '#333',    fg: '#ffe',}, // default
         {bg: '#3366CC', fg: '#ffe',}, // blue
@@ -73,6 +74,10 @@ var PaletteManager = (function() {
 
         outcome: function() {
             return outcome;
+        },
+
+        net: function() {
+            return net;
         },
 
         foreground: function(key) {
