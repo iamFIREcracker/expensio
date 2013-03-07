@@ -86,6 +86,13 @@ class Connect(form.Input):
         return self.connected
 
 
+class DevelopmentForm(form.Form):
+    def __init__(self, *inputs, **kw):
+        filtered = filter(lambda i: 'DEV' not in i.attrs or config.DEV == True,
+                          inputs)
+        super(DevelopmentForm, self).__init__(*filtered, **kw)
+
+
 validaccounts = form.Validator(
         "There should be - at least - one external account linked!",
         lambda i: any(v for v in i.itervalues()))
@@ -111,13 +118,15 @@ users_edit = form.Form(
             validcurrency, description='Currency'),
     )
 
-users_connect = form.Form(
+users_connect = DevelopmentForm(
         Connect('google', description='Google',
             class_='btn-connect btn-connect-google'),
         Connect('facebook', description='Facebook',
             class_='btn-connect btn-connect-facebook'),
         Connect('twitter', description='Twitter',
             class_='btn-connect btn-connect-twitter'),
+        Connect('fake', description='Fake',
+            class_='btn-connect', DEV=True),
         validators=[validaccounts]
     )
 
