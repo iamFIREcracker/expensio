@@ -9,7 +9,7 @@ var DaysUI = (function() {
 
     var init = function() {
         $chart.empty().hide();
-        $days.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
+        $days.append('<div class="loading"></div>');
         $help.hide();
         chart = null;
         days = {};

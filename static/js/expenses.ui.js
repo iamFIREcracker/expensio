@@ -15,7 +15,7 @@ var ExpensesUI = (function() {
 
     var init = function() {
         $inner.empty();
-        $expenses.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
+        $expenses.append('<div class="loading"></div>');
         $help.hide();
         expenses = {};
         latest = '';

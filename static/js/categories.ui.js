@@ -13,7 +13,7 @@ var CategoriesUI = function() {
         $help.hide();
         $total.hide();
         $chart.empty().hide();
-        $categories.append('<div class="loading"><img src="/static/images/loading.gif" /></div>');
+        $categories.append('<div class="loading"></div>');
         chart = null;
         categories = {};
         latest = '';

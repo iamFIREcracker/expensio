@@ -3,8 +3,10 @@
 }
 
 .loading {
-    margin-top: 30px;
-    text-align: center;
+    background: url(/static/images/loading.gif) no-repeat center;
+    width: 16px;
+    height: 16px;
+    margin: 20px auto;
 }
 
 .connect {
