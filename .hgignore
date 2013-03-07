@@ -11,6 +11,8 @@ dist/*
 expenses.egg*
 fontconfig/*
 sessions/*
+static/.webassets*
+static/assets/*
 static/avatars/[a-zA-Z0-9]*
 static/exports/[a-zA-Z0-9]*
 static/images/*.svg.png
