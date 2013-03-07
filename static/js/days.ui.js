@@ -1,7 +1,4 @@
 var DaysUI = (function() {
-    var __animationtimeout = 200; // milliseconds
-
-    var ndays = null;
     var formatter = null;
     var palette = null;
     var $days = null;
@@ -9,7 +6,6 @@ var DaysUI = (function() {
     var $help = null;
     var chart = null;
     var days = null;
-    var addamountlisteners = [];
 
     var init = function() {
         $chart.empty().hide();
@@ -17,8 +13,6 @@ var DaysUI = (function() {
         $help.hide();
         chart = null;
         days = {};
-
-        _.map(_.range(ndays), function(i) { days[i] = null; });
     };
 
     var initChart = function(income, outcome, net, categories) {
@@ -58,15 +52,14 @@ var DaysUI = (function() {
             },
             tooltip: {
                 formatter: function() {
-                    if (!this.y) {
+                    if (this.point.color === undefined) {
                         return false;
                     }
 
-                    var d = this.point.obj;
                     return sprintf(
                         "<strong>Date</strong>: %s <strong>Amount</strong>: %s",
-                        formatter.date(d.date),
-                        formatter.amount(this.point.y, d.currency));
+                        formatter.date(this.point.date),
+                        formatter.amount(this.point.y, this.point.currency));
                 },
                 style: {
                     fontFamily: fontFamily,
@@ -107,7 +100,8 @@ var DaysUI = (function() {
             return {
                 y: acc += day[chosenAmount],
                 color: palette[chosenAmount](),
-                obj: day
+                date: day.date,
+                currency: day.currency
             };
         };
     };
@@ -119,7 +113,8 @@ var DaysUI = (function() {
         return {
             y: (points[0].y + points[1].y),
             color: palette.net(),
-            obj: points[0].obj
+            date: points[0].date,
+            currency: points[0].currency
         };
     };
 
@@ -144,44 +139,15 @@ var DaysUI = (function() {
         var net = _.map(_.zip(income, outcome), prepareNet);
         var categories = _.map(days, prepareLabel);
 
-        // Lazy initialization
-        if (chart === null) {
-            initChart(income, outcome, net, categories); // Call this when the container is *visible*!
-        } else {
-            _.map(_.zip(_.range(data.length), data), updatePoint);
-            chart.xAxis[0].setCategories(categories);
-        }
+        initChart(income, outcome, net, categories); // Call this when the container is *visible*!
     };
 
     var updateDay = function(obj) {
-        var i = obj.delta + ndays - 1;
-        var prev = days[i];
-
-        /*
-         * The current day has no expenses (amount equal 0.0).  Check
-         * for a previously received update: if present, issue a graceful
-         * remove, otherwise return.
-         */
-        if (obj.amount === 0.0) {
-            if (prev === null) {
-                return false;
-            }
-
-            days[i] = null;
-            return true;
-        }
-
-        days[i] = obj;
-        $.each(addamountlisteners, function(index, func) {
-            func(obj.income);
-            func(obj.outcome);
-        });
-        return true;
+        days[obj.date] = obj;
     };
 
     return {
-        onReady: function(ndays_, formatter_, palette_, $days_) {
-            ndays = ndays_;
+        onReady: function(formatter_, palette_, $days_) {
             formatter = formatter_;
             palette = palette_;
             $days = $days_;
@@ -209,11 +175,5 @@ var DaysUI = (function() {
                 updateChart();
             }
         },
-
-
-        addAmount: function(func) {
-            addamountlisteners.push(func);
-        },
-
     };
 }());
