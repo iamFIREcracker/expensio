@@ -35,13 +35,11 @@ PaletteManager.onReady(Logger, function() {
     CategoriesManager.newData(function(data) {
         InCategoriesUI.onNewData(
             _.map(_.filter(data.stats.categories, IncomeNotNull), function(c) {
-                c.amount = -c.income; // Swap sign!!!
-                return c;
+                return $.extend({amount: -c.income}, c);
             }));
         OutCategoriesUI.onNewData(
             _.map(_.filter(data.stats.categories, OutcomeNotNull), function(c) {
-                c.amount = c.outcome;
-                return c;
+                return $.extend({amount: c.outcome}, c);
             }));
     });
 
