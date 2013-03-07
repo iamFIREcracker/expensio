@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import app.config as config
+
 from .controllers.auth.facebook import AccountsFacebookDisconnectHandler
 from .controllers.auth.google import AccountsGoogleDisconnectHandler
 from .controllers.auth.twitter import AccountsTwitterDisconnectHandler
@@ -48,10 +50,6 @@ URLS = (
     '/login/twitter', LoginTwitterHandler,
     '/login/twitter/authorized', LoginTwitterAuthorizedHandler,
     '/accounts/twitter/disconnect', AccountsTwitterDisconnectHandler,
-    '/login/fake', LoginFakeHandler,
-    '/login/fake/authorized', LoginFakeAuthorizedHandler,
-    '/accounts/fake/disconnect', AccountsFakeDisconnectHandler,
-    '/accounts/fake/populate', AccountsFakePopulateHandler,
     '/logout', LogoutHandler,
 
     '/users/(.+)/edit', UsersEditHandler,
@@ -80,4 +78,10 @@ URLS = (
     '/import', ImportHandler,
     '/export', ExportHandler,
     '/stats/(quadrimester|year|life)', StatsHandler,
-)
+) + (() if not config.DEV else (
+    # Develop routes
+    '/login/fake', LoginFakeHandler,
+    '/login/fake/authorized', LoginFakeAuthorizedHandler,
+    '/accounts/fake/disconnect', AccountsFakeDisconnectHandler,
+    '/accounts/fake/populate', AccountsFakePopulateHandler,
+))
