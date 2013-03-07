@@ -1,6 +1,11 @@
 <div class="row-fluid">
+    {% if DEV %}
+    <div class="offset4 span4">
+        <a class="connect" href="/login/fake" alt="connect with fake">Fake</a>
+    </div>
+    {% else %}
     <div class="span4">
-        <a class="connect" href="/login/google" alt="Connect with Google">Google</a>
+        <a class="connect" href="/login/google" alt="connect with google">Google</a>
     </div>
     <div class="span4">
         <a class="connect" href="/login/facebook" alt="Connect with Facebook">Facebook</a>
@@ -8,4 +13,5 @@
     <div class="span4">
         <a class="connect" href="/login/twitter" alt="Connect with Twitter">Twitter</a>
     </div>
+    {% endif %}
 </div>

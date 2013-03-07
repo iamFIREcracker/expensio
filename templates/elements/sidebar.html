@@ -2,6 +2,9 @@
     <ul class="nav nav-list">
         <li class="nav-header">Account</li>
         <li {{ 'class="active"' if current == 'profile' }}><a href="/profile">Profile</a></li>
+        {% if DEV %}
+        <li {{ 'class="active"' if current == 'populate' }}><a href="/accounts/fake/populate">Populate</a></li>
+        {% endif %}
         <li {{ 'class="active"' if current == 'deactivate' }}><a href="/deactivate">Deactivate</a></li>
         <li class="nav-header">Expenses</li>
         <li {{ 'class="active"' if current == 'import' }}><a href="/import">Import</a></li>
