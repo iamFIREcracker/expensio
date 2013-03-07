@@ -240,8 +240,7 @@ def prerequisites():
 @task
 def compile():
     ''' Compile all the dynamic resources (e.g. png from svg). '''
-    with cd(env.site_path):
-        run("find static/images/ -iname '*svg' -exec convert -background none {} {}.png \;")
+    cmd("find static/images/ -iname '*svg' -exec convert -background none {} {}.png \;")
 
 @task
 def bootstrap():
