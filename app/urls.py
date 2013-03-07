@@ -5,6 +5,7 @@ from .controllers.auth.facebook import AccountsFacebookDisconnectHandler
 from .controllers.auth.google import AccountsGoogleDisconnectHandler
 from .controllers.auth.twitter import AccountsTwitterDisconnectHandler
 from .controllers.auth.fake import AccountsFakeDisconnectHandler
+from .controllers.auth.fake import AccountsFakePopulateHandler
 from .controllers.auth import LoginFacebookAuthorizedHandler
 from .controllers.auth import LoginFacebookHandler
 from .controllers.auth import LoginFakeAuthorizedHandler
@@ -50,6 +51,7 @@ URLS = (
     '/login/fake', LoginFakeHandler,
     '/login/fake/authorized', LoginFakeAuthorizedHandler,
     '/accounts/fake/disconnect', AccountsFakeDisconnectHandler,
+    '/accounts/fake/populate', AccountsFakePopulateHandler,
     '/logout', LogoutHandler,
 
     '/users/(.+)/edit', UsersEditHandler,
