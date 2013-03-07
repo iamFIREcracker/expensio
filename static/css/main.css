@@ -27,8 +27,14 @@
 
 .btn-connect, .btn-connect:hover {
     color: white;
-    background-color: #aeaeae;
     text-decoration: none;
+}
+
+.btn-connect {
+    background-color: #aeaeae;
+}
+.btn-connect:hover {
+    background-color: #9a9a9a;
 }
 
 .btn-connect-google {
