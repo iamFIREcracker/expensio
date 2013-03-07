@@ -1,5 +1,13 @@
 {% extends 'base.html' %}
 
+
+{% block css %}
+{% assets output="assets/info.%(version)s.css", "base_css" %}
+<link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
+{% endassets %}
+{% endblock %}
+
+
 {% block content %}
 <div class="container-fluid">
     <div class="row-fluid">
@@ -26,4 +34,11 @@
     <h2 class="text-center">Try it!</h2>
     {% include 'elements/login.html' %}
 </div>
+{% endblock %}
+
+
+{% block js %}
+{% assets output="assets/info.%(version)s.js", "base_js" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
 {% endblock %}

@@ -1,17 +1,13 @@
 {% extends 'controls.html' %}
 
-{% block js %}
-<script src="/static/js/users.ui.js"></script>
-<script src="/static/js/users.manager.js"></script>
+
+{% block css %}
+{% assets output="assets/profile.%(version)s.css", "base_css",
+        "lightbox/css/lightbox.css" %}
+<link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
+{% endassets %}
 {% endblock %}
 
-{% block jsready %}
-ExpensesUI.onReady(
-        Formatter, PaletteManager, $('#current_month_overall'),
-        $('#expenses'));
-ExpensesManager.onReady(Logger, ExpensesUI);
-UsersManager.onReady(Logger, UsersUI);
-{% endblock %}
 
 {% block pane %}
 {% include 'users_avatar.html' %}
@@ -26,3 +22,20 @@ UsersManager.onReady(Logger, UsersUI);
     </div>
 </div>
 {% endblock %}
+
+
+{% block js %}
+{% assets output="assets/profile.%(version)s.js", "base_js", "users_js" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+{% endblock %}
+
+
+{% block jsready %}
+ExpensesUI.onReady(
+        Formatter, PaletteManager, $('#current_month_overall'),
+        $('#expenses'));
+ExpensesManager.onReady(Logger, ExpensesUI);
+UsersManager.onReady(Logger, UsersUI);
+{% endblock %}
+

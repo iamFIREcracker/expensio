@@ -1,10 +1,11 @@
 {% extends 'controls.html' %}
 
-{% block jsready %}
-ExpensesUI.onReady(
-        Formatter, PaletteManager, $('#current_month_overall'), $('#expenses'));
-ExpensesManager.onReady(Logger, ExpensesUI);
+{% block css %}
+{% assets output="assets/export.%(version)s.css", "base_css" %}
+<link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
+{% endassets %}
 {% endblock %}
+
 
 {% block pane %}
 <div class="alert alert-info">
@@ -16,4 +17,18 @@ ExpensesManager.onReady(Logger, ExpensesUI);
     automatically.
 </div>
 {% include 'expenses_export.html' %}
+{% endblock %}
+
+
+{% block js %}
+{% assets output="assets/export.%(version)s.js", "base_js" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+{% endblock %}
+
+
+{% block jsready %}
+ExpensesUI.onReady(
+        Formatter, PaletteManager, $('#current_month_overall'), $('#expenses'));
+ExpensesManager.onReady(Logger, ExpensesUI);
 {% endblock %}

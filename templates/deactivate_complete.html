@@ -1,15 +1,11 @@
 {% extends 'controls.html' %}
 
-{% block js %}
-<script src="/static/js/users.manager.js"></script>
+{% block css %}
+{% assets output="assets/deactivate.%(version)s.css", "base_css" %}
+<link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
+{% endassets %}
 {% endblock %}
 
-{% block jsready %}
-ExpensesUI.onReady(
-        Formatter, PaletteManager, $('#current_month_overall'), $('#expenses'));
-ExpensesManager.onReady(Logger, ExpensesUI);
-UsersManager.onReady(Logger);
-{% endblock %}
 
 {% block pane %}
 <div class="alert alert-danger">
@@ -19,4 +15,19 @@ UsersManager.onReady(Logger);
     following button.
 </div>
 {% include 'deactivate.html' %}
+{% endblock %}
+
+
+{% block js %}
+{% assets output="assets/deactivate.%(version)s.js", "base_js", "users_js" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+{% endblock %}
+
+
+{% block jsready %}
+ExpensesUI.onReady(
+        Formatter, PaletteManager, $('#current_month_overall'), $('#expenses'));
+ExpensesManager.onReady(Logger, ExpensesUI);
+UsersManager.onReady(Logger);
 {% endblock %}
