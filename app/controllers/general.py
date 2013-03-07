@@ -24,7 +24,7 @@ from app.forms import expenses_add
 class MainHandler(BaseHandler):
     def GET(self, year=None, month=None):
         if not self.current_user():
-            return web.ctx.render.info()
+            return web.ctx.render.info(DEV=config.DEV)
         else:
             # Validate `year` and `month`, if specified
             today = datetime.today()
@@ -36,7 +36,8 @@ class MainHandler(BaseHandler):
 
             return web.ctx.render.index(user=self.current_user(),
                                         year=year, month=month,
-                                        expenses_add=form)
+                                        expenses_add=form,
+                                        DEV=config.DEV)
 
 
 class UsersProfileHandler(BaseHandler):
@@ -56,7 +57,7 @@ class UsersProfileHandler(BaseHandler):
         edit.fill(id=user.id, name=user.name, currency=user.currency)
         return web.ctx.render.profile(user=self.current_user(),
                 current='profile', users_avatar=avatar, users_connect=connect,
-                users_edit=edit)
+                users_edit=edit, DEV=config.DEV)
 
 
 class UsersDeactivateHandler(BaseHandler):
@@ -65,7 +66,7 @@ class UsersDeactivateHandler(BaseHandler):
         form = users_delete()
         form.fill(id=self.current_user().id)
         return web.ctx.render.deactivate_complete(user=self.current_user(),
-                current='deactivate', users_delete=form)
+                current='deactivate', users_delete=form, DEV=config.DEV)
 
 
 class LogoutHandler():
@@ -78,14 +79,16 @@ class ImportHandler(BaseHandler):
     @protected
     def GET(self):
         return web.ctx.render.expenses_import_complete(user=self.current_user(),
-                current='import', expenses_import=expenses_import())
+                current='import', expenses_import=expenses_import(),
+                DEV=config.DEV)
 
 
 class ExportHandler(BaseHandler):
     @protected
     def GET(self):
         return web.ctx.render.expenses_export_complete(user=self.current_user(),
-                current='export', expenses_export=expenses_export())
+                current='export', expenses_export=expenses_export(),
+                DEV=config.DEV)
 
 
 class StatsHandler(BaseHandler):
@@ -97,4 +100,5 @@ class StatsHandler(BaseHandler):
         month = today.month
         return web.ctx.render.stats(user=self.current_user(),
                                     year=year, month=month, current=mode,
-                                    bins=config.DEFAULT_STATS_BINS)
+                                    bins=config.DEFAULT_STATS_BINS,
+                                    DEV=config.DEV)
