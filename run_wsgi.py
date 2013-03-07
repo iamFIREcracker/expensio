@@ -6,7 +6,7 @@ import sys
 from werkzeug.debug import DebuggedApplication
 
 import app.config as config
-import app.app as app
+from app import app
 
 
 if config.DEBUG:
