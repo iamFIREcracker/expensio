@@ -4,12 +4,12 @@
 import sys
 
 from werkzeug.debug import DebuggedApplication
-from app import app
 
-import local_settings
+import app.app as app
+import app.config as config
 
 
-if local_settings.DEBUG:
+if config.DEBUG:
     def nointernalerror():
         raise sys.exc_info()
     app.internalerror = nointernalerror
