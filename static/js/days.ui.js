@@ -166,7 +166,7 @@ var DaysUI = (function() {
 
             _.map(data.stats.days, updateDay);
 
-            if (_.any(days) === false) {
+            if (_.any(_.filter(days, WithIncomeOrOutcomeNotNulls)) === false) {
                 $chart.hide();
                 $help.show();
             } else {

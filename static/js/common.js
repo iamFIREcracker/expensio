@@ -66,4 +66,13 @@ var SwapAmountSign = function(c) {
  */
 var PositiveAmount = function(c) {
     return c.amount >= 0;
-}
+};
+
+/**
+ * Return true if the current day has values of income or outcome different from
+ * zero.
+ */
+var WithIncomeOrOutcomeNotNulls = function(d) {
+    console.log(d.income, d.outcome, d.income < 0 || d.outcome > 0);
+    return d.income < 0 || d.outcome > 0;
+};
