@@ -33,11 +33,16 @@ PaletteManager.onReady(Logger, function() {
     CategoriesManager.onReady(Logger, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
 
     CategoriesManager.newData(function(data) {
-        OutCategoriesUI.onNewData(
-            _.filter(data.stats.categories, PositiveAmount));
         InCategoriesUI.onNewData(
-            _.filter(
-                _.map(data.stats.categories, SwapAmountSign), PositiveAmount));
+            _.map(_.filter(data.stats.categories, IncomeNotNull), function(c) {
+                c.amount = -c.income; // Swap sign!!!
+                return c;
+            }));
+        OutCategoriesUI.onNewData(
+            _.map(_.filter(data.stats.categories, OutcomeNotNull), function(c) {
+                c.amount = c.outcome;
+                return c;
+            }));
     });
 
     DaysManager.onUpdate();
