@@ -10,8 +10,8 @@
 <script src="/static/js/history.manager.js"></script>
 <script src="/static/js/manager.js"></script>
 <script src="/static/js/date.manager.js"></script>
-<script src="/static/js/users.manager.js"></script>
 <script src="/static/js/params.manager.js"></script>
+<script src="/static/js/users.manager.js"></script>
 <script src="/static/js/categories.ui.js"></script>
 <script src="/static/js/categories.manager.js"></script>
 {% endblock %}
@@ -22,6 +22,7 @@ PaletteManager.onReady(Logger, function() {
     var OutCategoriesUI = CategoriesUI();
 
     DateManager.onReady($('#current_month'), {{ year }}, {{ month }});
+    ParamsManager.onReady(DateManager);
     HistoryManager.onReady(DateManager);
     UsersManager.onReady(Logger);
     ExpensesUI.onReady(
@@ -29,7 +30,7 @@ PaletteManager.onReady(Logger, function() {
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
     OutCategoriesUI.onReady(Formatter, PaletteManager, $('#out-categories'));
     InCategoriesUI.onReady(Formatter, PaletteManager, $('#in-categories'));
-    CategoriesManager.onReady(Logger, PeriodParamsManager(DateManager, InCategoriesUI, 'period'));
+    CategoriesManager.onReady(Logger, ParamsManager.Categories);
     Manager.onReady(Logger, DateManager, 30000);
 
     Manager.update(function() {
@@ -38,6 +39,7 @@ PaletteManager.onReady(Logger, function() {
     });
     Manager.monthChange(function(year, month) {
         DateManager.onMonthChange(year, month);
+        ParamsManager.Categories.onMonthChange(year, month);
         HistoryManager.onMonthChange(year, month);
         ExpensesManager.onMonthChange(year, month);
         OutCategoriesUI.onMonthChange(year, month);
@@ -54,6 +56,7 @@ PaletteManager.onReady(Logger, function() {
     });
 
     CategoriesManager.newData(function(data) {
+        ParamsManager.Categories.onNewData(data.stats.categories);
         InCategoriesUI.onNewData(
             _.map(_.filter(data.stats.categories, IncomeNotNull), function(c) {
                 return $.extend({amount: -c.income}, c);

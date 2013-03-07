@@ -7,8 +7,8 @@
 {% block js %}
 <script src="/static/highcharts/js/highcharts.js"></script>
 <script src="/static/js/date.manager.js"></script>
-<script src="/static/js/users.manager.js"></script>
 <script src="/static/js/params.manager.js"></script>
+<script src="/static/js/users.manager.js"></script>
 <script src="/static/js/days.ui.js"></script>
 <script src="/static/js/days.manager.js"></script>
 <script src="/static/js/categories.ui.js"></script>
@@ -21,16 +21,17 @@ PaletteManager.onReady(Logger, function() {
     var OutCategoriesUI = CategoriesUI();
 
     DateManager.onReady($('#current_month'), {{ year }}, {{ month }});
+    ParamsManager.onReady(DateManager);
     UsersManager.onReady(Logger);
     ExpensesUI.onReady(
             Formatter, PaletteManager, $('#current_month_overall'),
             $('#expenses'));
     ExpensesManager.onReady(Logger, ExpensesUI, DateManager);
     DaysUI.onReady(Formatter, PaletteManager, $('#days'));
-    DaysManager.onReady(Logger, DaysUI, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
+    DaysManager.onReady(Logger, DaysUI, ParamsManager.statsDays('{{ current }}', {{ bins }}));
     OutCategoriesUI.onReady(Formatter, PaletteManager, $('#out-categories'));
     InCategoriesUI.onReady(Formatter, PaletteManager, $('#in-categories'));
-    CategoriesManager.onReady(Logger, DaysParamsManager(DateManager, 'days', {{ bins }}, '{{ current }}'));
+    CategoriesManager.onReady(Logger, ParamsManager.statsCategories('{{ current }}'));
 
     CategoriesManager.newData(function(data) {
         InCategoriesUI.onNewData(

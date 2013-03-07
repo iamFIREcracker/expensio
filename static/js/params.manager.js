@@ -1,35 +1,69 @@
-var PeriodParamsManager = function(date, ui) {
+var ParamsManager = (function() {
+    var date = null;
+
+    var days = function(mode) {
+        var since;
+
+        if (mode === 'life') {
+            since = date.epoch();
+        } else if (mode === 'year') {
+            since = date.ndaysback(365 - 1);
+        } else if (mode === 'quadrimester') {
+            since = date.ndaysback(120 - 1);
+        }
+
+        return {since: since, to: date.today()};
+    };
+
     return {
-        get: function() {
-            var data = {
-                since: date.startofcurrentmonth(),
-                to: date.endofcurrentmonth(),
+        onReady: function(date_) {
+            date = date_;
+        },
+
+        Categories: (function() {
+            var latest;
+            return {
+                get: function() {
+                    return {
+                        since: date.startofcurrentmonth(),
+                        to: date.endofcurrentmonth(),
+                        latest: latest
+                    };
+                },
+
+                onMonthChange: function(year, month) {
+                    latest = undefined;
+                },
+
+                onNewData: function(categories) {
+                    var latest_ = _.last(_.sortBy(categories, function(c) {
+                        return c.updated;
+                    }));
+
+                    if (latest === undefined ||
+                        (latest_ !== undefined && latest_.updated > latest)) {
+                        latest = latest_.updated;
+                    }
+                    console.log(latest);
+                }
+
             };
-            var latest = ui.getLatest();
+        }()),
 
-            if (latest) {
-                data.latest = latest;
-            }
+        statsDays: function(mode, bins) {
+            return {
+                get: function() {
+                    return $.extend({bins: bins}, days(mode));
+                }
+            };
+        },
 
-            return data;
+        statsCategories: function(mode) {
+            return {
+                get: function() {
+                    return days(mode);
+                }
+            };
         }
     };
-};
-
-var DaysParamsManager = function(date, mode, bins, submode) {
-    return {
-        get: function() {
-            var since;
-
-            if (submode === 'life') {
-                since = date.epoch();
-            } else if (submode === 'year') {
-                since = date.ndaysback(365 - 1);
-            } else if (submode === 'quadrimester') {
-                since = date.ndaysback(120 - 1);
-            }
-
-            return {since: since, to: date.today(), bins: bins};
-        }
-    };
-}
+}());
