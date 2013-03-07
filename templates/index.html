@@ -86,14 +86,7 @@ PaletteManager.onReady(Logger, function() {
         </div>
     </div>
     <div class="span6" style="margin-left: 0px">
-        <h3 class="text-center">By Date</h3>
-        <div id="expenses">
-            <div class="alert alert-info" style="display: none">
-                All the tracked expenses for the current month will be listed here,
-                one above the other, sorted by date.
-            </div>
-            <div id="expenses-inner"></div>
-        </div>
+        {% include 'elements/expenses.html' %}
     </div>
 </div>
 {% endblock %}
