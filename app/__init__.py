@@ -19,12 +19,10 @@ from .upload import UploadManager
 from .urls import URLS
 
 
-urls = URLS
-
-
+web.config.debug = config.DEBUG
 
 workingdir = os.getcwd()
-app = web.application(urls, globals())
+app = web.application(URLS, globals())
 dbpath = config.DATABASE_URL.replace('sqlite:///', '')
 db = web.database(dbn='sqlite', db=dbpath)
 session = web.session.Session(app, web.session.DBStore(db, 'session'))
