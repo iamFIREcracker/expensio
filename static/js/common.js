@@ -1,27 +1,3 @@
-function AjaxCallbackWrapper(func, udata) {
-    return function(data) {
-        func(data, udata);
-    };
-}
-
-function EachCallbackWrapper(func, data) {
-    return function(i, value) {
-        func(i, value, data);
-    }
-}
-
-function size(obj) {
-    var size = 0, key;
-
-    for (key in obj) {
-        if (obj.hasOwnProperty(key)) size++;
-    }
-
-    return size;
-}
-
-
-
 /**
  * Generic handler to manage form submit callbacks.
  */
@@ -52,27 +28,25 @@ var OnSubmitSuccess = function($form, data, onSuccessCallback) {
 
 
 /**
- * Swap the sign of the amount of the input category.
+ * Return true if the current category has a negative income.
  */
-var SwapAmountSign = function(c) {
-  var r = $.extend({}, c);
-
-  r.amount = -r.amount;
-  return r;
+var IncomeNotNull = function(c) {
+    return c.income < 0;
 };
+
 
 /**
- * Return true if the current category have a positive amount.
+ * Return true if the current category has a positive outcome.
  */
-var PositiveAmount = function(c) {
-    return c.amount >= 0;
+var OutcomeNotNull = function(c) {
+    return c.outcome > 0;
 };
+
 
 /**
  * Return true if the current day has values of income or outcome different from
  * zero.
  */
 var WithIncomeOrOutcomeNotNulls = function(d) {
-    console.log(d.income, d.outcome, d.income < 0 || d.outcome > 0);
     return d.income < 0 || d.outcome > 0;
 };
