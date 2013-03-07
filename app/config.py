@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+DEV = False
 
 DATABASE_URL = 'sqlite:///expenses.db'
 
