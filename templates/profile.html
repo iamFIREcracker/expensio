@@ -2,7 +2,7 @@
 
 
 {% block css %}
-{% assets output="assets/profile.%(version)s.css", "base_css",
+{% assets filters="cssrewrite", output="assets/profile.%(version)s.css", "base_css",
         "lightbox/css/lightbox.css" %}
 <link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
 {% endassets %}

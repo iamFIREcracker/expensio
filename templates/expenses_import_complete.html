@@ -1,7 +1,7 @@
 {% extends 'controls.html' %}
 
 {% block css %}
-{% assets output="assets/import.%(version)s.css", "base_css" %}
+{% assets filters="cssrewrite", output="assets/import.%(version)s.css", "base_css" %}
 <link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
 {% endassets %}
 {% endblock %}

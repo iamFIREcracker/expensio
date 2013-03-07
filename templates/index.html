@@ -1,11 +1,13 @@
 {% extends 'base_enhanced.html' %}
 
+
 {% block css %}
-{% assets output="assets/index.%(version)s.css", "base_css",
+{% assets filters="cssrewrite", output="assets/index.%(version)s.css", "base_css",
         "lightbox/css/lightbox.css" %}
 <link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
 {% endassets %}
 {% endblock %}
+
 
 {% block container %}
 {% import '_widgethelpers.html' as widgets %}
@@ -30,6 +32,7 @@
 </div>
 {% endblock %}
 
+
 {% block js %}
 {% assets output="assets/index.%(version)s.js", "base_js", "users_js", "categories_js",
         "lightbox/js/lightbox.js",
@@ -41,6 +44,7 @@
 <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
 {% endblock %}
+
 
 {% block jsready %}
 PaletteManager.onReady(Logger, function() {

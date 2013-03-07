@@ -2,7 +2,7 @@
 
 
 {% block css %}
-{% assets output="assets/info.%(version)s.css", "base_css" %}
+{% assets filters="cssrewrite", output="assets/info.%(version)s.css", "base_css" %}
 <link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
 {% endassets %}
 {% endblock %}
