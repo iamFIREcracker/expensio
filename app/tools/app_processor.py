@@ -5,6 +5,10 @@ import os
 
 import web
 from web.contrib.template import render_jinja
+from webassets import Environment
+from webassets.ext.jinja2 import AssetsExtension
+
+from app.assets import env
 
 
 
@@ -44,7 +48,9 @@ def load_render(workingdir):
     """
     def inner():
         render = render_jinja(os.path.join(workingdir, 'templates'),
-                encoding='utf-8', extensions=['jinja2.ext.do'])
+                encoding='utf-8', extensions=['jinja2.ext.do',
+                                              AssetsExtension])
+        render._lookup.assets_environment = env
         web.ctx.render = render;
     return inner
 
