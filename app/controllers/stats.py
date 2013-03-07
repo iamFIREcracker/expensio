@@ -28,7 +28,8 @@ class CategoryWrapper(object):
     __serializable__ = {
         'name': lambda o: o.c[0],
         'updated': lambda o: formatters.datetime(o.c[1]),
-        'amount': lambda o: formatters.amount(o.c[2]),
+        'income': lambda o: formatters.amount(o.c[2]),
+        'outcome': lambda o: formatters.amount(o.c[3]),
         'currency': lambda o: o.currency,
         }
 
@@ -37,7 +38,7 @@ class CategoryWrapper(object):
         self.currency = currency
 
 
-def AccumulateCategoryAggregate((name, amount, updated), expense):
+def AccumulateCategoryAggregate((name, income, outcome, updated), expense):
     """
     Function to be used in conjunction with `reduce` in order to extract the
     name, the amount and when a certain category was last touched, given
@@ -48,7 +49,8 @@ def AccumulateCategoryAggregate((name, amount, updated), expense):
     """
     return (
             expense.category,
-            amount + expense.amount if not expense.deleted else amount,
+            income + expense.amount if expense.amount < 0 else income,
+            outcome + expense.amount if expense.amount > 0 else outcome,
             expense.updated if updated is None or expense.updated > updated
                     else updated)
 
@@ -59,9 +61,11 @@ def ComputeCategoryAggregate(expenses):
     aggregate of how much have been spent for each category, and what is the
     last time a new expense for a certain category has been done.
     """
-    (name, amount, updated) = reduce(
-            AccumulateCategoryAggregate, expenses, (None, 0, None))
-    return name, updated, amount
+    (name, income, outcome, updated) = reduce(
+            AccumulateCategoryAggregate,
+            filter(lambda e: not e.deleted, expenses),
+            (None, 0, 0, None))
+    return name, updated, income, outcome
 
 
 class StatsCategoriesHandler(BaseHandler):
