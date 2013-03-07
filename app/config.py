@@ -26,6 +26,6 @@ DEFAULT_STATS_BINS = 30
 COOKIE_EXPIRATION = 60 * 60 * 24 * 7 # Seven days
 
 try:
-    from local_settings import *
+    from local_config import *
 except:
     pass
