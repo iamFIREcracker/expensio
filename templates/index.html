@@ -78,15 +78,16 @@ PaletteManager.onReady(Logger, function() {
 </div>
 <div class="row-fluid">
     <div class="span6 pull-right">
+        {% import '_widgethelpers.html' as widgets %}
         <div class="row-fluid">
-            {% include 'elements/income.html' %}
+            {{ widgets.income('offset3 span6') }}
         </div>
         <div class="row-fluid">
-            {% include 'elements/outcome.html' %}
+            {{ widgets.outcome('offset3 span6') }}
         </div>
     </div>
     <div class="span6" style="margin-left: 0px">
-        {% include 'elements/expenses.html' %}
+        {{ widgets.expenses('offset3 span6') }}
     </div>
 </div>
 {% endblock %}

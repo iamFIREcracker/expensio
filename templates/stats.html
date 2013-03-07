@@ -59,16 +59,17 @@ PaletteManager.onReady(Logger, function() {
         </div>
     </div>
     <div class="offset1 span7">
+        {% import '_widgethelpers.html' as widgets %}
         <div class="row-fluid">
-            {% include 'elements/days.html' %}
+            {{ widgets.days('offset3 span6') }}
         </div>
         <span class="spacer20"></span>
         <div class="row-fluid">
             <div class="span6">
-                {% include 'elements/income.html' %}
+                {{ widgets.income() }}
             </div>
             <div class="span6">
-                {% include 'elements/outcome.html' %}
+                {{ widgets.outcome() }}
             </div>
         </div>
     </div>
