@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+DEBUG = False
 DEV = False
 
 DATABASE_URL = 'sqlite:///expenses.db'
@@ -23,3 +24,8 @@ EPOCH = '1970-01-01 00:00:00.000000'
 DEFAULT_STATS_BINS = 30
 
 COOKIE_EXPIRATION = 60 * 60 * 24 * 7 # Seven days
+
+try:
+    from local_settings import *
+except:
+    pass
