@@ -40,11 +40,10 @@ var ParamsManager = (function() {
                         return c.updated;
                     }));
 
-                    if (latest === undefined ||
-                        (latest_ !== undefined && latest_.updated > latest)) {
+                    if (latest_ !== undefined &&
+                        (latest === undefined || latest_.updated > latest)) {
                         latest = latest_.updated;
                     }
-                    console.log(latest);
                 }
 
             };
