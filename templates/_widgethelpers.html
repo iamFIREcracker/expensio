@@ -9,6 +9,7 @@
 {% macro expenses(helpgeometry) %}
         <h3 class="text-center">By Date</h3>
         <div id="expenses">
+            <div class="loading" style="display: hidden"></div>
             <div class="alert alert-info {{ helpgeometry }}" style="display: none">
                 All the expenses associated with the current period are going to
                 be listed here, one above the other, sorted by date.
@@ -20,6 +21,7 @@
 {% macro income(helpgeometry) %}
         <h3 class="text-center">Income</h3>
         <div id="in-categories">
+            <div class="loading" style="display: hidden"></div>
             <div class="alert alert-info {{ helpgeometry }}" style="display: none">
                 How much did you <strong>earned</strong> in the current period?
                 Which category has been the most <em>profitable</em>?
@@ -33,6 +35,7 @@
 {% macro outcome(helpgeometry) %}
         <h3 class="text-center">Outcome</h3>
         <div id="out-categories">
+            <div class="loading" style="display: hidden"></div>
             <div class="alert alert-info {{ helpgeometry}}" style="display: none">
                 How much did you <strong>spent</strong> in the current period?
                 On which category you have to work out to reduce your
@@ -47,6 +50,7 @@
 {% macro days(helpgeometry) %}
             <h3 class="text-center">By Date</h3>
             <div id="days">
+                <div class="loading" style="display: hidden"></div>
                 <div class="alert alert-info {{ helpgeometry }}" style="display: none">
                     Have a look at how your <em>possessions</em> vary in time
                     and how your incomes and outcomes add up shaping your

@@ -9,7 +9,7 @@ var DaysUI = (function() {
 
     var init = function() {
         $chart.empty().hide();
-        $days.append('<div class="loading"></div>');
+        $days.find('.loading').show();
         $help.hide();
         chart = null;
         days = {};
@@ -160,8 +160,8 @@ var DaysUI = (function() {
         onNewData: function(data) {
             var $loading = $days.find('.loading');
 
-            if ($loading.length) {
-                $loading.remove();
+            if ($loading.is(':visible')) {
+                $loading.hide();
             }
 
             _.map(data.stats.days, updateDay);

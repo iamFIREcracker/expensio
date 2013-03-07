@@ -15,7 +15,7 @@ var ExpensesUI = (function() {
 
     var init = function() {
         $inner.empty();
-        $expenses.append('<div class="loading"></div>');
+        $expenses.find('.loading').show();
         $help.hide();
         expenses = {};
         latest = '';
@@ -119,8 +119,8 @@ var ExpensesUI = (function() {
         onNewData: function(data) {
             var $loading = $expenses.find('.loading');
 
-            if ($loading.length) {
-                $loading.remove();
+            if ($loading.is(':visible')) {
+                $loading.hide();
             }
 
             _.map(data.expenses, updateExpense);

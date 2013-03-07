@@ -13,7 +13,7 @@ var CategoriesUI = function() {
         $help.hide();
         $total.hide();
         $chart.empty().hide();
-        $categories.append('<div class="loading"></div>');
+        $categories.find('.loading').show();
         chart = null;
         categories = {};
         latest = '';
@@ -170,8 +170,8 @@ var CategoriesUI = function() {
         onNewData: function(data) {
             var $loading = $categories.find('.loading');
 
-            if ($loading.length) {
-                $loading.remove();
+            if ($loading.is(':visible')) {
+                $loading.hide();
             }
 
             _.map(data, updateCategory);
