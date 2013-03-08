@@ -5,9 +5,9 @@ import os
 
 import web
 from web.contrib.template import render_jinja
-from webassets import Environment
 from webassets.ext.jinja2 import AssetsExtension
 
+import app.config as config
 from app.assets import env
 
 
@@ -51,6 +51,7 @@ def load_render(workingdir):
                 encoding='utf-8', extensions=['jinja2.ext.do',
                                               AssetsExtension])
         render._lookup.assets_environment = env
+        render._lookup.globals.update({'DEV': config.DEV})
         web.ctx.render = render;
     return inner
 
