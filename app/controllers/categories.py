@@ -18,6 +18,6 @@ class CategoriesNamesHandler(BaseHandler):
     def GET(self):
         categories = (web.ctx.orm.query(distinct(Expense.category))
                 .filter_by(user_id=self.current_user().id)
-                .order_by(Expense.created))
-        return jsonify(
-                categories=sorted([c[0] for c in categories]))
+                .order_by(Expense.created.asc())
+                .all())
+        return jsonify(categories=[c[0] for c in categories])
