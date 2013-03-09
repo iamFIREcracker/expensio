@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+from datetime import datetime
 
 import celery
 import web
@@ -143,7 +144,8 @@ class ExpensesEditHandler(BaseHandler):
             # the edit operations have been applied
             deleted = Expense(original_id=e.id, user_id=self.current_user().id,
                     amount=e.amount, category=e.category, note=e.note,
-                    date=e.date, deleted=True, attachment=e.attachment)
+                    date=e.date, deleted=True, attachment=e.attachment,
+                    created=e.created)
 
             # Now apply edit operations on the current expense
             e.amount = parsers.amount(form.d.amount)
@@ -152,6 +154,9 @@ class ExpensesEditHandler(BaseHandler):
             e.date = parsers.date_us(form.d.date)
             if attachment:
                 e.attachment = url
+            # Touch the creation date not to break the algo used to return
+            # categories sorted by the first time they were used
+            e.created = datetime.now()
 
             # Bulk add
             web.ctx.orm.add_all([deleted, e])
