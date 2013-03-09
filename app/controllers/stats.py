@@ -49,10 +49,9 @@ def AccumulateCategoryAggregate((name, income, outcome, updated), expense):
     """
     return (
             expense.category,
-            income + expense.amount if expense.amount < 0 else income,
-            outcome + expense.amount if expense.amount > 0 else outcome,
-            expense.updated if updated is None or expense.updated > updated
-                    else updated)
+            income + expense.amount if (not expense.deleted and expense.amount < 0) else income,
+            outcome + expense.amount if (not expense.deleted and expense.amount > 0) else outcome,
+            expense.updated if updated is None or expense.updated > updated else updated)
 
 
 def ComputeCategoryAggregate(expenses):
@@ -62,9 +61,7 @@ def ComputeCategoryAggregate(expenses):
     last time a new expense for a certain category has been done.
     """
     (name, income, outcome, updated) = reduce(
-            AccumulateCategoryAggregate,
-            filter(lambda e: not e.deleted, expenses),
-            (None, 0, 0, None))
+            AccumulateCategoryAggregate, expenses, (None, 0, 0, None))
     return name, updated, income, outcome
 
 
