@@ -40,8 +40,10 @@ class MainHandler(BaseHandler):
 
 
 class UsersProfileHandler(BaseHandler):
-    @protected
     def GET(self):
+        if not self.current_user():
+            raise web.found('/')
+
         user = self.current_user()
         avatar = users_avatar()
         avatar.fill(id=user.id, avatar=user.avatar)

@@ -71,4 +71,10 @@ class Expense(Base):
     attachment = Column(String)
 
     def __repr__(self):
-        return '<Expense %r, %f>' % (self.category, self.amount)
+        return '<Expense %s, %r, %r, %f, %r, %r, %r>' % (self.date,
+                                                         self.category,
+                                                         self.note,
+                                                         self.amount,
+                                                         self.deleted,
+                                                         self.created,
+                                                         self.updated)

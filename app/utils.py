@@ -70,12 +70,18 @@ def parsedateparams():
 def input_(**transformers):
     """Wrapper of `web.input` enabling users to execute validation and
     transformation of input data.
+
+    TODO: add possibility to validate multiple fields together
     """
     defaults = dict((name, None) for name in transformers.iterkeys())
     storage = web.input(**defaults)
 
     def transform(name, value, func):
-        return func(value)
+        try:
+            return func(value)
+        except:
+            # TODO add some log here
+            raise web.badrequest()
 
     [setattr(storage, name, transform(name, storage[name], transformers[name]))
             for (name, value) in storage.iteritems()]
