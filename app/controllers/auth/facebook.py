@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import json
-import time
 import urllib
 import urlparse
 
@@ -52,8 +51,7 @@ class LoginFacebookAuthorizedHandler(BaseHandler):
         # automatically generated user id
         user = web.ctx.orm.merge(user)
 
-        web.setcookie(
-                'user', user.id, time.time() + COOKIE_EXPIRATION)
+        web.setcookie('user', user.id, COOKIE_EXPIRATION)
 
         raise web.found(
                 web.ctx.session.pop('back') if 'back' in web.ctx.session else

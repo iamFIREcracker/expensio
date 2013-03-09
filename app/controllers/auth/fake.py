@@ -3,7 +3,6 @@
 
 import hashlib
 import random
-import time
 from datetime import timedelta
 from datetime import datetime
 
@@ -32,8 +31,7 @@ class LoginFakeAuthorizedHandler(BaseHandler):
         # automatically generated user id
         user = web.ctx.orm.merge(user)
 
-        web.setcookie(
-                'user', user.id, time.time() + COOKIE_EXPIRATION)
+        web.setcookie('user', user.id, COOKIE_EXPIRATION)
 
         raise web.found(
                 web.ctx.session.pop('back') if 'back' in web.ctx.session else
