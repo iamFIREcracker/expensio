@@ -135,12 +135,13 @@ def owner(model):
 
 
 def active(func):
-    def inner1(self, id):
+    def inner1(self, *args, **kwargs):
         if self.current_item().deleted:
             raise web.unauthorized()
 
-        return func(self, id)
+        return func(self, *args, **kwargs)
     return inner1
+
 
 def me(func):
     def inner1(self, id, *args, **kwargs):
