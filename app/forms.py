@@ -178,7 +178,7 @@ expenses_import = form.Form(
 
 
 categories_edit = form.Form(
-        form.Hidden('id'),
+        form.Hidden('name'),
         Colopicker('foreground', validcolor, description='Foreground',
                 class_="input-small", readonly=""),
         Colopicker('background', validcolor, description='Background',
