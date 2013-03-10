@@ -2,7 +2,8 @@ var ExpensesManager = (function() {
     var logger = null;
     var ui = null;
     var date = null;
-    var addsubmitlisteners = Array();
+    var addsubmitlisteners = [];
+    var changecategorylisteners = [];
 
 
     var initWidgets = function($context) {
@@ -173,7 +174,8 @@ var ExpensesManager = (function() {
 
         OnSubmitSuccess($('#category_edit'), data, function() {
             $modal.on('hidden', function() {
-                logger.success('Category edited successfully!', function() {
+                $.each(changecategorylisteners, function(index, func) {
+                    func();
                 });
             }).modal('hide');
         });
@@ -323,8 +325,11 @@ var ExpensesManager = (function() {
         },
 
         addSubmit: function(func) {
-            addsubmitlisteners.push(func)
+            addsubmitlisteners.push(func);
         },
 
+        changeCategory: function(func) {
+            changecategorylisteners.push(func);
+        }
     };
 }());

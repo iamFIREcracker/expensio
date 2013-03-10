@@ -83,6 +83,13 @@ PaletteManager.onReady(Logger, function() {
         ExpensesManager.onUpdate();
         CategoriesManager.onUpdate();
     });
+    ExpensesManager.changeCategory(function() {
+        Logger.warn("A category has changed: reloading..", function() {
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        });
+    });
     ExpensesUI.addExpense(function(exp) {
         ExpensesManager.onAddExpense(exp);
     });
