@@ -88,11 +88,11 @@ PaletteManager.onReady(Logger, function() {
     CategoriesManager.newData(function(data) {
         ParamsManager.Categories.onNewData(data.stats.categories);
         InCategoriesUI.onNewData(
-            _.map(_.filter(data.stats.categories, IncomeNotNull), function(c) {
+            _.map(data.stats.categories, function(c) {
                 return $.extend({amount: -c.income}, c);
             }));
         OutCategoriesUI.onNewData(
-            _.map(_.filter(data.stats.categories, OutcomeNotNull), function(c) {
+            _.map(data.stats.categories, function(c) {
                 return $.extend({amount: c.outcome}, c);
             }));
     });
