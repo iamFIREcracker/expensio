@@ -16,7 +16,8 @@ from .controllers.auth import LoginGoogleAuthorizedHandler
 from .controllers.auth import LoginGoogleHandler
 from .controllers.auth import LoginTwitterAuthorizedHandler
 from .controllers.auth import LoginTwitterHandler
-from .controllers.categories import CategoriesNamesHandler
+from .controllers.categories import CategoriesHandler
+from .controllers.categories import CategoriesEditHandler
 from .controllers.expenses import ExpensesAddHandler
 from .controllers.expenses import ExpensesDeleteHandler
 from .controllers.expenses import ExpensesEditHandler
@@ -69,7 +70,8 @@ URLS = (
     '/expenses/export', ExpensesExportHandler,
     '/expenses/export/tsv/status/(.+)', ExpensesExportTSVStatusHandler,
 
-    '/categories/names', CategoriesNamesHandler,
+    '/categories', CategoriesHandler,
+    '/categories/(.+)/edit', CategoriesEditHandler,
 
     '/', MainHandler,
     '/(\d+)/(\d+)', MainHandler,
