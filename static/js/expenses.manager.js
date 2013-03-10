@@ -167,6 +167,23 @@ var ExpensesManager = (function() {
     };
 
 
+    var onCategoryEditSubmitSuccess = function(data) {
+        var $modal = $('.modal');
+        var $form = $modal.find('#category_edit');
+
+        OnSubmitSuccess($('#category_edit'), data, function() {
+            $modal.on('hidden', function() {
+                logger.success('Category edited successfully!', function() {
+                });
+            }).modal('hide');
+        });
+    };
+
+    var onCategoryEditSubmitError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+
     return {
         onReady: function(logger_, ui_, date_) {
             logger = logger_;
@@ -233,6 +250,33 @@ var ExpensesManager = (function() {
         },
 
         onAddExpense: function(exp) {
+            exp.$elem.find('.exp_category').click(function() {
+                var $modal = ui.categoryEdit();
+
+                $modal.find('.modal-body').load('/categories/' + exp.category + '/edit', function() {
+                    $modal.find('.color').each(function() {
+                        $(this).colorpicker({
+                            format: 'hex'
+                        });
+                    });
+
+                    $modal.find('#category_edit').submit(function() {
+                        var $form = $(this);
+
+                        $form.ajaxSubmit({
+                            dataType: 'json',
+                            url: '/categories/' + $form.find('#name').val() + '/edit',
+                            success: onCategoryEditSubmitSuccess,
+                            error: onCategoryEditSubmitError,
+                        });
+
+                        return false;
+                    });
+                });
+
+                return false;
+            });
+
             exp.$elem.find('.exp_edit').click(function() {
                 var $modal = ui.expensesEdit();
 
