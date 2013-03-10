@@ -28,22 +28,6 @@ var OnSubmitSuccess = function($form, data, onSuccessCallback) {
 
 
 /**
- * Return true if the current category has a negative income.
- */
-var IncomeNotNull = function(c) {
-    return c.income < 0;
-};
-
-
-/**
- * Return true if the current category has a positive outcome.
- */
-var OutcomeNotNull = function(c) {
-    return c.outcome > 0;
-};
-
-
-/**
  * Return true if the current day has values of income or outcome different from
  * zero.
  */
