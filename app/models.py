@@ -86,7 +86,7 @@ class Category(Base):
 
     id = Column(String, default=_uuid, primary_key=True)
     user_id = Column(String, ForeignKey('user.id'))
-    name = Column(String, unique=True, nullable=False)
+    name = Column(String, nullable=False)
     foreground = Column(String, nullable=False)
     background = Column(String, nullable=False)
     deleted = Column(Boolean, default=False, nullable=False)
