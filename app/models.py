@@ -10,6 +10,7 @@ from sqlalchemy import DateTime
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
+from sqlalchemy.schema import UniqueConstraint
 
 from app.database import Base
 
@@ -78,3 +79,27 @@ class Expense(Base):
                                                          self.deleted,
                                                          self.created,
                                                          self.updated)
+
+
+class Category(Base):
+    __tablename__ = 'category'
+
+    id = Column(String, default=_uuid, primary_key=True)
+    user_id = Column(String, ForeignKey('user.id'))
+    name = Column(String, unique=True, nullable=False)
+    foreground = Column(String, nullable=False)
+    background = Column(String, nullable=False)
+    deleted = Column(Boolean, default=False, nullable=False)
+    created = Column(DateTime, default=datetime.now)
+    updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    __table_args__ = (UniqueConstraint('user_id', 'name', name='user_cname_uc'),
+                     )
+
+    def __repr__(self):
+        return '<Category %r, %r, %r, %r, %r, %r>' % (self.id,
+                                                      self.user_id,
+                                                      self.name,
+                                                      self.foreground,
+                                                      self.background,
+                                                      self.deleted)
