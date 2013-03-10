@@ -109,6 +109,11 @@
     padding: 2px;
 }
 
+.exp_category a, .exp_category a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
 .exp_note {
     margin-left: 2%;
     color: #888;
