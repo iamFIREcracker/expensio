@@ -14,7 +14,6 @@ from app.utils import BaseHandler
 
 class CategoryWrapper(object):
     __serializable__ = {
-            'id': lambda o: o.c.id,
             'name': lambda o: o.c.name,
             'foreground': lambda o: o.c.foreground,
             'background': lambda o: o.c.background
