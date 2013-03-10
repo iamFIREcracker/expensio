@@ -25,6 +25,9 @@ DEFAULT_STATS_BINS = 30
 
 COOKIE_EXPIRATION = 60 * 60 * 24 * 7 # Seven days
 
+CATEGORY_FOREGROUND = '#333333'
+CATEGORY_BACKGROUND = '#cccccc'
+
 try:
     from local_config import *
 except:
