@@ -117,12 +117,12 @@ def redirectable(func):
     return inner
 
 
-def owner(model):
+def owner(model, field='id'):
     def inner1(func):
-        def inner2(self, id):
+        def inner2(self, value):
             record = (web.ctx.orm.query(model)
-                    .filter_by(id=id)
                     .filter_by(user_id=self.current_user().id)
+                    .filter(getattr(model, field) == value)
                     .first())
             if not record:
                 raise web.notfound()
