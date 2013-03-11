@@ -8,6 +8,7 @@ from datetime import datetime
 
 import web
 
+from app.controllers.expenses import create_category
 from app.forms import users_connect
 from app.models import Expense
 from app.models import User
@@ -76,11 +77,14 @@ class AccountsFakePopulateHandler(BaseHandler):
                                        An alcoholic release mounts the preferable routine.
                                        The mighty concentrate breathes within the muddle.'''.split('\n')]
         amounts = range(-30, 15)
-        web.ctx.orm.add_all(
-                Expense(user_id=self.current_user().id,
+        for _ in xrange(1000):
+            e = Expense(user_id=self.current_user().id,
                         date=random.choice(dates),
                         category=random.choice(categories),
                         note=random.choice(notes),
-                        amount=random.choice(amounts)) for _ in xrange(1000))
+                        amount=random.choice(amounts))
+            web.ctx.orm.add(e)
+            create_category(self.current_user().id, e.category)
+
         raise web.found('/')
 
