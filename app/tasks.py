@@ -67,7 +67,7 @@ def CategoriesResetTask(user):
     user_categories = set()
 
     expenses = (db_session.query(Expense, User).join(User)
-                    .filter_by(user_id=user.id)
+                    .filter(Expense.user_id == user.id)
                     .filter(User.deleted == False)
                     .order_by(Expense.created.asc()))
     categories = []
@@ -80,7 +80,7 @@ def CategoriesResetTask(user):
                                 name=expense.category,
                                 foreground=color['foreground'],
                                 background=color['background'])
-            db_session.add()
+            db_session.add(category)
             try:
                 db_session.commit()
                 categories.append(category)
@@ -100,5 +100,6 @@ def CategoriesResetTask(user):
 
             user_categories.add(k)
             user_categories_counter[expense.user_id] += 1
+
     db_session.remove()
     return categories
