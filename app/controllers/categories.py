@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import celery
 import web
 
+import app.tasks as tasks
 from app.forms import categories_edit
 from app.models import Category
 from app.utils import jsonify
@@ -63,3 +65,24 @@ class CategoriesEditHandler(BaseHandler):
             web.ctx.orm.add(c)
             c = web.ctx.orm.merge(c)
             return jsonify(success=True, user=CategoryWrapper(c))
+
+
+class CategoriesResetHandler(BaseHandler):
+    @protected
+    def POST(self):
+        task_id = tasks.CategoriesResetTask.delay(self.current_user()).task_id
+        return jsonify(success=True,
+                goto='/categories/reset/status/%s' % task_id)
+
+
+class CategoriesResetStatusHandler(BaseHandler):
+    @protected
+    def GET(self, task_id):
+        try:
+            retval = (tasks.CategoriesResetTask.AsyncResult(task_id)
+                    .get(timeout=1.0))
+        except celery.exceptions.TimeoutError:
+            return jsonify(success=False, goto=web.ctx.path)
+        else:
+            return jsonify(success=True,
+                    goto=[CategoryWrapper(c) for c in retval])

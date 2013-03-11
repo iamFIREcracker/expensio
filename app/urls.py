@@ -18,6 +18,8 @@ from .controllers.auth import LoginTwitterAuthorizedHandler
 from .controllers.auth import LoginTwitterHandler
 from .controllers.categories import CategoriesHandler
 from .controllers.categories import CategoriesEditHandler
+from .controllers.categories import CategoriesResetHandler
+from .controllers.categories import CategoriesResetStatusHandler
 from .controllers.expenses import ExpensesAddHandler
 from .controllers.expenses import ExpensesDeleteHandler
 from .controllers.expenses import ExpensesEditHandler
@@ -72,6 +74,8 @@ URLS = (
 
     '/categories', CategoriesHandler,
     '/categories/(.+)/edit', CategoriesEditHandler,
+    '/categories/reset', CategoriesResetHandler,
+    '/categories/reset/status/(.+)', CategoriesResetStatusHandler,
 
     '/', MainHandler,
     '/(\d+)/(\d+)', MainHandler,
