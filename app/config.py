@@ -26,7 +26,7 @@ DEFAULT_STATS_BINS = 30
 COOKIE_EXPIRATION = 60 * 60 * 24 * 7 # Seven days
 
 CATEGORY_FOREGROUND = '#333333'
-CATEGORY_BACKGROUND = '#cccccc'
+CATEGORY_BACKGROUND = '#e6e6e6'
 CATEGORY_PALETTE = [
         {'foreground': '#ffffff', 'background': '#3366cc' },
         {'foreground': '#ffffff', 'background': '#dc3912' },
