@@ -241,7 +241,10 @@ var Expense = function(ui, palette, formatter) {
         '</span>' +
         '<span class="exp_note">' + note + '</span>' +
     '</span>' +
-    '<span class="exp_amount">' + formatter.amount(amount, currency) + '</span>' +
+    '<span class="exp_amount" ' +
+            'style="color: ' + (amount < 0 ? palette.income() : palette.outcome()) + '">' +
+        formatter.amount(amount, currency) +
+    '</span>' +
     addAttachment(attachment, note) +
     '<span class="exp_edit">' +
         '<a href="/expenses/' + id + '/edit" title="Edit expense">' +
