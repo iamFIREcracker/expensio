@@ -39,6 +39,17 @@ def load_path_url():
     web.ctx.path_url = web.ctx.home + web.ctx.path
 
 
+def load_logger(logger):
+    """Add a logger to the shared context.
+
+    Inputs:
+        logger logger instance
+    """
+    def inner():
+        web.ctx.logger = logger
+    return inner
+
+
 def load_render(workingdir):
     """Add the renderer to the shared context.
 

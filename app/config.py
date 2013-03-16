@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
+LOGGER_NAME = 'expenses'
+LOG_FORMAT = '%(asctime)s %(levelname)s: %(message)s ' + \
+             '[in %(pathname)s:%(lineno)d]'
+
 DEBUG = False
 DEBUG_SQL = False
+
 DEV = False
 
 DATABASE_URL = 'sqlite:///expenses.db'
