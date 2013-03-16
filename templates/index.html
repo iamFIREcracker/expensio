@@ -3,6 +3,7 @@
 
 {% block css %}
 {% assets filters="cssrewrite", output="assets/index.%(version)s.css", "base_css",
+        "bootstrap-colorpicker/css/bootstrap-colorpicker.css",
         "lightbox/css/lightbox.css" %}
 <link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
 {% endassets %}
@@ -37,6 +38,7 @@
 {% assets output="assets/index.%(version)s.js", "base_js", "users_js", "categories_js",
         "lightbox/js/lightbox.js",
         "highcharts/js/highcharts.js",
+        "bootstrap-colorpicker/js/bootstrap-colorpicker.js",
         "js/date.manager.js",
         "js/params.manager.js",
         "js/history.manager.js",
@@ -80,6 +82,13 @@ PaletteManager.onReady(Logger, function() {
     ExpensesManager.addSubmit(function() {
         ExpensesManager.onUpdate();
         CategoriesManager.onUpdate();
+    });
+    ExpensesManager.changeCategory(function() {
+        Logger.warn("A category has changed: reloading..", function() {
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        });
     });
     ExpensesUI.addExpense(function(exp) {
         ExpensesManager.onAddExpense(exp);

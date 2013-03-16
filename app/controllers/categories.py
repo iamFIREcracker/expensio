@@ -1,23 +1,88 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from sqlalchemy.sql import distinct
-
+import celery
 import web
 
-from app.models import Expense
-from app.utils import protected
+import app.tasks as tasks
+from app.forms import categories_edit
+from app.models import Category
 from app.utils import jsonify
+from app.utils import active
+from app.utils import owner
+from app.utils import protected
 from app.utils import BaseHandler
 
 
+class CategoryWrapper(object):
+    __serializable__ = {
+            'name': lambda o: o.c.name,
+            'foreground': lambda o: o.c.foreground,
+            'background': lambda o: o.c.background
+            }
 
-class CategoriesNamesHandler(BaseHandler):
+    def __init__(self, c):
+        self.c = c
 
+
+
+class CategoriesHandler(BaseHandler):
     @protected
     def GET(self):
-        categories = (web.ctx.orm.query(distinct(Expense.category))
+        categories = (web.ctx.orm.query(Category)
                 .filter_by(user_id=self.current_user().id)
-                .order_by(Expense.created.asc())
+                .order_by(Category.created.asc())
                 .all())
-        return jsonify(categories=[c[0] for c in categories])
+        return jsonify(categories=[CategoryWrapper(c) for c in categories])
+
+
+class CategoriesEditHandler(BaseHandler):
+    @protected
+    @owner(Category, 'name')
+    @active
+    def GET(self, name):
+        form = categories_edit()
+        item = self.current_item()
+        form.fill(name=item.name, foreground=item.foreground,
+                  background=item.background)
+        return web.ctx.render.categories_edit(categories_edit=form)
+
+
+    @protected
+    @owner(Category, 'name')
+    @active
+    def POST(self, name):
+        form = categories_edit()
+
+        if not form.validates():
+            return jsonify(success=False,
+                    errors=dict((i.name, i.note) for i in form.inputs
+                        if i.note is not None))
+        else:
+            c = self.current_item()
+            c.foreground = form.d.foreground
+            c.background = form.d.background
+            web.ctx.orm.add(c)
+            c = web.ctx.orm.merge(c)
+            return jsonify(success=True, user=CategoryWrapper(c))
+
+
+class CategoriesResetHandler(BaseHandler):
+    @protected
+    def POST(self):
+        task_id = tasks.CategoriesResetTask.delay(self.current_user()).task_id
+        return jsonify(success=True,
+                goto='/categories/reset/status/%s' % task_id)
+
+
+class CategoriesResetStatusHandler(BaseHandler):
+    @protected
+    def GET(self, task_id):
+        try:
+            retval = (tasks.CategoriesResetTask.AsyncResult(task_id)
+                    .get(timeout=1.0))
+        except celery.exceptions.TimeoutError:
+            return jsonify(success=False, goto=web.ctx.path)
+        else:
+            return jsonify(success=True,
+                    goto=[CategoryWrapper(c) for c in retval])

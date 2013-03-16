@@ -40,8 +40,10 @@ class MainHandler(BaseHandler):
 
 
 class UsersProfileHandler(BaseHandler):
-    @protected
     def GET(self):
+        if not self.current_user():
+            raise web.found('/')
+
         user = self.current_user()
         avatar = users_avatar()
         avatar.fill(id=user.id, avatar=user.avatar)
@@ -72,6 +74,13 @@ class LogoutHandler():
     def GET(self):
         logout()
         raise web.found('/')
+
+
+class ResetHandler(BaseHandler):
+    @protected
+    def GET(self):
+        return web.ctx.render.categories_reset_complete(user=self.current_user(),
+                current='reset')
 
 
 class ImportHandler(BaseHandler):

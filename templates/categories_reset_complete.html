@@ -1,0 +1,34 @@
+{% extends 'controls.html' %}
+
+{% block css %}
+{% assets filters="cssrewrite", output="assets/categories.%(version)s.css", "base_css" %}
+<link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
+{% endassets %}
+{% endblock %}
+
+
+{% block pane %}
+<div class="alert alert-warn">
+    Sometimes it could be useful to reset user customized category colors and
+    let us use a <em>fancy</em> palette to shade your screen.  Please mind that
+    by clicking on the following button you will start a colors reset procedure
+    which cannot be rolled back.
+</div>
+{% include 'categories_reset.html' %}
+{% endblock %}
+
+
+{% block js %}
+{% assets output="assets/categories.%(version)s.js", "base_js",
+        "js/categories.reset.js" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+{% endblock %}
+
+
+{% block jsready %}
+ExpensesUI.onReady(
+        Formatter, PaletteManager, $('#current_month_overall'), $('#expenses'));
+ExpensesManager.onReady(Logger, ExpensesUI);
+CategoriesReset.onReady(Logger, $('#cat_reset'));
+{% endblock %}

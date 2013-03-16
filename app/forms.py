@@ -86,6 +86,16 @@ class Connect(form.Input):
         return self.connected
 
 
+class Colopicker(form.Textbox):
+    def render(self):
+        return """
+<div class="input-append color" data-color="%(value)s">
+    %(input)s
+    <span class="add-on"><i style="background-color: %(value)s;"></i></span>
+</div>
+""" % dict(value=self.value, input=super(Colopicker, self).render())
+
+
 class DevelopmentForm(form.Form):
     def __init__(self, *inputs, **kw):
         filtered = filter(lambda i: 'DEV' not in i.attrs or config.DEV == True,
@@ -101,6 +111,7 @@ validformat = form.Validator('tsv, csv ..', parsers.format)
 validamount = form.Validator('Invalid (e.g. 1.00)', parsers.amount)
 validdate = form.Validator('Invalid (e.g. 1/22/2013)', parsers.date_us)
 validimportdata = form.Validator('Invalid format', parsers.expenses)
+validcolor = form.Validator('Invalid color (e.g. #1234ab)', parsers.color)
 
 
 users_avatar = form.Form(
@@ -163,4 +174,13 @@ expenses_import = form.Form(
         form.Textarea('data', validimportdata, description='',
             class_="span12", rows=24,
             placeholder="1/22/2013	bar	1.00	coffe with mom")
+    )
+
+
+categories_edit = form.Form(
+        form.Hidden('name'),
+        Colopicker('foreground', validcolor, description='Foreground',
+                class_="input-small", readonly=""),
+        Colopicker('background', validcolor, description='Background',
+                class_="input-small", readonly=""),
     )

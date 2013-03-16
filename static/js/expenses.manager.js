@@ -2,7 +2,8 @@ var ExpensesManager = (function() {
     var logger = null;
     var ui = null;
     var date = null;
-    var addsubmitlisteners = Array();
+    var addsubmitlisteners = [];
+    var changecategorylisteners = [];
 
 
     var initWidgets = function($context) {
@@ -153,7 +154,7 @@ var ExpensesManager = (function() {
     };
 
     var onExportSubmitSuccess = function(data) {
-        var $form = $('#exp_import');
+        var $form = $('#exp_export');
         OnSubmitSuccess($form, data, function() {
             $form.clearForm();
             logger.info('Waiting for the server to generate export file...', function() {
@@ -163,6 +164,24 @@ var ExpensesManager = (function() {
     };
 
     var onExportSubmitError = function(data) {
+        logger.error('Something went wrong while contacting the server');
+    };
+
+
+    var onCategoryEditSubmitSuccess = function(data) {
+        var $modal = $('.modal');
+        var $form = $modal.find('#category_edit');
+
+        OnSubmitSuccess($('#category_edit'), data, function() {
+            $modal.on('hidden', function() {
+                $.each(changecategorylisteners, function(index, func) {
+                    func();
+                });
+            }).modal('hide');
+        });
+    };
+
+    var onCategoryEditSubmitError = function(data) {
         logger.error('Something went wrong while contacting the server');
     };
 
@@ -233,6 +252,33 @@ var ExpensesManager = (function() {
         },
 
         onAddExpense: function(exp) {
+            exp.$elem.find('.exp_category').click(function() {
+                var $modal = ui.categoryEdit();
+
+                $modal.find('.modal-body').load('/categories/' + exp.category + '/edit', function() {
+                    $modal.find('.color').each(function() {
+                        $(this).colorpicker({
+                            format: 'hex'
+                        });
+                    });
+
+                    $modal.find('#category_edit').submit(function() {
+                        var $form = $(this);
+
+                        $form.ajaxSubmit({
+                            dataType: 'json',
+                            url: '/categories/' + $form.find('#name').val() + '/edit',
+                            success: onCategoryEditSubmitSuccess,
+                            error: onCategoryEditSubmitError,
+                        });
+
+                        return false;
+                    });
+                });
+
+                return false;
+            });
+
             exp.$elem.find('.exp_edit').click(function() {
                 var $modal = ui.expensesEdit();
 
@@ -279,8 +325,11 @@ var ExpensesManager = (function() {
         },
 
         addSubmit: function(func) {
-            addsubmitlisteners.push(func)
+            addsubmitlisteners.push(func);
         },
 
+        changeCategory: function(func) {
+            changecategorylisteners.push(func);
+        }
     };
 }());

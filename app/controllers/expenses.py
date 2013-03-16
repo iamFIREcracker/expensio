@@ -7,6 +7,7 @@ from datetime import datetime
 import celery
 import web
 
+import app.config as config
 import app.formatters as formatters
 import app.parsers as parsers
 import app.tasks as tasks
@@ -14,6 +15,7 @@ from app.forms import expenses_add
 from app.forms import expenses_edit
 from app.forms import expenses_export
 from app.forms import expenses_import
+from app.models import Category
 from app.models import Expense
 from app.upload import UploadedFile
 from app.utils import active
@@ -64,6 +66,24 @@ def LatestExpensesInBetween(user_id, since, to, latest):
                 .filter(Expense.updated > latest))
 
 
+def create_category(userid, categoryname):
+    """Create the category requested category object if not already present."""
+    c = (web.ctx.orm.query(Category)
+            .filter_by(user_id=userid)
+            .filter_by(name=categoryname)
+            .first())
+    if c is not None:
+        return False
+
+    c = Category(user_id=userid,
+                    name=categoryname,
+                    foreground=config.CATEGORY_FOREGROUND,
+                    background=config.CATEGORY_BACKGROUND)
+    web.ctx.orm.add(c)
+
+    return True
+
+
 class ExpensesHandler(BaseHandler):
     @protected
     def GET(self):
@@ -105,6 +125,8 @@ class ExpensesAddHandler(BaseHandler):
                     date=parsers.date_us(form.d.date), attachment=url)
             web.ctx.orm.add(e)
             e = web.ctx.orm.merge(e)
+
+            create_category(self.current_user().id, e.category)
 
             return jsonify(success=True,
                     expense=ExpenseWrapper(e, self.current_user().currency))
@@ -161,6 +183,9 @@ class ExpensesEditHandler(BaseHandler):
             # Bulk add
             web.ctx.orm.add_all([deleted, e])
             e = web.ctx.orm.merge(e)
+
+            # Add the associated category if not already present
+            create_category(self.current_user().id, e.category)
 
             return jsonify(success=True,
                     expense=ExpenseWrapper(e, self.current_user().currency))

@@ -176,6 +176,19 @@ var ExpensesUI = (function() {
 
         },
 
+        categoryEdit: function() {
+            return $('' +
+'<div class="modal hide fade">' +
+  '<div class="modal-header">' +
+    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+    '<h3>Edit category</h3>' +
+  '</div>' +
+  '<div class="modal-body">' +
+  '</div>' +
+'</div>'
+            ).modal();
+        },
+
         addExpense: function(func) {
             addexpenselisteners.push(func)
         },
@@ -219,14 +232,19 @@ var Expense = function(ui, palette, formatter) {
 '<div class="exp">' +
     '<span class="exp_date">' + formatter.date(date) + '</span>' +
     '<span class="exp_inner">' +
-        '<span class="exp_category palette" ' +
-            'style="background-color: '+ palette.background(category) + '; ' +
+        '<span class="exp_category palette"' +
+                'style="background-color: '+ palette.background(category) + '; ' +
                 'color: ' + palette.foreground(category) + '">' +
+            '<a href="/categories/' + category + '/edit" title="Edit category">' +
                 category +
+            '</a>' +
         '</span>' +
         '<span class="exp_note">' + note + '</span>' +
     '</span>' +
-    '<span class="exp_amount">' + formatter.amount(amount, currency) + '</span>' +
+    '<span class="exp_amount" ' +
+            'style="color: ' + (amount < 0 ? palette.income() : palette.outcome()) + '">' +
+        formatter.amount(amount, currency) +
+    '</span>' +
     addAttachment(attachment, note) +
     '<span class="exp_edit">' +
         '<a href="/expenses/' + id + '/edit" title="Edit expense">' +

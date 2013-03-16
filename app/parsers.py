@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import re
 from datetime import datetime as datetime_
-
-import web
 
 import config
 import utils
+
+"""Compiled regular expression handy to parse hex colors """
+COLOR_RE = re.compile('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$')
 
 
 def amount(value):
@@ -44,3 +46,6 @@ def datetime(value):
 
 def period(value):
     return datetime_.strptime(value, config.PERIOD_FORMAT)
+
+def color(value):
+    return COLOR_RE.match(value)

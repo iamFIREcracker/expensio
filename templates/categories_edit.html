@@ -1,0 +1,11 @@
+{% from "_formhelpers.html" import render_field %}
+<form id="category_edit" class="form-horizontal" enctype="multipart/form-data" method="post">
+    {% for input in categories_edit.inputs %}
+        {{ render_field(input) }}
+    {% endfor %}
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-primary">Edit</button>
+        </div>
+    </div>
+</form>

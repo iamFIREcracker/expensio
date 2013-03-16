@@ -16,7 +16,10 @@ from .controllers.auth import LoginGoogleAuthorizedHandler
 from .controllers.auth import LoginGoogleHandler
 from .controllers.auth import LoginTwitterAuthorizedHandler
 from .controllers.auth import LoginTwitterHandler
-from .controllers.categories import CategoriesNamesHandler
+from .controllers.categories import CategoriesHandler
+from .controllers.categories import CategoriesEditHandler
+from .controllers.categories import CategoriesResetHandler
+from .controllers.categories import CategoriesResetStatusHandler
 from .controllers.expenses import ExpensesAddHandler
 from .controllers.expenses import ExpensesDeleteHandler
 from .controllers.expenses import ExpensesEditHandler
@@ -28,6 +31,7 @@ from .controllers.general import ExportHandler
 from .controllers.general import ImportHandler
 from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
+from .controllers.general import ResetHandler
 from .controllers.general import StatsHandler
 from .controllers.general import UsersDeactivateHandler
 from .controllers.general import UsersProfileHandler
@@ -69,12 +73,16 @@ URLS = (
     '/expenses/export', ExpensesExportHandler,
     '/expenses/export/tsv/status/(.+)', ExpensesExportTSVStatusHandler,
 
-    '/categories/names', CategoriesNamesHandler,
+    '/categories', CategoriesHandler,
+    '/categories/(.+)/edit', CategoriesEditHandler,
+    '/categories/reset', CategoriesResetHandler,
+    '/categories/reset/status/(.+)', CategoriesResetStatusHandler,
 
     '/', MainHandler,
     '/(\d+)/(\d+)', MainHandler,
     '/profile', UsersProfileHandler,
     '/deactivate', UsersDeactivateHandler,
+    '/reset', ResetHandler,
     '/import', ImportHandler,
     '/export', ExportHandler,
     '/stats/(quarter|year|life)', StatsHandler,

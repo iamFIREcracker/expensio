@@ -70,12 +70,18 @@ def parsedateparams():
 def input_(**transformers):
     """Wrapper of `web.input` enabling users to execute validation and
     transformation of input data.
+
+    TODO: add possibility to validate multiple fields together
     """
     defaults = dict((name, None) for name in transformers.iterkeys())
     storage = web.input(**defaults)
 
     def transform(name, value, func):
-        return func(value)
+        try:
+            return func(value)
+        except:
+            # TODO add some log here
+            raise web.badrequest()
 
     [setattr(storage, name, transform(name, storage[name], transformers[name]))
             for (name, value) in storage.iteritems()]
@@ -111,12 +117,12 @@ def redirectable(func):
     return inner
 
 
-def owner(model):
+def owner(model, field='id'):
     def inner1(func):
-        def inner2(self, id):
+        def inner2(self, value):
             record = (web.ctx.orm.query(model)
-                    .filter_by(id=id)
                     .filter_by(user_id=self.current_user().id)
+                    .filter(getattr(model, field) == value)
                     .first())
             if not record:
                 raise web.notfound()
@@ -129,12 +135,13 @@ def owner(model):
 
 
 def active(func):
-    def inner1(self, id):
+    def inner1(self, *args, **kwargs):
         if self.current_item().deleted:
             raise web.unauthorized()
 
-        return func(self, id)
+        return func(self, *args, **kwargs)
     return inner1
+
 
 def me(func):
     def inner1(self, id, *args, **kwargs):

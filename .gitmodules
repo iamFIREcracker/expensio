@@ -4,4 +4,7 @@
 [submodule "static/jquery-form"]
 	path = static/jquery-form
 	url = git://github.com/malsup/form.git
+[submodule "static/bootstrap-colorpicker"]
+	path = static/bootstrap-colorpicker
+	url = git://github.com/xaguilars/bootstrap-colorpicker.git
 

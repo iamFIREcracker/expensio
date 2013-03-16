@@ -2,6 +2,10 @@
     text-align: center;
 }
 
+.colorpicker.dropdown-menu {
+    z-index: 1050;
+}
+
 .loading {
     background: url(/static/images/loading.gif) no-repeat center;
     width: 16px;
@@ -103,6 +107,11 @@
 .exp_category {
     display: inline-block;
     padding: 2px;
+}
+
+.exp_category a, .exp_category a:hover {
+    text-decoration: none;
+    color: inherit;
 }
 
 .exp_note {
