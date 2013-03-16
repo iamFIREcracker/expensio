@@ -20,6 +20,7 @@ from .urls import URLS
 
 
 web.config.debug = config.DEBUG
+web.config.debug_sql = config.DEBUG_SQL
 
 workingdir = os.getcwd()
 app = web.application(URLS, globals())
