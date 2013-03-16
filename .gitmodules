@@ -6,5 +6,5 @@
 	url = git://github.com/malsup/form.git
 [submodule "static/bootstrap-colorpicker"]
 	path = static/bootstrap-colorpicker
-	url = git://github.com/edweezy/bootstrap-colorpicker.git
+	url = git://github.com/xaguilars/bootstrap-colorpicker.git
 
