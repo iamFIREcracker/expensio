@@ -76,6 +76,13 @@ class LogoutHandler():
         raise web.found('/')
 
 
+class ResetHandler(BaseHandler):
+    @protected
+    def GET(self):
+        return web.ctx.render.categories_reset_complete(user=self.current_user(),
+                current='reset')
+
+
 class ImportHandler(BaseHandler):
     @protected
     def GET(self):

@@ -31,6 +31,7 @@ from .controllers.general import ExportHandler
 from .controllers.general import ImportHandler
 from .controllers.general import LogoutHandler
 from .controllers.general import MainHandler
+from .controllers.general import ResetHandler
 from .controllers.general import StatsHandler
 from .controllers.general import UsersDeactivateHandler
 from .controllers.general import UsersProfileHandler
@@ -81,6 +82,7 @@ URLS = (
     '/(\d+)/(\d+)', MainHandler,
     '/profile', UsersProfileHandler,
     '/deactivate', UsersDeactivateHandler,
+    '/reset', ResetHandler,
     '/import', ImportHandler,
     '/export', ExportHandler,
     '/stats/(quarter|year|life)', StatsHandler,
