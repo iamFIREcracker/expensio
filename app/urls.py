@@ -83,7 +83,7 @@ URLS = (
     '/deactivate', UsersDeactivateHandler,
     '/import', ImportHandler,
     '/export', ExportHandler,
-    '/stats/(quadrimester|year|life)', StatsHandler,
+    '/stats/(quarter|year|life)', StatsHandler,
 ) + (() if not config.DEV else (
     # Develop routes
     '/login/fake', LoginFakeHandler,
