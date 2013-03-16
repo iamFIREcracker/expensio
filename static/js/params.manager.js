@@ -8,7 +8,7 @@ var ParamsManager = (function() {
             since = date.epoch();
         } else if (mode === 'year') {
             since = date.ndaysback(365 - 1);
-        } else if (mode === 'quadrimester') {
+        } else if (mode === 'quarter') {
             since = date.ndaysback(120 - 1);
         }
 
