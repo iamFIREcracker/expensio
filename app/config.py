@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-LOGGER_NAME = 'expenses'
+APP_NAME = 'expenses'
+
+LOGGER_NAME = APP_NAME
 LOG_FORMAT = '%(asctime)s %(levelname)s: %(message)s ' + \
              '[in %(pathname)s:%(lineno)d]'
 
