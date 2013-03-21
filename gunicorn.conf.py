@@ -166,6 +166,14 @@ tmp_upload_dir = None
 #   
 #       A path string. "-" means log to stdout.
 #
+#   syslog - Log to syslog
+#
+#       True or False
+#
+#   syslog_addr - Address of the syslog daemon
+#
+#       E.g. udp://localhost:514
+#
 
 loglevel = 'info'
 accesslog = '-'
