@@ -3,7 +3,7 @@
 APP_NAME = 'expenses'
 
 LOGGER_NAME = APP_NAME
-LOG_FORMAT = '%(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+LOG_FORMAT = '[%(process)d] %(levelname)s %(message)s [in %(pathname)s:%(lineno)d]'
 
 DEBUG = False
 DEBUG_SQL = False
