@@ -154,6 +154,8 @@ def me(func):
 
 
 class BaseHandler(object):
+    name = __name__
+
     def current_user(self):
         if not hasattr(self, '_current_user'):
             self._current_user = None

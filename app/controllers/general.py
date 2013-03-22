@@ -26,6 +26,9 @@ class MainHandler(BaseHandler):
         if not self.current_user():
             return web.ctx.render.info()
         else:
+            web.ctx.logger.debug("%(key)r Inputs year=%(year)r month=%(month)r",
+                    dict(key=self.name, year=year, month=month))
+
             # Validate `year` and `month`, if specified
             today = datetime.today()
             year = int(year) if year is not None else today.year
