@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import uuid
-import json
 from datetime import datetime
 
 from sqlalchemy import Boolean
@@ -13,22 +12,6 @@ from sqlalchemy import String
 from sqlalchemy.schema import UniqueConstraint
 
 from app.database import Base
-
-
-class AlchemyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, '__serializable__'):
-            fields = {}
-            for (field, f) in obj.__serializable__.iteritems():
-                data = f(obj);
-
-                try:
-                    json.dumps(data)
-                    fields[field] = data
-                except TypeError:
-                    fields[field] = None
-            return fields
-        return json.JSONEncoder.default(self, obj)
 
 
 def _uuid():
