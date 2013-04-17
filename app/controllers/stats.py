@@ -13,6 +13,7 @@ import web
 import app.formatters as formatters
 import app.parsers as parsers
 from app.models import Expense
+from app.serializers import StatByCategorySerializer
 from app.utils import jsonify
 from app.utils import input_
 from app.utils import parsedateparams
@@ -22,20 +23,6 @@ from app.query import Expenses
 from .expenses import LatestExpensesInBetween
 from .expenses import ExpensesInBetween
 
-
-
-class CategoryWrapper(object):
-    __serializable__ = {
-        'name': lambda o: o.c[0],
-        'updated': lambda o: formatters.datetime(o.c[1]),
-        'income': lambda o: formatters.amount(o.c[2]),
-        'outcome': lambda o: formatters.amount(o.c[3]),
-        'currency': lambda o: o.currency,
-        }
-
-    def __init__(self, category, currency):
-        self.c = category
-        self.currency = currency
 
 
 def AccumulateCategoryAggregate((name, income, outcome, updated), expense):
@@ -94,21 +81,8 @@ class StatsCategoriesHandler(BaseHandler):
 
         return jsonify(
                 stats=dict(
-                    categories=[CategoryWrapper(c, self.current_user().currency)
+                    categories=[StatByCategorySerializer(c, self.current_user().currency)
                         for c in categories]))
-
-
-class DayWrapper(object):
-    __serializable__ = {
-            'date': lambda o: formatters.date(o.d['date']),
-            'income': lambda o: formatters.amount(o.d['income']),
-            'outcome': lambda o: formatters.amount(o.d['outcome']),
-            'currency': lambda o: o.currency,
-            }
-
-    def __init__(self, day, currency):
-        self.d = day
-        self.currency = currency
 
 
 def ComputeDayAggregate(seed, expenses):

@@ -17,6 +17,7 @@ from app.forms import expenses_export
 from app.forms import expenses_import
 from app.models import Category
 from app.models import Expense
+from app.serializers import ExpenseSerializer
 from app.upload import UploadedFile
 from app.utils import active
 from app.utils import owner
@@ -25,25 +26,6 @@ from app.utils import jsonify
 from app.utils import parsedateparams
 from app.utils import BaseHandler
 
-
-
-class ExpenseWrapper(object):
-    __serializable__ = {
-            'id': lambda o: o.e.id,
-            'date': lambda o: formatters.date(o.e.date),
-            'created': lambda o: formatters.datetime(o.e.created),
-            'updated': lambda o: formatters.datetime(o.e.updated),
-            'category': lambda o: o.e.category,
-            'amount': lambda o: formatters.amount(o.e.amount),
-            'currency': lambda o: o.currency,
-            'note': lambda o: o.e.note,
-            'attachment': lambda o: o.e.attachment,
-            'deleted': lambda o: bool(o.e.deleted),
-            }
-
-    def __init__(self, expense, currency):
-        self.e = expense
-        self.currency = currency
 
 
 def ExpensesInBetween(user_id, since, to):
@@ -96,7 +78,7 @@ class ExpensesHandler(BaseHandler):
                 .all())
 
         return jsonify(
-                expenses=[ExpenseWrapper(e, self.current_user().currency)
+                expenses=[ExpenseSerializer(e, self.current_user().currency)
                         for e in expenses])
 
 
@@ -129,7 +111,7 @@ class ExpensesAddHandler(BaseHandler):
             create_category(self.current_user().id, e.category)
 
             return jsonify(success=True,
-                    expense=ExpenseWrapper(e, self.current_user().currency))
+                    expense=ExpenseSerializer(e, self.current_user().currency))
 
 
 class ExpensesEditHandler(BaseHandler):
@@ -188,7 +170,7 @@ class ExpensesEditHandler(BaseHandler):
             create_category(self.current_user().id, e.category)
 
             return jsonify(success=True,
-                    expense=ExpenseWrapper(e, self.current_user().currency))
+                    expense=ExpenseSerializer(e, self.current_user().currency))
 
 
 class ExpensesDeleteHandler(BaseHandler):
@@ -208,7 +190,7 @@ class ExpensesDeleteHandler(BaseHandler):
         e = web.ctx.orm.merge(e)
 
         return jsonify(success=True,
-                expense=ExpenseWrapper(e, self.current_user().currency))
+                expense=ExpenseSerializer(e, self.current_user().currency))
 
 
 class ExpensesImportHandler(BaseHandler):
@@ -228,7 +210,7 @@ class ExpensesImportHandler(BaseHandler):
             expenses = [web.ctx.orm.merge(e) for e in expenses]
 
             return jsonify(success=True,
-                    expenses=[ExpenseWrapper(e, self.current_user().currency)
+                    expenses=[ExpenseSerializer(e, self.current_user().currency)
                             for e in expenses])
 
 

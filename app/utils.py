@@ -11,8 +11,8 @@ import web
 
 import formatters
 import parsers
+import app.serializers as serializers
 from app import config
-from models import AlchemyEncoder # XXX WTF?
 from models import User
 
 
@@ -43,7 +43,7 @@ def compose(*funcs):
 def jsonify(*args, **kwargs):
     web.header('Content-Type', 'application/json')
 
-    return json.dumps(dict(*args, **kwargs), cls=AlchemyEncoder)
+    return json.dumps(dict(*args, **kwargs), cls=serializers.JSONSerializer)
 
 
 def logout():
