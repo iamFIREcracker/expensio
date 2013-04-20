@@ -8,6 +8,7 @@ import web
 from app import config
 from app.database import db_session
 from app.logging import create_logger
+from app.tools.app_processor import header_html
 from .tools.app_processor import load_keyvalue
 from .tools.app_processor import load_logger
 from .tools.app_processor import load_path_url
@@ -33,6 +34,7 @@ def create_app():
     db = web.database(dbn='sqlite', db=dbpath)
     session = web.session.Session(app, web.session.DBStore(db, 'session'))
 
+    app.add_processor(web.loadhook(header_html))
     app.add_processor(web.loadhook(load_path_url))
     app.add_processor(web.loadhook(load_logger(create_logger(web.config))))
     app.add_processor(web.loadhook(load_render(workingdir)))
