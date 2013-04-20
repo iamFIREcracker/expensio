@@ -3,6 +3,7 @@
 from uuid import uuid4
 from datetime import datetime
 
+import web
 from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -91,3 +92,15 @@ class Category(Base):
                                                       self.foreground,
                                                       self.background,
                                                       self.deleted)
+
+    @staticmethod
+    def exists(category_name, user_id):
+        """Returns True if a category with name ``category_name`` and
+        associated with the user ID ``user_id`` is already present in the
+        system, False otherwise.
+        """
+        c = (web.ctx.orm.query(Category)
+                .filter_by(user_id=user_id)
+                .filter_by(name=category_name)
+                .first())
+        return c is not None
