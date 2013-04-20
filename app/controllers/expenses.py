@@ -48,24 +48,6 @@ def LatestExpensesInBetween(user_id, since, to, latest):
                 .filter(Expense.updated > latest))
 
 
-def create_category(userid, categoryname):
-    """Create the category requested category object if not already present."""
-    c = (web.ctx.orm.query(Category)
-            .filter_by(user_id=userid)
-            .filter_by(name=categoryname)
-            .first())
-    if c is not None:
-        return False
-
-    c = Category(user_id=userid,
-                    name=categoryname,
-                    foreground=config.CATEGORY_FOREGROUND,
-                    background=config.CATEGORY_BACKGROUND)
-    web.ctx.orm.add(c)
-
-    return True
-
-
 class ExpensesHandler(BaseHandler):
     @protected
     def GET(self):
@@ -106,14 +88,13 @@ class ExpensesAddHandler(BaseHandler):
                     category=form.d.category, note=form.d.note,
                     date=parsers.date_us(form.d.date), attachment=url)
             web.ctx.orm.add(e)
-            # A first commit is needed here to retrieve the id of the newly
-            # created expenses.
             web.ctx.orm.commit()
             e = web.ctx.orm.merge(e)
 
-            create_category(self.current_user().id, e.category)
-            # A second commit is needed to commit the newly created category
-            web.ctx.orm.commit()
+            if not Category.exists(e.category, self.current_user().id):
+                web.ctx.orm.add(
+                        Category.new(e.category, self.current_user().id))
+                web.ctx.orm.commit()
 
             return jsonify(success=True,
                     expense=ExpenseSerializer(e, self.current_user().currency))
@@ -173,7 +154,10 @@ class ExpensesEditHandler(BaseHandler):
             e = web.ctx.orm.merge(e)
 
             # Add the associated category if not already present
-            create_category(self.current_user().id, e.category)
+            if not Category.exists(e.category, self.current_user().id):
+                web.ctx.orm.add(
+                        Category.new(e.category, self.current_user().id))
+                web.ctx.orm.commit()
 
             return jsonify(success=True,
                     expense=ExpenseSerializer(e, self.current_user().currency))

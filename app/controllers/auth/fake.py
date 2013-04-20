@@ -8,15 +8,15 @@ from datetime import datetime
 
 import web
 
-from app.controllers.expenses import create_category
+import app.config as config
 from app.forms import users_connect
+from app.models import Category
 from app.models import Expense
 from app.models import User
 from app.utils import jsonify
 from app.utils import protected
 from app.utils import redirectable
 from app.utils import BaseHandler
-from app.config import COOKIE_EXPIRATION
 
 
 class LoginFakeAuthorizedHandler(BaseHandler):
@@ -33,7 +33,7 @@ class LoginFakeAuthorizedHandler(BaseHandler):
         # automatically generated user id
         user = web.ctx.orm.merge(user)
 
-        web.setcookie('user', user.id, COOKIE_EXPIRATION)
+        web.setcookie('user', user.id, config.COOKIE_EXPIRATION)
 
         raise web.found(
                 web.ctx.session.pop('back') if 'back' in web.ctx.session else
@@ -85,8 +85,10 @@ class AccountsFakePopulateHandler(BaseHandler):
                         note=random.choice(notes),
                         amount=random.choice(amounts))
             web.ctx.orm.add(e)
-            create_category(self.current_user().id, e.category)
-        web.ctx.orm.commit()
+            if not Category.exists(e.category, self.current_user().id):
+                web.ctx.orm.add(
+                        Category.new(e.category, self.current_user().id))
+            web.ctx.orm.commit()
+
 
         raise web.found('/')
-
