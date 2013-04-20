@@ -93,20 +93,6 @@ def load_keyvalue(key, value):
 def load_sqla(dbsession):
     """Load SQLAlchemy database session and manage exceptions properly.
 
-    This hook other than to set the `orm` variable of the shared context, is in
-    charge of execute the handler of the request and catch all the exception: if
-    one is raised it will try to commit or rollback the current transaction.
-
-    If an HTTPError is raised it means that the application is trying to
-    redirect the client to another page.  This does not usually means that an
-    error occurred, so we try to commit possible changes done on the database
-    session.  If another type Exception is catched, the an error occurred and we
-    have to rollback any changes done on the database session.  Finally if no
-    exception is catched at all, try to commit pending changes.
-
-    However, in all the previous scenarios we have to close the current database
-    session.
-
     Inputs:
         dbsession database session
     """
@@ -114,16 +100,7 @@ def load_sqla(dbsession):
         web.ctx.orm = dbsession
 
         try:
-            res = handler()
-        except web.HTTPError:
-            dbsession.commit()
-            raise
-        except:
-            dbsession.rollback()
-            raise
-        else:
-            dbsession.commit()
-            return res
+            return handler()
         finally:
             dbsession.remove()
     return inner

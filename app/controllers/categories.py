@@ -52,6 +52,7 @@ class CategoriesEditHandler(BaseHandler):
             c.foreground = form.d.foreground
             c.background = form.d.background
             web.ctx.orm.add(c)
+            web.ctx.orm.commit()
             c = web.ctx.orm.merge(c)
             return jsonify(success=True, user=CategorySerializer(c))
 

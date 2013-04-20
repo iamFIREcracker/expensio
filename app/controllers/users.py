@@ -57,6 +57,7 @@ class UsersAvatarRemove(BaseHandler):
         u = self.current_user()
         u.avatar = None
         web.ctx.orm.add(u)
+        web.ctx.orm.commit()
         u = web.ctx.orm.merge(u)
         return jsonify(success=True, user=UserSerializer(u))
 
@@ -75,6 +76,7 @@ class UsersEditHandler(BaseHandler):
             u.name = form.d.name
             u.currency = form.d.currency
             web.ctx.orm.add(u)
+            web.ctx.orm.commit()
             u = web.ctx.orm.merge(u)
             return jsonify(success=True, user=UserSerializer(u))
 
@@ -86,5 +88,6 @@ class UsersDeleteHandler(BaseHandler):
         u = self.current_user()
         u.deleted = True
         web.ctx.orm.add(u)
+        web.ctx.orm.commit()
         logout()
         return jsonify(success=True)

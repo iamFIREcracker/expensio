@@ -106,6 +106,7 @@ class ExpensesAddHandler(BaseHandler):
                     category=form.d.category, note=form.d.note,
                     date=parsers.date_us(form.d.date), attachment=url)
             web.ctx.orm.add(e)
+            web.ctx.orm.commit()
             e = web.ctx.orm.merge(e)
 
             create_category(self.current_user().id, e.category)
@@ -164,6 +165,7 @@ class ExpensesEditHandler(BaseHandler):
 
             # Bulk add
             web.ctx.orm.add_all([deleted, e])
+            web.ctx.orm.commit()
             e = web.ctx.orm.merge(e)
 
             # Add the associated category if not already present
@@ -187,6 +189,7 @@ class ExpensesDeleteHandler(BaseHandler):
         e = self.current_item()
         e.deleted = True
         web.ctx.orm.add(e)
+        web.ctx.orm.commit()
         e = web.ctx.orm.merge(e)
 
         return jsonify(success=True,
@@ -207,6 +210,7 @@ class ExpensesImportHandler(BaseHandler):
                     for (date, category, amount, note)
                             in parsers.expenses(form.d.data)]
             web.ctx.orm.add_all(expenses)
+            web.ctx.orm.commit()
             expenses = [web.ctx.orm.merge(e) for e in expenses]
 
             return jsonify(success=True,

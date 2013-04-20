@@ -47,6 +47,7 @@ class LoginGoogleAuthorizedHandler(BaseHandler):
         user.google_id = profile['id']
 
         web.ctx.orm.add(user)
+        web.ctx.orm.commit()
         # Merge fying and persistent object: this enables us to read the
         # automatically generated user id
         user = web.ctx.orm.merge(user)
@@ -107,4 +108,5 @@ class AccountsGoogleDisconnectHandler(BaseHandler):
             return jsonify(success=False, reason=connect.note)
 
         web.ctx.orm.add(user)
+        web.ctx.orm.commit()
         return jsonify(success=True)

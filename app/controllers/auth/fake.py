@@ -28,6 +28,7 @@ class LoginFakeAuthorizedHandler(BaseHandler):
             user = User(name='Fake Name')
 
         web.ctx.orm.add(user)
+        web.ctx.orm.commit()
         # Merge fying and persistent object: this enables us to read the
         # automatically generated user id
         user = web.ctx.orm.merge(user)
@@ -85,6 +86,7 @@ class AccountsFakePopulateHandler(BaseHandler):
                         amount=random.choice(amounts))
             web.ctx.orm.add(e)
             create_category(self.current_user().id, e.category)
+        web.ctx.orm.commit()
 
         raise web.found('/')
 
