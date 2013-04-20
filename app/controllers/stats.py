@@ -10,10 +10,10 @@ from operator import attrgetter
 
 import web
 
-import app.formatters as formatters
 import app.parsers as parsers
 from app.models import Expense
 from app.serializers import StatByCategorySerializer
+from app.serializers import StatByDaySerializer
 from app.utils import jsonify
 from app.utils import input_
 from app.utils import parsedateparams
@@ -175,5 +175,5 @@ class StatsDaysHandler(BaseHandler):
 
         return jsonify(
                 stats=dict(
-                    days=[DayWrapper(d, self.current_user().currency)
+                    days=[StatByDaySerializer(d, self.current_user().currency)
                         for d in days]))

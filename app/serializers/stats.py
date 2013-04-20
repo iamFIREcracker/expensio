@@ -28,8 +28,8 @@ class StatByDaySerializer(object):
 
     def to_dict(self):
         return {
-            'date': formatters.date(self.o.d['date']),
-            'income': formatters.amount(self.o.d['income']),
-            'outcome': formatters.amount(self.o.d['outcome']),
+            'date': formatters.date(self.o['date']),
+            'income': formatters.amount(self.o['income']),
+            'outcome': formatters.amount(self.o['outcome']),
             'currency': self.currency,
         }
