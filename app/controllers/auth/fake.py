@@ -10,7 +10,7 @@ import web
 
 import app.config as config
 from app.forms import users_connect
-from app.models import Category
+from app.managers import Categories
 from app.models import Expense
 from app.models import User
 from app.utils import jsonify
@@ -85,9 +85,9 @@ class AccountsFakePopulateHandler(BaseHandler):
                         note=random.choice(notes),
                         amount=random.choice(amounts))
             web.ctx.orm.add(e)
-            if not Category.exists(e.category, self.current_user().id):
+            if not Categories.exists(e.category, self.current_user().id):
                 web.ctx.orm.add(
-                        Category.new(e.category, self.current_user().id))
+                        Categories.new(e.category, self.current_user().id))
             web.ctx.orm.commit()
 
 

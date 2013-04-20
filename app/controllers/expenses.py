@@ -7,7 +7,6 @@ from datetime import datetime
 import celery
 import web
 
-import app.config as config
 import app.formatters as formatters
 import app.parsers as parsers
 import app.tasks as tasks
@@ -15,7 +14,7 @@ from app.forms import expenses_add
 from app.forms import expenses_edit
 from app.forms import expenses_export
 from app.forms import expenses_import
-from app.models import Category
+from app.managers import Categories
 from app.models import Expense
 from app.serializers import ExpenseSerializer
 from app.upload import UploadedFile
@@ -91,9 +90,9 @@ class ExpensesAddHandler(BaseHandler):
             web.ctx.orm.commit()
             e = web.ctx.orm.merge(e)
 
-            if not Category.exists(e.category, self.current_user().id):
+            if not Categories.exists(e.category, self.current_user().id):
                 web.ctx.orm.add(
-                        Category.new(e.category, self.current_user().id))
+                        Categories.new(e.category, self.current_user().id))
                 web.ctx.orm.commit()
 
             return jsonify(success=True,
@@ -154,9 +153,9 @@ class ExpensesEditHandler(BaseHandler):
             e = web.ctx.orm.merge(e)
 
             # Add the associated category if not already present
-            if not Category.exists(e.category, self.current_user().id):
+            if not Categories.exists(e.category, self.current_user().id):
                 web.ctx.orm.add(
-                        Category.new(e.category, self.current_user().id))
+                        Categories.new(e.category, self.current_user().id))
                 web.ctx.orm.commit()
 
             return jsonify(success=True,
