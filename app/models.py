@@ -12,6 +12,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import String
 from sqlalchemy.schema import UniqueConstraint
 
+import app.config as config
 from app.database import Base
 
 
@@ -104,3 +105,13 @@ class Category(Base):
                 .filter_by(name=category_name)
                 .first())
         return c is not None
+
+    @staticmethod
+    def new(category_name, user_id):
+        """Creates a new category with name ``category_name`` and associated
+        with the user ID ``user_id``.
+        """
+        return Category(
+                user_id=user_id, name=category_name,
+                foreground=config.CATEGORY_FOREGROUND,
+                background=config.CATEGORY_BACKGROUND)
