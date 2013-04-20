@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import uuid
+from uuid import uuid4
 from datetime import datetime
 
 from sqlalchemy import Boolean
@@ -14,14 +14,15 @@ from sqlalchemy.schema import UniqueConstraint
 from app.database import Base
 
 
-def _uuid():
-    return unicode(uuid.uuid4())
+def uuid():
+    """Generates a ``uuid``."""
+    return unicode(uuid4())
 
 
 class User(Base):
     __tablename__ = 'user'
 
-    id = Column(String, default=_uuid, primary_key=True)
+    id = Column(String, default=uuid, primary_key=True)
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     avatar = Column(String)
@@ -42,7 +43,7 @@ def expenseid(context):
 class Expense(Base):
     __tablename__ = 'expense'
 
-    id = Column(String, default=_uuid, primary_key=True)
+    id = Column(String, default=uuid, primary_key=True)
     original_id = Column(String, ForeignKey('expense.id'), default=expenseid)
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
@@ -67,7 +68,7 @@ class Expense(Base):
 class Category(Base):
     __tablename__ = 'category'
 
-    id = Column(String, default=_uuid, primary_key=True)
+    id = Column(String, default=uuid, primary_key=True)
     user_id = Column(String, ForeignKey('user.id'))
     name = Column(String, nullable=False)
     foreground = Column(String, nullable=False)
