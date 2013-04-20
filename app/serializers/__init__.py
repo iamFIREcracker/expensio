@@ -5,6 +5,7 @@ import json
 
 from .categories import CategorySerializer
 from .expenses import ExpenseSerializer
+from .users import UserSerializer
 from .stats import StatByCategorySerializer
 from .stats import StatByDaySerializer
 
@@ -18,5 +19,5 @@ class JSONSerializer(json.JSONEncoder):
             #return super(json.JSONEncoder, self).default(o)
 
 
-__all__ = [CategorySerializer, ExpenseSerializer, StatByCategorySerializer,
-           StatByDaySerializer]
+__all__ = [CategorySerializer, ExpenseSerializer, UserSerializer,
+           StatByCategorySerializer, StatByDaySerializer]

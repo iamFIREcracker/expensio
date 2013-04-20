@@ -7,6 +7,7 @@ import web
 import app.tasks as tasks
 from app.forms import users_avatar
 from app.forms import users_edit
+from app.serializers import UserSerializer
 from app.upload import UploadedFile
 from app.utils import jsonify
 from app.utils import logout
@@ -14,16 +15,6 @@ from app.utils import me
 from app.utils import protected
 from app.utils import BaseHandler
 
-
-
-class UserWrapper(object):
-    __serializable__ = {
-            'id': lambda o: o.u.id,
-            'currency': lambda o: o.u.currency,
-            }
-
-    def __init__(self, u):
-        self.u = u
 
 
 class UsersAvatarChange(BaseHandler):
@@ -67,7 +58,7 @@ class UsersAvatarRemove(BaseHandler):
         u.avatar = None
         web.ctx.orm.add(u)
         u = web.ctx.orm.merge(u)
-        return jsonify(success=True, user=UserWrapper(u))
+        return jsonify(success=True, user=UserSerializer(u))
 
 
 class UsersEditHandler(BaseHandler):
@@ -85,7 +76,7 @@ class UsersEditHandler(BaseHandler):
             u.currency = form.d.currency
             web.ctx.orm.add(u)
             u = web.ctx.orm.merge(u)
-            return jsonify(success=True, user=UserWrapper(u))
+            return jsonify(success=True, user=UserSerializer(u))
 
 
 class UsersDeleteHandler(BaseHandler):
