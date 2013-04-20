@@ -19,6 +19,12 @@ def uuid():
     return unicode(uuid4())
 
 
+def current_object_id(context):
+    """Returns the ``id`` of the current object to be stored."""
+    return context.current_parameters['id']
+
+
+
 class User(Base):
     __tablename__ = 'user'
 
@@ -36,15 +42,13 @@ class User(Base):
     def __repr__(self):
         return '<User %r>' % (self.name)
 
-def expenseid(context):
-    return context.current_parameters['id']
-
 
 class Expense(Base):
     __tablename__ = 'expense'
 
     id = Column(String, default=uuid, primary_key=True)
-    original_id = Column(String, ForeignKey('expense.id'), default=expenseid)
+    original_id = Column(String, ForeignKey('expense.id'),
+            default=current_object_id)
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     user_id = Column(String, ForeignKey('user.id'))
