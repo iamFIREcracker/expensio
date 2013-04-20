@@ -7,12 +7,14 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from app import config
 
+
 engine = create_engine(config.DATABASE_URL, convert_unicode=True)
 db_session = scoped_session(sessionmaker(#autocommit=False,
                                          #autoflush=False,
                                          bind=engine))
 Base = declarative_base()
 Base.query = db_session.query_property()
+
 
 def init_db():
     # import all modules here that might define models so that
@@ -21,7 +23,3 @@ def init_db():
     import app.models
     import app.sessions
     Base.metadata.create_all(bind=engine)
-
-
-if __name__ == '__main__':
-    init_db()
