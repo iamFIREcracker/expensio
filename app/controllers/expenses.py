@@ -106,10 +106,14 @@ class ExpensesAddHandler(BaseHandler):
                     category=form.d.category, note=form.d.note,
                     date=parsers.date_us(form.d.date), attachment=url)
             web.ctx.orm.add(e)
+            # A first commit is needed here to retrieve the id of the newly
+            # created expenses.
             web.ctx.orm.commit()
             e = web.ctx.orm.merge(e)
 
             create_category(self.current_user().id, e.category)
+            # A second commit is needed to commit the newly created category
+            web.ctx.orm.commit()
 
             return jsonify(success=True,
                     expense=ExpenseSerializer(e, self.current_user().currency))
