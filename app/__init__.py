@@ -17,7 +17,7 @@ web.config.debug_sql = config.DEBUG_SQL
 
 def create_app():
     """App factory."""
-    from app.database import db_session
+    from app.database import create_session
     from app.logging import create_logger
     from app.tools.app_processor import header_html
     from app.tools.app_processor import load_keyvalue
@@ -49,6 +49,6 @@ def create_app():
                                                             workingdir))))
     app.add_processor(web.loadhook(load_keyvalue('exportman',
                                                 ExportManager(workingdir))))
-    app.add_processor(load_sqla(db_session))
+    app.add_processor(load_sqla(create_session()))
 
     return app

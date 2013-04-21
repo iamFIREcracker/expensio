@@ -10,7 +10,7 @@ from PIL import Image
 import app.config as config
 import app.formatters as formatters
 from app.celery import celery
-from app.database import db_session
+from app.database import create_session
 from app.models import Category
 from app.models import Expense
 from app.models import User
@@ -32,6 +32,7 @@ class ExpenseTSVWrapper(object):
 @celery.task
 def ExpensesExportTSVTask(exportman, user):
     filename = 'expenses.tsv'
+    db_session = create_session()
     expenses = (db_session.query(Expense)
                 .filter_by(user_id=user.id)
                 .filter(Expense.deleted == False)
@@ -43,6 +44,7 @@ def ExpensesExportTSVTask(exportman, user):
 
 @celery.task
 def UsersAvatarChangeTask(avatar, avatarman, user, home):
+    db_session = create_session()
     _, ext = os.path.splitext(avatar.filename)
     im = Image.open(avatar.name)
     im.thumbnail((128, 128), Image.ANTIALIAS)
@@ -63,6 +65,7 @@ def CategoriesResetTask(user):
     def key(*args):
         return ''.join(args)
 
+    db_session = create_session()
     user_categories_counter = Counter()
     user_categories = set()
 
