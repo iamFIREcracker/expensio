@@ -13,7 +13,7 @@ def create_engine():
     """Creates a new database engine.
     
     The engine is """
-    return _create_engine(web.config.db, convert_unicode=True, echo=True)
+    return _create_engine(web.config.db, convert_unicode=True)
 
 
 def create_session(engine=None):
