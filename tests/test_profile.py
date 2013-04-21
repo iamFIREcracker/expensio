@@ -15,17 +15,10 @@ class TestProfile(TestCaseWithApp):
         login(self.app)
         resp = self.app.get('/profile')
         self.assertEquals('200 OK', resp.status)
-        self.assertTrue(
-                'Avatar' in resp, 'Avatar field missing')
-        self.assertTrue(
-                'Name' in resp, 'Name field missing')
-        self.assertTrue(
-                'Currency' in resp, 'Currency field missing')
-        self.assertTrue(
-                'Google' in resp, 'Google connect field missing')
-        self.assertTrue(
-                'Facebook' in resp, 'Facebook connect field missing')
-        self.assertTrue(
-                'Twitter' in resp, 'Twitter connect field missing')
-        self.assertTrue(
-                'Fake' in resp, 'Fake connect field missing')
+        self.assertIn('Avatar', resp)
+        self.assertIn('Name', resp)
+        self.assertIn('Currency', resp)
+        self.assertIn('Google', resp)
+        self.assertIn('Facebook', resp)
+        self.assertIn('Twitter', resp)
+        self.assertIn('Fake', resp)

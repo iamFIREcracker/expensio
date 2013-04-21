@@ -17,18 +17,13 @@ class TestIndex(TestCaseWithApp):
         login(self.app)
         resp = self.app.get('/')
         self.assertEquals('200 OK', resp.status)
-        self.assertTrue(
-                'Fake Name' in resp, 'Name of the user missing')
-        self.assertTrue(
-                'By Date' in resp, 'By-Date widget missing')
-        self.assertTrue(
-                'Income' in resp, 'Income widget missing')
-        self.assertTrue(
-                'Outcome' in resp, 'Outcome widget missing')
+        self.assertIn('Fake Name', resp)
+        self.assertIn('By Date', resp)
+        self.assertIn('Income', resp)
+        self.assertIn('Outcome', resp)
 
     def test_logged_user_can_decide_which_period_to_display(self):
         login(self.app)
         resp = self.app.get('/2012/12')
         self.assertEquals('200 OK', resp.status)
-        self.assertTrue(
-                '2012, 12' in resp, 'Selected year-month title missing.')
+        self.assertIn('2012, 12', resp)
