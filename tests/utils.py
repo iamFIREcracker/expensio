@@ -34,6 +34,8 @@ class TestCaseWithApp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        # Disable custom logging
+        web.config.log_enable = False
         # Disable sql logging, otherwise webtest will consider them as errors
         web.config.debug_sql = False
 
