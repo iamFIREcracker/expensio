@@ -4,6 +4,7 @@ APP_NAME = 'expenses'
 TAG = '0.0.1'
 
 LOGGER_NAME = APP_NAME
+LOG_ENABLE = True
 LOG_FORMAT = '[%(process)d] %(levelname)s %(message)s [in %(pathname)s:%(lineno)d]'
 
 DEBUG = False

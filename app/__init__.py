@@ -10,6 +10,7 @@ from app import config
 
 web.config.db = config.DATABASE_URL
 web.config.logger_name = config.LOGGER_NAME
+web.config.log_enable = config.LOG_ENABLE
 web.config.log_format = config.LOG_FORMAT
 web.config.debug = config.DEBUG
 web.config.debug_sql = config.DEBUG_SQL
