@@ -50,17 +50,16 @@ def load_logger(logger):
     return inner
 
 
-def load_render(workingdir):
+def load_render(views):
     """Add the renderer to the shared context.
 
     Inputs:
-        workingdir application working directory containing a directory named
-        `templates` with all the files to render
+        views path containing application views
     """
     def inner():
-        render = render_jinja(os.path.join(workingdir, 'templates'),
-                encoding='utf-8', extensions=['jinja2.ext.do',
-                                              AssetsExtension])
+        render = render_jinja(
+                views, encoding='utf-8',
+                extensions=['jinja2.ext.do', AssetsExtension])
         render._lookup.assets_environment = env
         render._lookup.globals.update({'DEV': config.DEV})
         web.ctx.render = render;

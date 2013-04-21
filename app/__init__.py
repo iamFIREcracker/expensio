@@ -31,6 +31,7 @@ def create_app():
     from app.urls import URLS
 
     workingdir = os.getcwd()
+    views = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'views')
     app = web.application(URLS, globals())
     dbpath = web.config.db.replace('sqlite:///', '')
     db = web.database(dbn='sqlite', db=dbpath)
@@ -39,7 +40,7 @@ def create_app():
     app.add_processor(web.loadhook(header_html))
     app.add_processor(web.loadhook(load_path_url))
     app.add_processor(web.loadhook(load_logger(create_logger(web.config))))
-    app.add_processor(web.loadhook(load_render(workingdir)))
+    app.add_processor(web.loadhook(load_render(views)))
     app.add_processor(web.loadhook(load_session(session)))
     app.add_processor(web.loadhook(load_keyvalue('uploadman',
                                                 UploadManager(config.UPLOAD_DIR,
