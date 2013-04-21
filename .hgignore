@@ -17,5 +17,6 @@ static/avatars/[a-zA-Z0-9]*
 static/exports/[a-zA-Z0-9]*
 static/images/*.svg.png
 static/uploads/[a-zA-Z0-9]*
+templates/elements/version.html
 tags
 venv/*
