@@ -12,6 +12,7 @@ import web
 import formatters
 import parsers
 import app.serializers as serializers
+
 from app import config
 from models import User
 
@@ -21,6 +22,21 @@ from models import User
 _CURRENCIES = [u'€', u'$']
 
 _FORMATS = ['tsv']
+
+
+def get_name():
+    """Gets the name of the application."""
+    return config.APP_NAME
+
+
+def get_version():
+    """Gets the repository version."""
+    import subprocess
+    proc = subprocess.Popen(
+            'hg log -r tip --template "{latesttagdistance}"',
+            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    pending, _ = proc.communicate()
+    return "%(tag)sd%(pending)s" % dict(tag=config.TAG, pending=pending)
 
 
 def currencies():
