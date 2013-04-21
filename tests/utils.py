@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-import unittest
 import tempfile
+import unittest
 
 import web
 from webtest import TestApp
@@ -29,7 +29,8 @@ def login(app):
     return resp
 
 
-class TestApplication(unittest.TestCase):
+
+class TestCaseWithApp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -53,22 +54,3 @@ class TestApplication(unittest.TestCase):
     def tearDownClass(cls):
         os.unlink(cls.dbfile)
 
-
-    def test_anonymous_user_is_presented_with_the_info_page(self):
-        resp = self.app.get('/')
-        self.assertEquals('200 OK', resp.status)
-        self.assertTrue(
-                'Try it!' in resp, 'Fake register link missing')
-
-    def test_logged_user_is_presented_the_main_page(self):
-        login(self.app)
-        resp = self.app.get('/')
-        self.assertEquals('200 OK', resp.status)
-        self.assertTrue(
-                'Fake Name' in resp, 'Name of the user missing')
-        self.assertTrue(
-                'By Date' in resp, 'By-Date widget missing')
-        self.assertTrue(
-                'Income' in resp, 'Income widget missing')
-        self.assertTrue(
-                'Outcome' in resp, 'Outcome widget missing')
