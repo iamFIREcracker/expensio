@@ -9,6 +9,11 @@ import web
 from webtest import TestApp
 
 
+def temp_file():
+    """Creates a temporary file."""
+    return tempfile.NamedTemporaryFile(suffix='.app.db', delete=False).name
+
+
 def url(path):
     """Create a complete URL pointing to ``path``.
 
@@ -28,18 +33,16 @@ class TestApplication(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Disable sql logging, otherwise webtest would consider log messages
-        # as errors :-(
+        # Disable sql logging, otherwise webtest will consider them as errors
         web.config.debug_sql = False
 
-        # Configures the database to use (in memory for tests)
-        cls.dbfile = tempfile.NamedTemporaryFile(suffix='app', delete=False).name
+        # Configures the database
+        cls.dbfile = temp_file()
         web.config.db = 'sqlite:///' + cls.dbfile
-        raise ValueError(web.config.db)
 
         # Initialize the database
-        import app.database as database
-        database.init_db()
+        from app.database import init_db
+        init_db()
 
         # Create the application
         from app import create_app
