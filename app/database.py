@@ -9,9 +9,10 @@ from sqlalchemy.ext.declarative import declarative_base as _declarative_base
 
 
 
-
 def create_engine():
-    """Creates a new database engine."""
+    """Creates a new database engine.
+    
+    The engine is """
     return _create_engine(web.config.db, convert_unicode=True, echo=True)
 
 
@@ -23,8 +24,13 @@ def create_session(engine=None):
             sessionmaker(
                     autocommit=False, autoflush=False, bind=engine))
 
+
 def declarative_base():
-    """Creates a new declarative base class."""
+    """Creates a new declarative base class.
+    
+    Wraps SQLAlchemy ``declarative_base`` by adding two new fields to the
+    returned base class:  a ``session`` property and a ``query`` property handy
+    to execute queries."""
     session = create_session()
     Base = _declarative_base()
     Base.session = session
