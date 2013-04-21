@@ -53,27 +53,22 @@ class TestApplication(unittest.TestCase):
     def tearDownClass(cls):
         os.unlink(cls.dbfile)
 
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
 
     def test_anonymous_user_is_presented_with_the_info_page(self):
         resp = self.app.get('/')
         self.assertEquals('200 OK', resp.status)
         self.assertTrue(
-                'Try it!' in resp, "The page should contain a ``Try it!`` message.")
+                'Try it!' in resp, 'Fake register link missing')
 
-    def test_new_user_is_presented_with_the_profile_page(self):
-        resp = self.app.get('/login/fake')
-        self.assertEquals('302 Found', resp.status)
-        self.assertEquals(url('/login/fake/authorized'), resp.location)
-        resp = resp.follow()
-        self.assertEquals('302 Found', resp.status)
-        self.assertEquals(url('/profile'), resp.location)
-        resp = resp.follow()
+    def test_logged_user_is_presented_the_main_page(self):
+        login(self.app)
+        resp = self.app.get('/')
         self.assertEquals('200 OK', resp.status)
         self.assertTrue(
-                'Profile' in resp, "The page should contain a ``Profile`` message.")
-
+                'Fake Name' in resp, 'Name of the user missing')
+        self.assertTrue(
+                'By Date' in resp, 'By-Date widget missing')
+        self.assertTrue(
+                'Income' in resp, 'Income widget missing')
+        self.assertTrue(
+                'Outcome' in resp, 'Outcome widget missing')
