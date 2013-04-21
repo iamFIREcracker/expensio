@@ -9,31 +9,27 @@
 
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="hero-unit">
-                <h1>Expenses</h1>
-                <p>Keeping track of your expenses has never been so easier:
-                <strong>amount</strong>, <strong>date</strong> and
-                a <strong>category</strong>, this is all you need to archive expenses.
-                However, for those of you interested in cleaning up all your closets
-                full of receipts, you can even link an image to an expense and review it
-                or print it if necessary.</p>
+<header class="hero-unit">
+    <div class="container-fluid">
+        <h1>Expenses</h1>
+        <p>Keeping track of your expenses has never been so easier:
+        <strong>amount</strong>, <strong>date</strong> and
+        a <strong>category</strong>, this is all you need to archive expenses.
+        However, for those of you interested in cleaning up all your closets
+        full of receipts, you can even link an image to an expense and review it
+        or print it if necessary.</p>
 
-                <p>Use charts to visually keep track of how the amounts spent in the
-                last 30 days, or to takle the category that will make you
-                <em>poor</em>.</p>
+        <p>Use charts to visually keep track of how the amounts spent in the
+        last 30 days, or to takle the category that will make you
+        <em>poor</em>.</p>
 
-                <p><strong>Expenses</strong> is really simple to use:  just click on one
-                of the following links, fill the information about your user, and start
-                tracking stuff!</p>
-            </div>
-        </div>
+        <p><strong>Expenses</strong> is really simple to use:  just click on one
+        of the following links, fill the information about your user, and start
+        tracking stuff!</p>
     </div>
     <h2 class="text-center">Try it!</h2>
     {% include 'elements/login.html' %}
-</div>
+</header>
 {% endblock %}
 
 
