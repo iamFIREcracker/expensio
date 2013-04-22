@@ -118,7 +118,7 @@ var UsersManager = (function() {
 
                     $form.ajaxSubmit({
                         dataType: 'json',
-                        url: '/users/' + $form.find('#id').val() + '/avatar/change',
+                        url: '/v1/users/' + $form.find('#id').val() + '/avatar/change',
                         success: onAvatarChangeSubmitSuccess,
                         error: onAvatarChangeSubmitError,
                     });
