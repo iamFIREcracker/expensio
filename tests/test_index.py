@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.utils import login
+from tests.utils import register
 from tests.utils import TestCaseWithApp
 
 
@@ -14,7 +14,7 @@ class TestIndex(TestCaseWithApp):
                 'Try it!' in resp, 'Fake register link missing')
 
     def test_logged_user_is_presented_the_main_page(self):
-        login(self.app)
+        register(self.app)
         resp = self.app.get('/')
         self.assertEquals('200 OK', resp.status)
         self.assertIn('Fake Name', resp)
@@ -23,7 +23,7 @@ class TestIndex(TestCaseWithApp):
         self.assertIn('Outcome', resp)
 
     def test_logged_user_can_decide_which_period_to_display(self):
-        login(self.app)
+        register(self.app)
         resp = self.app.get('/2012/12')
         self.assertEquals('200 OK', resp.status)
         self.assertIn('2012, 12', resp)

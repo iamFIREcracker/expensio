@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 import web
-from webtest import TestApp
+import webtest
 
 
 def temp_file():
@@ -21,12 +21,25 @@ def url(path):
     return "http://localhost:80%(path)s" % dict(path=path)
 
 
+def register(app):
+    """Register a new user and return its id."""
+    resp = login(app)
+    return resp.forms[0]['id'].value
+
+
 def login(app):
-    """Executes the login workflow."""
+    """Register a new user and return its id."""
     resp = app.get('/login/fake')
     resp = resp.follow() # -> /login/fake/authorized
-    resp = resp.follow() # -> /profile
-    return resp
+    return resp.follow() # -> /profile
+
+
+def upload(filename):
+    """Return a webtest.Upload object for ``filename``.
+    
+    Note that ``filename`` is supposed to be relative."""
+    return webtest.Upload(
+            os.path.basename(os.path.abspath(filename)), file(filename).read())
 
 
 
@@ -38,6 +51,8 @@ class TestCaseWithApp(unittest.TestCase):
         web.config.log_enable = False
         # Disable sql logging, otherwise webtest will consider them as errors
         web.config.debug_sql = False
+        # Disable debug mode
+        web.config.debug = False
 
         # Configures the database
         cls.dbfile = temp_file()
@@ -50,9 +65,12 @@ class TestCaseWithApp(unittest.TestCase):
         # Create the application
         from app import create_app
         middleware = []
-        cls.app = TestApp(create_app().wsgifunc(*middleware))
+        cls.app = webtest.TestApp(create_app().wsgifunc(*middleware))
 
     @classmethod
     def tearDownClass(cls):
         os.unlink(cls.dbfile)
 
+
+    def setUp(self):
+        self.app.reset()
