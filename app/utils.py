@@ -105,16 +105,6 @@ def input_(**transformers):
     return storage
     
 
-def api(func):
-    def inner(self, *args, **kwargs):
-        accept = web.ctx.environ.get('HTTP_ACCEPT', '').split(',')
-        if 'application/json' not in accept:
-            raise web.notacceptable()
-
-        return func(self, *args, **kwargs)
-    return inner
-
-
 def protected(func):
     def inner(self, *args, **kwargs):
         if not self.current_user():
