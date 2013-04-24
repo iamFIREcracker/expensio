@@ -10,7 +10,7 @@ def api(func):
     that the specified value is actually supported by the server.
 
     If an unsupported content-type is passed a ``web.notacceptable`` exception
-    is raised and the status '406 Not acceptable' is sent to the client.
+    is raised and the status '406 Not acceptable' is sent back to the client.
 
 
     >>> class MyNotAcceptable(Exception):
