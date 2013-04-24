@@ -30,14 +30,20 @@ var UsersManager = (function() {
 
     var onAvatarChangeSubmitSuccess = function(data) {
         OnSubmitSuccess($('#user_avatar'), data, function() {
-            logger.info('Waiting for the server to process the image...', function() {
-                avatarChangeCheckStatus(data.goto);
-            });
+            // Nothing to do here, apart from validation.  The API workflow
+            // suggests a '202 Accepted' in case of success.
         });
     };
 
     var onAvatarChangeSubmitError = function(data) {
-        logger.error('Something went wrong while contacting the server');
+        _data = data;
+        if (data.status === 202 && data.responseText === 'Accepted') {
+            logger.info('Waiting for the server to process the image...', function() {
+                avatarChangeCheckStatus(data.getResponseHeader('Location'));
+            });
+        } else {
+            logger.error('Something went wrong while contacting the server');
+        }
     };
 
 
