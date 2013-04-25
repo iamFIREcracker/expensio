@@ -58,7 +58,7 @@ URLS = (
 
     '/users/(.+)/edit', UsersEditHandler,
     '/v1/users/(.+)/avatar/change', UsersAvatarChange,
-    '/users/(.+)/avatar/change/status/(.+)', UsersAvatarChangeStatusHandler,
+    '/v1/users/(.+)/avatar/change/status/(.+)', UsersAvatarChangeStatusHandler,
     '/users/(.+)/avatar/remove', UsersAvatarRemove,
     '/users/(.+)/delete', UsersDeleteHandler,
 

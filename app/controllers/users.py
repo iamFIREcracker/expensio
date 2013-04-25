@@ -64,7 +64,7 @@ class UsersAvatarChange(BaseHandler):
                     web.ctx.home).task_id
             web.header(
                     'Location',
-                    '/users/%(user_id)s/avatar/change/status/%(task_id)s' % dict(
+                    '/v1/users/%(user_id)s/avatar/change/status/%(task_id)s' % dict(
                         user_id=self.current_user().id, task_id=task_id
                     ))
             raise web.accepted()
