@@ -92,9 +92,9 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
         clients are then supposed to come later and check again the status of the
         task.
 
-        On the other hand a '303 See Other' status message with the location of
-        the uploaded avatar will be sent back to client if the task has exited
-        normally.
+        On the other hand a '201 Created' status message with the 'Location'
+        header pointing to the uploaded avatar will be sent back to client if
+        the task has exited normally.
         """
         try:
             retval = (tasks.UsersAvatarChangeTask.AsyncResult(task_id)
@@ -102,7 +102,8 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
         except celery.exceptions.TimeoutError:
             raise web.ok()
         else:
-            raise web.seeother(retval)
+            web.header('Location', retval)
+            raise web.created()
 
 
 class UsersAvatarRemove(BaseHandler):

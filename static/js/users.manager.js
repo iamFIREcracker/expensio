@@ -2,28 +2,25 @@ var UsersManager = (function() {
     var logger = null;
     var ui = null;
 
-    var onAvatarChangeCheckStatusSuccess = function(data) {
-        if (!data.success) {
-            setTimeout(function() {
-                avatarChangeCheckStatus(data.goto);
-            }, 1000);
-        } else {
-            setTimeout(function() {
-                window.location.reload();
-            }, 2000);
-        }
-    };
-
-    var onAvatarChangeCheckStatusError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
     var avatarChangeCheckStatus = function(url) {
         $.ajax({
             dataType: 'json',
             url: url,
-            success: onAvatarChangeCheckStatusSuccess,
-            error: onAvatarChangeCheckStatusError,
+            success: function(data) {
+                setTimeout(function() {
+                    avatarChangeCheckStatus(url);
+                }, 1000);
+            },
+            error: function(data) {
+                console.log(data);
+                if (data.status === 201 && data.responseText === 'Created') {
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    logger.error('Something went wrong while contacting the server');
+                }
+            }
         });
     };
 
@@ -36,7 +33,6 @@ var UsersManager = (function() {
     };
 
     var onAvatarChangeSubmitError = function(data) {
-        _data = data;
         if (data.status === 202 && data.responseText === 'Accepted') {
             logger.info('Waiting for the server to process the image...', function() {
                 avatarChangeCheckStatus(data.getResponseHeader('Location'));

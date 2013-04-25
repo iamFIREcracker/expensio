@@ -70,7 +70,7 @@ class TestProfile(TestCaseWithApp):
             HTTP_ACCEPT='application/json'
         ))
 
-        self.assertEquals('303 See Other', resp.status)
+        self.assertEquals('201 Created', resp.status)
         self.assertTrue(
                 resp.location.startswith(url('/static/avatars/')),
                 'The redirect should point to a static resource')
