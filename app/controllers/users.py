@@ -10,7 +10,6 @@ from app.forms import users_edit
 from app.serializers import UserSerializer
 from app.upload import UploadedFile
 from app.tools.request_decorators import api
-from app.utils import accepted
 from app.utils import jsonify
 from app.utils import logout
 from app.utils import me
