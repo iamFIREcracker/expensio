@@ -11,7 +11,7 @@ import webtest
 
 def temp_file():
     """Creates a temporary file."""
-    return tempfile.NamedTemporaryFile(suffix='.app.db', delete=False).name
+    return tempfile.NamedTemporaryFile(delete=False).name
 
 
 def url(path):
