@@ -47,15 +47,10 @@ class TestCaseWithApp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Disable custom logging
-        web.config.log_enable = False
-        # Disable sql logging, otherwise webtest will consider them as errors
-        web.config.debug_sql = False
-        # Disable debug mode
-        web.config.debug = False
+        cls.dbfile = temp_file()
 
         # Configures the database
-        cls.dbfile = temp_file()
+        # XXX Cannot move this below the import of ``init_db`` 
         web.config.db = 'sqlite:///' + cls.dbfile
 
         # Initialize the database
@@ -64,6 +59,14 @@ class TestCaseWithApp(unittest.TestCase):
 
         # Create the application
         from app import create_app
+
+        # Disable custom logging
+        web.config.log_enable = False
+        # Disable sql logging, otherwise webtest will consider them as errors
+        web.config.debug_sql = False
+        # Disable debug mode
+        web.config.debug = False
+
         middleware = []
         cls.app = webtest.TestApp(create_app().wsgifunc(*middleware))
 
