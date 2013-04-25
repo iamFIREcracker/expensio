@@ -87,7 +87,7 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
 
         If all these prerequisites hold true then the controller will check the 
         status of a task with ID ``task_id``.
-        
+
         If the task is still active the controller will return '200 OK'; 
         clients are then supposed to come later and check again the status of the
         task.
@@ -95,12 +95,17 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
         On the other hand a '201 Created' status message with the 'Location'
         header pointing to the uploaded avatar will be sent back to client if
         the task has exited normally.
+
+        Note that a '415 Unsupported Media Type' status message is returned if
+        the format of the uploaded avatar cannot be handled by the server.
         """
         try:
             retval = (tasks.UsersAvatarChangeTask.AsyncResult(task_id)
                     .get(timeout=0.1))
         except celery.exceptions.TimeoutError:
             raise web.ok()
+        except IOError:
+            raise web.unsupportedmediatype()
         else:
             web.header('Location', retval)
             raise web.created()

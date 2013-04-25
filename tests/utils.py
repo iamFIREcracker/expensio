@@ -34,6 +34,16 @@ def login(app):
     return resp.follow() # -> /profile
 
 
+def post_avatar_change(user_id, avatar, app):
+    """Posts a new avatar change remote task."""
+    resp = app.post(
+            '/v1/users/%(user_id)s/avatar/change' % dict(user_id=user_id),
+            dict(avatar=upload(avatar)), extra_environ=dict(
+                HTTP_ACCEPT='application/json'
+            ))
+    return resp
+
+
 def upload(filename):
     """Return a webtest.Upload object for ``filename``.
     

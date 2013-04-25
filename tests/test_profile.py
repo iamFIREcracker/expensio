@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
+
 import webtest
 
+from tests.utils import post_avatar_change
 from tests.utils import register
 from tests.utils import upload
 from tests.utils import url
 from tests.utils import TestCaseWithApp
+
 
 
 class TestProfile(TestCaseWithApp):
@@ -51,6 +55,8 @@ class TestProfile(TestCaseWithApp):
                 extra_environ=dict(HTTP_ACCEPT='application/json'))
         self.assertFalse(
                 resp.json['success'], 'An error should have been received')
+        self.assertIn('errors', resp.json)
+        self.assertIn('avatar', resp.json['errors'])
 
     def test_logged_user_can_post_avatar_change(self):
         user_id = register(self.app)
@@ -65,6 +71,44 @@ class TestProfile(TestCaseWithApp):
                     '/v1/users/%(user_id)s/avatar/change/' % dict(
                         user_id=user_id
                     )))
+
+    def test_http_accept_header_is_required_to_check_avatar_change_status(self):
+        with self.assertRaises(webtest.AppError) as cm:
+            self.app.get('/v1/users/invalid-uuid/avatar/change/status/invalid-uuid')
+            self.assertEqual(
+                    "Bad response: 406 Not Acceptable", cm.exception)
+
+    def test_logged_user_cannot_check_avatar_change_status_of_another_user(self):
+        register(self.app)
+        with self.assertRaises(webtest.AppError) as cm:
+            self.app.get(
+                    '/v1/users/invalid-uuid/avatar/change/status/invalid-uuid',
+                    extra_environ=dict(
+                        HTTP_ACCEPT='application/json'
+                    ))
+            self.assertEqual(
+                    "Bad response: 401 Unauthorized", cm.exception)
+
+    def test_logged_user_cannot_change_avatar_with_a_not_image_file(self):
+        user_id = register(self.app)
+        resp = post_avatar_change(user_id, __file__, self.app)
+
+        # Wait for the async task to complete
+        time.sleep(1.0)
+
+        with self.assertRaises(webtest.AppError) as cm:
+            self.app.get(resp.location, extra_environ=dict(
+                HTTP_ACCEPT='application/json'
+            ))
+            self.assertEqual(
+                    "Bad response: 415 Unsupported Media Type", cm.exception)
+
+    def test_logged_user_can_change_avatar(self):
+        user_id = register(self.app)
+        resp = post_avatar_change(user_id, 'tests/avatar.png', self.app)
+
+        # Wait for the async task to complete
+        time.sleep(1.0)
 
         resp = self.app.get(resp.location, extra_environ=dict(
             HTTP_ACCEPT='application/json'
