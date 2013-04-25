@@ -71,16 +71,38 @@ class UsersAvatarChange(BaseHandler):
 
 
 class UsersAvatarChangeStatusHandler(BaseHandler):
+
+    @api
     @protected
     @me
     def GET(self, id, task_id):
+        """Checks the status of a pending 'avatar-change' operation.
+
+        The 'HTTP_ACCEPT' header is required to allow the controller to specify
+        the acceptable media type for the response.
+
+        There should be a logged-in user behind this request.
+
+        The specified ``id`` should match the one of the logged-in user.
+
+        If all these prerequisites hold true then the controller will check the 
+        status of a task with ID ``task_id``.
+        
+        If the task is still active the controller will return '200 OK'; 
+        clients are then supposed to come later and check again the status of the
+        task.
+
+        On the other hand a '303 See Other' status message with the location of
+        the uploaded avatar will be sent back to client if the task has exited
+        normally.
+        """
         try:
             retval = (tasks.UsersAvatarChangeTask.AsyncResult(task_id)
                     .get(timeout=1.0))
         except celery.exceptions.TimeoutError:
-            return jsonify(success=False, goto=web.ctx.path)
+            raise web.ok()
         else:
-            return jsonify(success=True, avatar=retval)
+            raise web.seeother(retval)
 
 
 class UsersAvatarRemove(BaseHandler):
