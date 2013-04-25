@@ -46,12 +46,11 @@ class UsersAvatarChange(BaseHandler):
         {
             "success": false,
             "errors":
-            [
-                "avatar": "Missing"
-            ]
+            {
+                "avatar": "Required"
+            }
         }
         """
-        avatar = UploadedFile('avatar')
         form = users_avatar()
 
         if not form.validates():
@@ -59,6 +58,7 @@ class UsersAvatarChange(BaseHandler):
                     errors=dict((i.name, i.note) for i in form.inputs
                         if i.note is not None))
         else:
+            avatar = UploadedFile('avatar')
             task_id = tasks.UsersAvatarChangeTask.delay(
                     avatar, web.ctx.avatarman, self.current_user(),
                     web.ctx.home).task_id
