@@ -14,6 +14,9 @@ DEV = False
 
 DATABASE_URL = 'sqlite:///expenses.db'
 
+CELERY_BROKER = 'amqp://expenses:expenses@localhost:5672//'
+CELERY_BROKER_BACKEND = 'amqp'
+
 AVATAR_WIDTH = 72
 AVATAR_HEIGHT = AVATAR_WIDTH
 AVATAR_PLACEHOLD = "http://www.placehold.it/{width}x{height}/EFEFEF/AAAAAA&text=no+image".format(

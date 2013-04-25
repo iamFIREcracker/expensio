@@ -3,12 +3,13 @@
 
 from __future__ import absolute_import 
 
+import web
 from celery import Celery
 
 
 celery = Celery('app.celery',
-                broker='amqp://expenses:expenses@localhost:5672//',
-                backend='amqp',
+                broker=web.config.celery_broker,
+                backend=web.config.celery_broker_backend,
                 include=('app.tasks',))
 
 celery.conf.update(
