@@ -98,7 +98,7 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
         """
         try:
             retval = (tasks.UsersAvatarChangeTask.AsyncResult(task_id)
-                    .get(timeout=1.0))
+                    .get(timeout=0.1))
         except celery.exceptions.TimeoutError:
             raise web.ok()
         else:
