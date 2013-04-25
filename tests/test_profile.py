@@ -28,13 +28,13 @@ class TestProfile(TestCaseWithApp):
         self.assertIn('Twitter', resp)
         self.assertIn('Fake', resp)
 
-    def test_http_accept_header_is_required_to_change_avatar(self):
+    def test_http_accept_header_is_required_to_post_avatar_change(self):
         with self.assertRaises(webtest.AppError) as cm:
             self.app.post('/v1/users/invalid-uuid/avatar/change')
             self.assertEqual(
                     "Bad response: 406 Not Acceptable", cm.exception)
 
-    def test_logged_user_cannot_change_avatar_of_another_user(self):
+    def test_logged_user_cannot_post_avatar_change_of_another_user(self):
         register(self.app)
         with self.assertRaises(webtest.AppError) as cm:
             self.app.post(
@@ -44,7 +44,7 @@ class TestProfile(TestCaseWithApp):
             self.assertEqual(
                     "Bad response: 401 Unauthorized", cm.exception)
 
-    def test_logged_user_cannot_change_avatar_without_specifying_it(self):
+    def test_logged_user_cannot_post_avatar_change_without_specifying_it(self):
         user_id = register(self.app)
         resp = self.app.post(
                 '/v1/users/%(user_id)s/avatar/change' % dict(user_id=user_id),
@@ -52,7 +52,7 @@ class TestProfile(TestCaseWithApp):
         self.assertFalse(
                 resp.json['success'], 'An error should have been received')
 
-    def test_logged_user_can_change_avatar(self):
+    def test_logged_user_can_post_avatar_change(self):
         user_id = register(self.app)
         resp = self.app.post(
                 '/v1/users/%(user_id)s/avatar/change' % dict(user_id=user_id),
