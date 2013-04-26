@@ -8,14 +8,19 @@ import web
 from app import config
 
 
+
+web.config.debug = config.DEBUG
+web.config.debug_sql = config.DEBUG_SQL
+
 web.config.logger_name = config.LOGGER_NAME
 web.config.log_enable = config.LOG_ENABLE
 web.config.log_format = config.LOG_FORMAT
-web.config.debug = config.DEBUG
-web.config.debug_sql = config.DEBUG_SQL
+
 web.config.db = config.DATABASE_URL
+
 web.config.celery_broker = config.CELERY_BROKER
 web.config.celery_broker_backend = config.CELERY_BROKER_BACKEND
+
 
 
 def create_app():

@@ -12,6 +12,6 @@ celery = Celery('app.celery',
                 backend=web.config.celery_broker_backend,
                 include=('app.tasks',))
 
-celery.conf.update(
-    CELERY_RESULT_DBURI='sqlite:///celery.db'
-)
+#celery.conf.update(
+    #CELERY_ALWAYS_EAGER=web.config.celery_always_eager
+#)
