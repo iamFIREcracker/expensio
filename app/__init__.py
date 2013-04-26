@@ -19,7 +19,7 @@ web.config.log_format = config.LOG_FORMAT
 web.config.db = config.DATABASE_URL
 
 web.config.celery_broker = config.CELERY_BROKER
-web.config.celery_broker_backend = config.CELERY_BROKER_BACKEND
+web.config.celery_result_backend = config.CELERY_RESULT_BACKEND
 
 
 

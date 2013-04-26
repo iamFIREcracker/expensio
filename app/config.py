@@ -15,7 +15,7 @@ DEV = False
 DATABASE_URL = 'sqlite:///expenses.db'
 
 CELERY_BROKER = 'amqp://expenses:expenses@localhost:5672//'
-CELERY_BROKER_BACKEND = 'amqp'
+CELERY_RESULT_BACKEND = 'amqp'
 
 AVATAR_WIDTH = 72
 AVATAR_HEIGHT = AVATAR_WIDTH
