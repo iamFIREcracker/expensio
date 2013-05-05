@@ -11,7 +11,3 @@ celery = Celery('app.celery',
                 broker=web.config.celery_broker,
                 backend=web.config.celery_result_backend,
                 include=('app.tasks',))
-
-#celery.conf.update(
-    #CELERY_ALWAYS_EAGER=web.config.celery_always_eager
-#)
