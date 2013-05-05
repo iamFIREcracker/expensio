@@ -8,7 +8,6 @@ import web
 from app import config
 
 
-
 web.config.debug = config.DEBUG
 web.config.debug_sql = config.DEBUG_SQL
 
@@ -20,7 +19,6 @@ web.config.db = config.DATABASE_URL
 
 web.config.celery_broker = config.CELERY_BROKER
 web.config.celery_result_backend = config.CELERY_RESULT_BACKEND
-
 
 
 def create_app():
@@ -45,19 +43,18 @@ def create_app():
     db = web.database(dbn='sqlite', db=dbpath)
     session = web.session.Session(app, web.session.DBStore(db, 'session'))
 
+    uploadman = UploadManager(config.UPLOAD_DIR, workingdir)
+    avatarman = UploadManager(config.AVATAR_DIR, workingdir)
+    exportman = ExportManager(workingdir)
+
     app.add_processor(web.loadhook(header_html))
     app.add_processor(web.loadhook(load_path_url))
     app.add_processor(web.loadhook(load_logger(create_logger(web.config))))
     app.add_processor(web.loadhook(load_render(views)))
     app.add_processor(web.loadhook(load_session(session)))
-    app.add_processor(web.loadhook(load_keyvalue('uploadman',
-                                                UploadManager(config.UPLOAD_DIR,
-                                                            workingdir))))
-    app.add_processor(web.loadhook(load_keyvalue('avatarman',
-                                                UploadManager(config.AVATAR_DIR,
-                                                            workingdir))))
-    app.add_processor(web.loadhook(load_keyvalue('exportman',
-                                                ExportManager(workingdir))))
+    app.add_processor(web.loadhook(load_keyvalue('uploadman', uploadman)))
+    app.add_processor(web.loadhook(load_keyvalue('avatarman', avatarman)))
+    app.add_processor(web.loadhook(load_keyvalue('exportman', exportman)))
     app.add_processor(load_sqla(create_session()))
 
     return app
