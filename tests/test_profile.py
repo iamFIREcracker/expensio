@@ -118,3 +118,23 @@ class TestProfile(TestCaseWithApp):
         self.assertTrue(
                 resp.location.startswith(url('/static/avatars/')),
                 'The redirect should point to a static resource')
+
+    def test_http_accept_header_is_required_to_remove_avatar(self):
+        with self.assertRaises(webtest.AppError) as cm:
+            self.app.post('/v1/users/invalid-uuid/avatar/remove')
+            self.assertEqual("Bad response: 406 Not Acceptable", cm.exception)
+
+    def test_logged_user_cannot_remove_avatar_of_another_user(self):
+        register(self.app)
+        with self.assertRaises(webtest.AppError) as cm:
+            self.app.post('/v1/users/invalid-uuid/avatar/remove',
+                          extra_environ=dict(HTTP_ACCEPT='application/json'))
+            self.assertEqual("Bad response: 401 Unauthorized",
+                             cm.exception)
+
+    def test_logged_user_can_remove_avatar(self):
+        user_id = register(self.app)
+        url = '/v1/users/%(user_id)s/avatar/remove' % dict(user_id=user_id)
+        resp = self.app.post(url,
+                             extra_environ=dict(HTTP_ACCEPT='application/json'))
+        self.assertEquals('200 OK', resp.status)
