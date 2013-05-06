@@ -112,15 +112,37 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
 
 
 class UsersAvatarRemove(BaseHandler):
+
+    @api
     @protected
     @me
     def POST(self, id):
+        """Removes the avatar of the user identified by ``id``.
+
+        The 'HTTP_ACCEPT' header is required to allow the controller to specify
+        the acceptable media type for the response.
+
+        There should be a logged-in user behind this request.
+
+        The specified ``id`` should match the one of the logged-in user.
+
+        If all these prerequisites hold true then the controller will unlink the
+        avatar, if any, from the logged-in user.
+
+        On success the controller will clear the 'avatar' property of the
+        logged-in user and then return '200 OK' back to the client.
+
+        On success the controller will spawn an asynchronous task (in charge of
+        processing the image) and will return '202 Accepted'.  Note that the
+        'Location' header will be filled with the URI handy to check the status
+        of the asynchronous task.
+        """
         u = self.current_user()
         u.avatar = None
         web.ctx.orm.add(u)
         web.ctx.orm.commit()
         u = web.ctx.orm.merge(u)
-        return jsonify(success=True, user=UserSerializer(u))
+        return web.ok()
 
 
 class UsersEditHandler(BaseHandler):
