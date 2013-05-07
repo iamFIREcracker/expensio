@@ -6,19 +6,16 @@ var UsersManager = (function() {
         $.ajax({
             dataType: 'json',
             url: url,
-            success: function(data) {
-                setTimeout(function() {
-                    avatarChangeCheckStatus(url);
-                }, 1000);
-            },
-            error: function(data) {
-                console.log(data);
-                if (data.status === 201 && data.responseText === 'Created') {
+            statusCode: {
+                200: function(data) {
+                    setTimeout(function() {
+                        avatarChangeCheckStatus(url);
+                    }, 1000);
+                },
+                201: function() {
                     setTimeout(function() {
                         window.location.reload();
                     }, 2000);
-                } else {
-                    logger.error('Something went wrong while contacting the server');
                 }
             }
         });
@@ -42,17 +39,6 @@ var UsersManager = (function() {
         }
     };
 
-
-    var onAvatarRemoveSubmitSuccess = function(data) {
-        OnSubmitSuccess($('#user_avatar'), data, function() {
-            logger.success(
-                    'Avatar successfully removed!', function() {
-                        setTimeout(function() {
-                            window.location.reload();
-                        }, 2000);
-                    });
-        });
-    };
 
     var onAvatarRemoveSubmitError = function(data) {
         logger.error('Something went wrong while contacting the server');
@@ -133,11 +119,20 @@ var UsersManager = (function() {
                 var $modal = ui.confirmAvatarRemove();
 
                 $modal.find('a').click(function() {
-                    $form.ajaxSubmit({
+                    $.ajax({
                         dataType: 'json',
-                        url: '/users/' + $form.find('#id').val() + '/avatar/remove',
-                        success: onAvatarRemoveSubmitSuccess,
-                        error: onAvatarRemoveSubmitError,
+                        type: 'POST',
+                        url: '/v1/users/' + $form.find('#id').val() + '/avatar/remove',
+                        statusCode: {
+                            200: function(data) {
+                                logger.success(
+                                        'Avatar successfully removed!', function() {
+                                            setTimeout(function() {
+                                                window.location.reload();
+                                            }, 2000);
+                                        });
+                            },
+                        },
                     });
                 });
             });
