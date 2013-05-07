@@ -131,11 +131,6 @@ class UsersAvatarRemove(BaseHandler):
 
         On success the controller will clear the 'avatar' property of the
         logged-in user and then return '200 OK' back to the client.
-
-        On success the controller will spawn an asynchronous task (in charge of
-        processing the image) and will return '202 Accepted'.  Note that the
-        'Location' header will be filled with the URI handy to check the status
-        of the asynchronous task.
         """
         u = self.current_user()
         u.avatar = None
