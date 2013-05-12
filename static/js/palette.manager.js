@@ -19,7 +19,6 @@ var PaletteManager = (function() {
                 background: category.background
             };
         });
-        console.log(categories);
         onReadySuccess();
     };
 

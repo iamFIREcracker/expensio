@@ -43,6 +43,13 @@ def post_avatar_change(user_id, avatar, app):
             ))
     return resp
 
+def edit_profile(user_id, app, **data):
+    """Updates profile."""
+    resp = app.post(
+            '/v1/users/%(user_id)s/edit' % dict(user_id=user_id),
+            data, extra_environ=dict(HTTP_ACCEPT='application/json'))
+    return resp
+
 
 def upload(filename):
     """Return a webtest.Upload object for ``filename``.
@@ -66,6 +73,15 @@ class TestCaseWithApp(unittest.TestCase):
         # Initialize the database
         from app.database import init_db
         init_db()
+
+        # Configure celery
+        #from app.celery import celery
+
+        #celery.conf.update(
+            ##BROKER_BACKEND='memory',
+            #CELERY_ALWAYS_EAGER=True,
+            #CELERY_EAGER_PROPAGATE_EXCEPTIONS=True
+        #)
 
         # Create the application
         from app import create_app

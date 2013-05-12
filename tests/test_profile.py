@@ -5,6 +5,7 @@ import time
 
 import webtest
 
+from tests.utils import edit_profile
 from tests.utils import post_avatar_change
 from tests.utils import register
 from tests.utils import upload
@@ -138,3 +139,28 @@ class TestProfile(TestCaseWithApp):
         resp = self.app.post(url,
                              extra_environ=dict(HTTP_ACCEPT='application/json'))
         self.assertEquals('200 OK', resp.status)
+
+    def test_http_accept_header_is_required_to_update_profile(self):
+        with self.assertRaises(webtest.AppError) as cm:
+            edit_profile('invalid-uuid', self.app)
+            self.app.post('/v1/users/invalid-uuid/edit')
+            self.assertEqual("Bad response: 406 Not Acceptable", cm.exception)
+
+    def test_logged_user_cannot_update_profile_of_another_user(self):
+        register(self.app)
+        with self.assertRaises(webtest.AppError) as cm:
+            edit_profile('invalid-uuid', self.app)
+            self.assertEqual("Bad response: 401 Unauthorized", cm.exception)
+
+    def test_logged_user_cannot_update_profile_with_invalid_currency(self):
+        user_id = register(self.app)
+        resp = edit_profile(user_id, self.app, name='name', currency='invalid')
+        self.assertFalse(
+                resp.json['success'], 'An error should have been received')
+        self.assertIn('errors', resp.json)
+        self.assertIn('currency', resp.json['errors'])
+
+    def test_logged_user_can_update_profile(self):
+        user_id = register(self.app)
+        resp = edit_profile(user_id, self.app, name='name', currency='$')
+        self.assertEquals('204 No Content', resp.status)

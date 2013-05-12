@@ -3,13 +3,14 @@
 
 import celery
 import web
+from web.webapi import _status_code
 
 import app.tasks as tasks
 from app.forms import users_avatar
 from app.forms import users_edit
-from app.serializers import UserSerializer
 from app.upload import UploadedFile
 from app.tools.request_decorators import api
+from app.utils import describe_invalid_form
 from app.utils import jsonify
 from app.utils import logout
 from app.utils import me
@@ -41,8 +42,8 @@ class UsersAvatarChange(BaseHandler):
         'Location' header will be filled with the URI handy to check the status
         of the asynchronous task.
 
-        On error an object with error descriptions and of the specified media
-        format is returned to the caller:
+        On error an object of the specified media format containing error
+        descriptions will be sent back to the caller:
         {
             "success": false,
             "errors":
@@ -141,22 +142,46 @@ class UsersAvatarRemove(BaseHandler):
 
 
 class UsersEditHandler(BaseHandler):
+    
+    @api
     @protected
     @me
     def POST(self, id):
+        """Changes one or more properties of the user identified by ``id``.
+
+        The 'HTTP_ACCEPT' header is required to allow the controller to specify
+        the acceptable media type for the response.
+
+        There should be a logged-in user behind this request.
+
+        The specified ``id`` should match the one of the logged-in user.
+
+        If all these prerequisites hold true then the controller will try to
+        update the logged-in user.
+
+        On success the controller will return '204 No Content'.
+
+        On error (e.g. one or more submitted fields are invalid), an object of
+        the specified media format containing error descriptions will be sent
+        back to the caller:
+        {
+            "success": false,
+            "errors":
+            {
+                "currency": "Unknown"
+            }
+        }
+        """
         form = users_edit()
         if not form.validates():
-            return jsonify(success=False,
-                    errors=dict((i.name, i.note) for i in form.inputs
-                        if i.note is not None))
+            return jsonify(success=False, errors=describe_invalid_form(form))
         else:
             u = self.current_user()
             u.name = form.d.name
             u.currency = form.d.currency
             web.ctx.orm.add(u)
             web.ctx.orm.commit()
-            u = web.ctx.orm.merge(u)
-            return jsonify(success=True, user=UserSerializer(u))
+            raise _status_code('204 No Content')
 
 
 class UsersDeleteHandler(BaseHandler):

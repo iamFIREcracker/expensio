@@ -56,10 +56,10 @@ URLS = (
     '/accounts/twitter/disconnect', AccountsTwitterDisconnectHandler,
     '/logout', LogoutHandler,
 
-    '/users/(.+)/edit', UsersEditHandler,
     '/v1/users/(.+)/avatar/change', UsersAvatarChange,
     '/v1/users/(.+)/avatar/change/status/(.+)', UsersAvatarChangeStatusHandler,
     '/v1/users/(.+)/avatar/remove', UsersAvatarRemove,
+    '/v1/users/(.+)/edit', UsersEditHandler,
     '/users/(.+)/delete', UsersDeleteHandler,
 
     '/stats/days', StatsDaysHandler,

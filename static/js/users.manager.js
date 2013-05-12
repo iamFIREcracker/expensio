@@ -45,22 +45,6 @@ var UsersManager = (function() {
     };
 
 
-    var onEditSubmitSuccess = function(data) {
-        OnSubmitSuccess($('#user_edit'), data, function() {
-            logger.success(
-                    'User edited successfully!', function() {
-                        setTimeout(function() {
-                            window.location = '/';
-                        }, 2000);
-                    });
-        });
-    };
-
-    var onEditSubmitError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
-
     var onAccountDisconnectSuccess = function(data) {
         OnSubmitSuccess($('#user_connect'), data, function() {
             logger.success(
@@ -143,11 +127,25 @@ var UsersManager = (function() {
             $('#user_edit').submit(function() {
                 var $form = $(this);
 
-                $form.ajaxSubmit({
+                $.ajax({
                     dataType: 'json',
-                    url: '/users/' + $form.find('#id').val() + '/edit',
-                    success: onEditSubmitSuccess,
-                    error: onEditSubmitError,
+                    type: 'POST',
+                    url: '/v1/users/' + $form.find('#id').val() + '/edit',
+                    data: $form.formSerialize(),
+                    statusCode: {
+                        200: function(data) {
+                            OnSubmitSuccess($('#user_edit'), data);
+                        },
+                        204: function(data) {
+                            logger.success(
+                                'User edited successfully!', function() {
+                                    setTimeout(function() {
+                                        window.location = '/';
+                                        }, 2000);
+                                    });
+                        }
+                    },
+                    
                 });
 
                 return false;
