@@ -137,12 +137,7 @@ var UsersManager = (function() {
                             OnSubmitSuccess($('#user_edit'), data);
                         },
                         204: function(data) {
-                            logger.success(
-                                'User edited successfully!', function() {
-                                    setTimeout(function() {
-                                        window.location = '/';
-                                        }, 2000);
-                                    });
+                            logger.success('User edited successfully!');
                         }
                     },
                     
