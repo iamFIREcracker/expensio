@@ -5,6 +5,22 @@
 import web
 
 
+def html(func):
+    """Sets the 'Content-type' header to 'text/html'.
+
+    >>> class Headers(list):
+    ...   def append(self, v):
+    ...     print v
+    >>> request = lambda: None
+
+    >>> web.ctx['headers'] = Headers()
+    >>> html(request)()
+    ('Content-Type', 'text/html; charset=UTF-8')
+    """
+    web.header('Content-Type', 'text/html; charset=UTF-8')
+    return func
+
+
 def api(func):
     """Checks that the current request has the header ``HTTP_ACCEPT`` set, and
     that the specified value is actually supported by the server.
