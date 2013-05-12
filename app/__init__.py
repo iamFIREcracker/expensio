@@ -25,7 +25,6 @@ def create_app():
     """App factory."""
     from app.database import create_session
     from app.logging import create_logger
-    from app.tools.app_processor import header_html
     from app.tools.app_processor import load_keyvalue
     from app.tools.app_processor import load_logger
     from app.tools.app_processor import load_path_url
@@ -47,7 +46,6 @@ def create_app():
     avatarman = UploadManager(config.AVATAR_DIR, workingdir)
     exportman = ExportManager(workingdir)
 
-    app.add_processor(web.loadhook(header_html))
     app.add_processor(web.loadhook(load_path_url))
     app.add_processor(web.loadhook(load_logger(create_logger(web.config))))
     app.add_processor(web.loadhook(load_render(views)))

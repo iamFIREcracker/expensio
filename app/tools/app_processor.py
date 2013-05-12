@@ -12,11 +12,6 @@ from app.assets import env
 
 
 
-def header_html():
-    """Global header setter for `text/html` documents."""
-    web.header('Content-Type', 'text/html; charset=UTF-8')
-
-
 def header_json():
     """Global header setter for `text/json` documents."""
     web.header('Content-Type', 'text/json; charset=UTF-8')
