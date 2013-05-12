@@ -61,6 +61,21 @@ def jsonify(*args, **kwargs):
 
     return json.dumps(dict(*args, **kwargs), cls=serializers.JSONSerializer)
 
+def describe_invalid_form(form):
+    """Describes the reasons why ``form`` has been invalidated.
+
+    The function iterates on all the 'input' fields of the given form in order
+    to extract the associated invalidation note.
+
+    A dictionary containing the names of the input fields as keys, and
+    validation errors as values is returned:
+    {
+        'field1': 'Required',
+        'field2': 'Invalid (e.g. MM/DD/YYYY)'
+    }
+    """
+    return dict((i.name, i.note) for i in form.inputs if i.note is not None)
+
 
 def logout():
     web.setcookie('user', '', expires=time.time() - 86400)
