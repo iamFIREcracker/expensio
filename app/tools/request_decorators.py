@@ -17,8 +17,10 @@ def html(func):
     >>> html(request)()
     ('Content-Type', 'text/html; charset=UTF-8')
     """
-    web.header('Content-Type', 'text/html; charset=UTF-8')
-    return func
+    def inner(*args, **kwargs):
+        web.header('Content-Type', 'text/html; charset=UTF-8')
+        return func(*args, **kwargs)
+    return inner
 
 
 def api(func):
