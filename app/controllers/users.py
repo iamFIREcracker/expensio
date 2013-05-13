@@ -185,12 +185,28 @@ class UsersEditHandler(BaseHandler):
 
 
 class UsersDeleteHandler(BaseHandler):
+
+    @api
     @protected
     @me
     def POST(self, id):
+        """Deletes the user identified by ``id``.
+
+        The 'HTTP_ACCEPT' header is required to allow the controller to specify
+        the acceptable media type for the response.
+
+        There should be a logged-in user behind this request.
+
+        The specified ``id`` should match the one of the logged-in user.
+
+        If all these prerequisites hold true then the controller will delete
+        (deactivate) the logged-in user.
+
+        On success the controller will return '204 No Content'.
+        """
         u = self.current_user()
         u.deleted = True
         web.ctx.orm.add(u)
         web.ctx.orm.commit()
         logout()
-        return jsonify(success=True)
+        raise _status_code('204 No Content')

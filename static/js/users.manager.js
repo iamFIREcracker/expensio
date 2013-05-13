@@ -61,20 +61,6 @@ var UsersManager = (function() {
     };
 
 
-    var onDeleteSubmitSuccess = function(data) {
-        logger.success(
-                'Account successfully deactivated .. bye byeeee!', function() {
-                    setTimeout(function() {
-                        window.location = '/';
-                    }, 2000);
-                });
-    };
-
-    var onDeleteSubmitError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
-
     return {
         onReady: function(logger_, ui_) {
             logger = logger_;
@@ -167,11 +153,22 @@ var UsersManager = (function() {
             $('#user_delete').submit(function() {
                 var $form = $(this);
 
-                $form.ajaxSubmit({
-                    dataType: 'html',
-                    url: '/users/' + $form.find('#id').val() + '/delete',
-                    success: onDeleteSubmitSuccess,
-                    error: onDeleteSubmitError,
+                $.ajax({
+                    dataType: 'json',
+                    type: 'POST',
+                    url: '/v1/users/' + $form.find('#id').val() + '/delete',
+                    statusCode: {
+                        204: function(data) {
+                            logger.success(
+                                    'Account successfully deactivated .. bye byeeee!',
+                                    function() {
+                                        setTimeout(function() {
+                                            window.location = '/';
+                                        }, 2000);
+                                    });
+
+                        }
+                    }
                 });
 
                 return false;

@@ -50,6 +50,12 @@ def edit_profile(user_id, app, **data):
             data, extra_environ=dict(HTTP_ACCEPT='application/json'))
     return resp
 
+def delete_profile(user_id, app):
+    """Deletes the user specified by ``user_id``."""
+    resp = app.post(
+            '/v1/users/%(user_id)s/delete' % dict(user_id=user_id),
+            extra_environ=dict(HTTP_ACCEPT='application/json'))
+    return resp
 
 def upload(filename):
     """Return a webtest.Upload object for ``filename``.

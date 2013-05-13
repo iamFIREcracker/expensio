@@ -60,7 +60,7 @@ URLS = (
     '/v1/users/(.+)/avatar/change/status/(.+)', UsersAvatarChangeStatusHandler,
     '/v1/users/(.+)/avatar/remove', UsersAvatarRemove,
     '/v1/users/(.+)/edit', UsersEditHandler,
-    '/users/(.+)/delete', UsersDeleteHandler,
+    '/v1/users/(.+)/delete', UsersDeleteHandler,
 
     '/stats/days', StatsDaysHandler,
     '/stats/categories', StatsCategoriesHandler,

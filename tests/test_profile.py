@@ -6,6 +6,7 @@ import time
 import webtest
 
 from tests.utils import edit_profile
+from tests.utils import delete_profile
 from tests.utils import post_avatar_change
 from tests.utils import register
 from tests.utils import upload
@@ -143,7 +144,6 @@ class TestProfile(TestCaseWithApp):
     def test_http_accept_header_is_required_to_update_profile(self):
         with self.assertRaises(webtest.AppError) as cm:
             edit_profile('invalid-uuid', self.app)
-            self.app.post('/v1/users/invalid-uuid/edit')
             self.assertEqual("Bad response: 406 Not Acceptable", cm.exception)
 
     def test_logged_user_cannot_update_profile_of_another_user(self):
@@ -163,4 +163,20 @@ class TestProfile(TestCaseWithApp):
     def test_logged_user_can_update_profile(self):
         user_id = register(self.app)
         resp = edit_profile(user_id, self.app, name='name', currency='$')
+        self.assertEquals('204 No Content', resp.status)
+
+    def test_http_accept_header_is_required_to_delete_user(self):
+        with self.assertRaises(webtest.AppError) as cm:
+            delete_profile('invalid-uuid', self.app)
+            self.assertEqual("Bad response: 406 Not Acceptable", cm.exception)
+
+    def test_logged_user_cannot_delete_profile_of_another_user(self):
+        register(self.app)
+        with self.assertRaises(webtest.AppError) as cm:
+            delete_profile('invalid-uuid', self.app)
+            self.assertEqual("Bad response: 401 Unauthorized", cm.exception)
+
+    def test_logged_user_can_delete_profile(self):
+        user_id = register(self.app)
+        resp = delete_profile(user_id, self.app)
         self.assertEquals('204 No Content', resp.status)
