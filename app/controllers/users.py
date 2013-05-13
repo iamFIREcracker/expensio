@@ -129,14 +129,13 @@ class UsersAvatarRemove(BaseHandler):
         avatar, if any, from the logged-in user.
 
         On success the controller will clear the 'avatar' property of the
-        logged-in user and then return '200 OK' back to the client.
+        logged-in user and then return '204 No Content' back to the client.
         """
         u = self.current_user()
         u.avatar = None
         web.ctx.orm.add(u)
         web.ctx.orm.commit()
-        u = web.ctx.orm.merge(u)
-        return web.ok()
+        raise _status_code('204 No Content')
 
 
 class UsersEditHandler(BaseHandler):

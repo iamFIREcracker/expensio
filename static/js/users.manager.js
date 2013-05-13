@@ -40,11 +40,6 @@ var UsersManager = (function() {
     };
 
 
-    var onAvatarRemoveSubmitError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
-
     var onAccountDisconnectSuccess = function(data) {
         OnSubmitSuccess($('#user_connect'), data, function() {
             logger.success(
@@ -94,9 +89,10 @@ var UsersManager = (function() {
                         type: 'POST',
                         url: '/v1/users/' + $form.find('#id').val() + '/avatar/remove',
                         statusCode: {
-                            200: function(data) {
+                            204: function(data) {
                                 logger.success(
-                                        'Avatar successfully removed!', function() {
+                                        'Avatar successfully removed!',
+                                        function() {
                                             setTimeout(function() {
                                                 window.location.reload();
                                             }, 2000);

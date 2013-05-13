@@ -113,7 +113,7 @@ class TestProfile(TestCaseWithApp):
     def test_logged_user_can_remove_avatar(self):
         user_id = register(self.app)
         resp = remove_avatar(user_id, self.app)
-        self.assertEquals('200 OK', resp.status)
+        self.assertEquals('204 No Content', resp.status)
 
     def test_http_accept_header_is_required_to_update_profile(self):
         with self.assertRaises(webtest.AppError) as cm:
