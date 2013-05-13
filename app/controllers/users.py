@@ -55,9 +55,7 @@ class UsersAvatarChange(BaseHandler):
         form = users_avatar()
 
         if not form.validates():
-            return jsonify(success=False,
-                    errors=dict((i.name, i.note) for i in form.inputs
-                        if i.note is not None))
+            return jsonify(success=False, errors=describe_invalid_form(form))
         else:
             avatar = UploadedFile('avatar')
             task_id = tasks.UsersAvatarChangeTask.delay(
