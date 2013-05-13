@@ -34,14 +34,20 @@ def login(app):
     return resp.follow() # -> /profile
 
 
-def post_avatar_change(user_id, avatar, app):
-    """Posts a new avatar change remote task."""
-    resp = app.post(
-            '/v1/users/%(user_id)s/avatar/change' % dict(user_id=user_id),
-            dict(avatar=upload(avatar)), extra_environ=dict(
-                HTTP_ACCEPT='application/json'
-            ))
+def change_avatar(user_id, app, avatar=None):
+    """Posts a new avatar change remove task."""
+    data = dict() if avatar is None else dict(avatar=_upload(avatar))
+    url = '/v1/users/%(user_id)s/avatar/change' % dict(user_id=user_id)
+    resp = app.post(url, data,
+                    extra_environ=dict(HTTP_ACCEPT='application/json'))
     return resp
+
+def remove_avatar(user_id, app):
+    """Removes the avatar associated with ``user_id``."""
+    url = '/v1/users/%(user_id)s/avatar/remove' % dict(user_id=user_id)
+    resp = app.post(url, extra_environ=dict(HTTP_ACCEPT='application/json'))
+    return resp
+
 
 def edit_profile(user_id, app, **data):
     """Updates profile."""
@@ -57,7 +63,7 @@ def delete_profile(user_id, app):
             extra_environ=dict(HTTP_ACCEPT='application/json'))
     return resp
 
-def upload(filename):
+def _upload(filename):
     """Return a webtest.Upload object for ``filename``.
     
     Note that ``filename`` is supposed to be relative."""
