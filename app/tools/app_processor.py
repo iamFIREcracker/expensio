@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-
 import web
 from web.contrib.template import render_jinja
 from webassets.ext.jinja2 import AssetsExtension
 
 import app.config as config
+import app.exceptions
 from app.assets import env
 
 
@@ -97,4 +96,26 @@ def load_sqla(dbsession):
             return handler()
         finally:
             dbsession.remove()
+    return inner
+
+
+def manage_content_exceptions():
+    """Checks if ``ResponseContent`` exceptions are thrown by the request
+    handler, and in that case, return the wrapped content.
+
+    >>> def handler():
+    ...   print 'Hello, world!'
+    >>> manage_content_exceptions()(handler)
+    Hello, world!
+
+    >>> def handler():
+    ...   raise app.exceptions.ResponseContent('Hello, exception!')
+    >>> manage_content_exceptions()(handler)
+    'Hello, exception!'
+    """
+    def inner(handler):
+        try:
+            return handler()
+        except app.exceptions.ResponseContent as r:
+            return r.content
     return inner
