@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 import web
 
 
@@ -24,33 +23,36 @@ def html(func):
 
 
 def api(func):
-    """Checks that the current request has the header ``HTTP_ACCEPT`` set, and
+    """Checks that the current request has the header ``HTTP_ACCEPT`` set and
     that the specified value is actually supported by the server.
 
-    If an unsupported content-type is passed a ``web.notacceptable`` exception
-    is raised and the status '406 Not acceptable' is sent back to the client.
+    If an unsupported content-type is passed, a '406 Not acceptable' is sent
+    back to the client.
 
+    On success, the requested content-type header is set and the request is
+    executed.
 
     >>> class MyNotAcceptable(Exception):
     ...   pass
     >>> web.notacceptable = MyNotAcceptable
     >>> request = lambda: 'Hello world'
 
-
     >>> web.ctx['environ'] = dict()
+    >>> web.ctx['headers'] = list()
     >>> api(request)()
     Traceback (most recent call last):
         ...
     MyNotAcceptable
 
-
     >>> web.ctx['environ'] = dict(HTTP_ACCEPT='application/xml')
+    >>> web.ctx['headers'] = list()
     >>> api(request)()
     Traceback (most recent call last):
         ...
     MyNotAcceptable
 
     >>> web.ctx['environ'] = dict(HTTP_ACCEPT='application/json')
+    >>> web.ctx['headers'] = list()
     >>> api(request)()
     'Hello world'
     """
@@ -58,11 +60,7 @@ def api(func):
         accept = web.ctx.environ.get('HTTP_ACCEPT', '').split(',')
         if 'application/json' not in accept:
             raise web.notacceptable()
+
+        web.header('Content-Type', 'application/json')
         return func(*args, **kwargs)
     return inner
-
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
