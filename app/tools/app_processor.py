@@ -99,23 +99,21 @@ def load_sqla(dbsession):
     return inner
 
 
-def manage_content_exceptions():
+def manage_content_exceptions(handler):
     """Checks if ``ResponseContent`` exceptions are thrown by the request
     handler, and in that case, return the wrapped content.
 
     >>> def handler():
     ...   print 'Hello, world!'
-    >>> manage_content_exceptions()(handler)
+    >>> manage_content_exceptions(handler)
     Hello, world!
 
     >>> def handler():
     ...   raise app.exceptions.ResponseContent('Hello, exception!')
-    >>> manage_content_exceptions()(handler)
+    >>> manage_content_exceptions(handler)
     'Hello, exception!'
     """
-    def inner(handler):
-        try:
-            return handler()
-        except app.exceptions.ResponseContent as r:
-            return r.content
-    return inner
+    try:
+        return handler()
+    except app.exceptions.ResponseContent as r:
+        return r.content
