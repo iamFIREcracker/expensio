@@ -27,11 +27,11 @@ class MediaContentMapper(Publisher):
     tmp/12847/avatar_128x128.png => /var/web/app/media/avatar_128x128.png
     """
 
-    def __init__(self, destdir):
+    def __init__(self, mediadir):
         super(MediaContentMapper, self).__init__()
-        self.destdir = destdir
+        self.mediadir = mediadir
 
     def perform(self, *tmppaths):
         self.publish('mediapaths_ready',
-                     *zip(tmppaths, map(lambda n: os.path.join(self.destdir, n),
+                     *zip(tmppaths, map(lambda n: os.path.join(self.mediadir, n),
                                         map(os.path.basename, tmppaths))))
