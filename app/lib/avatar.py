@@ -146,27 +146,3 @@ class AvatarChangeTaskStatusChecker(Publisher):
             self.publish('task_error', e)
         else:
             self.publish('task_complete', ret)
-
-
-class AvatarPathInMediaFolderGenerator(Publisher):
-    """Generates the media folder destination path associated with the uploaded
-    avatar actually parked in the temporary folder.
-
-
-    >>> class Subscriber(object):
-    ...   def avatarpath_generated(self, avatarpath):
-    ...     print avatarpath
-    >>> this = AvatarPathInMediaFolderGenerator()
-    >>> this.add_subscriber(Subscriber())
-
-    >>> this.perform('/tmp/12847/avatar.png', '/var/web/app/media')
-    /var/web/app/media/avatar.png
-
-    >>> this.perform('tmp/12847/avatar.png', 'var/web/app/media')
-    var/web/app/media/avatar.png
-    """
-
-    def perform(self, tmppath, destdir):
-        tmpname = os.path.basename(tmppath)
-        destpath = os.path.join(destdir, tmpname)
-        self.publish('avatarpath_generated', destpath)
