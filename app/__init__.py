@@ -31,6 +31,7 @@ def create_app():
     from app.tools.app_processor import load_render
     from app.tools.app_processor import load_session
     from app.tools.app_processor import load_sqla
+    from app.tools.app_processor import manage_content_exceptions
     from app.export import ExportManager
     from app.upload import UploadManager
     from app.urls import URLS
@@ -54,5 +55,6 @@ def create_app():
     app.add_processor(web.loadhook(load_keyvalue('avatarman', avatarman)))
     app.add_processor(web.loadhook(load_keyvalue('exportman', exportman)))
     app.add_processor(load_sqla(create_session()))
+    app.add_processor(manage_content_exceptions)
 
     return app
