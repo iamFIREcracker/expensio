@@ -77,12 +77,12 @@ class AvatarChangeTaskExecutor(Publisher):
     >>> this = AvatarChangeTaskExecutor()
     >>> this.add_subscriber(Subscriber())
 
-    >>> this.perform(Task(), 'myuserid', '/tmp/avatar2395iu/foo.png')
+    >>> this.perform(Task(), 'myuserid', '/tmp/avatar2395iu/foo.png', None, None)
     Spawned task
     /v1/users/myuserid/avatar/change/status/42
     """
 
-    def perform(self, task, userid, uploaded):
+    def perform(self, task, userid, uploaded, destdir, baseurl):
         """Spawns ``task`` asynchronously and return the URL to use to check the
         status of the task.
 
@@ -90,8 +90,10 @@ class AvatarChangeTaskExecutor(Publisher):
             task the task
             userid the ID of the caller
             uploaded the path of the uploaded file
+            destdir the avatar destination directory
+            baseurl the avatar base url
         """
-        taskid = task.delay(userid, uploaded)
+        taskid = task.delay(userid, uploaded, destdir, baseurl)
         url = '/v1/users/%(userid)s/avatar/change/status/%(taskid)s'
         url = url % dict(userid=userid, taskid=taskid)
         self.publish('task_created', url)
