@@ -3,11 +3,19 @@
 
 import app.config as config
 from app.models import Category
+from app.models import User
 
+
+class Users(object):
+
+    @staticmethod
+    def get(user_id):
+        """Gets the user identified by ``user_id``."""
+        return User.query.filter_by(user_id=user_id).first()
 
 
 class Categories(object):
-    
+
     @staticmethod
     def exists(category_name, user_id):
         """Returns True if a category with name ``category_name`` and
