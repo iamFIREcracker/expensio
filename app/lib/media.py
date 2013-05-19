@@ -16,19 +16,22 @@ class MediaContentMapper(Publisher):
     ...       message = '%(source)s => %(destination)s'
     ...       message = message % dict(source=s, destination=d)
     ...       print message
-    >>> this = MediaContentMapper()
+    >>> this = MediaContentMapper('/var/web/app/media')
     >>> this.add_subscriber(Subscriber())
 
-    >>> this.perform('/var/web/app/media', '/tmp/12847/avatar.png')
+    >>> this.perform('/tmp/12847/avatar.png')
     /tmp/12847/avatar.png => /var/web/app/media/avatar.png
 
-    >>> paths = ['tmp/12847/avatar.png',  'tmp/12847/avatar_128x128.png']
-    >>> this.perform('/var/web/app/media', *paths)
+    >>> this.perform('tmp/12847/avatar.png',  'tmp/12847/avatar_128x128.png')
     tmp/12847/avatar.png => /var/web/app/media/avatar.png
     tmp/12847/avatar_128x128.png => /var/web/app/media/avatar_128x128.png
     """
 
-    def perform(self, destdir, *tmppaths):
+    def __init__(self, destdir):
+        super(MediaContentMapper, self).__init__()
+        self.destdir = destdir
+
+    def perform(self, *tmppaths):
         self.publish('mediapaths_ready',
-                     *zip(tmppaths, map(lambda n: os.path.join(destdir, n),
+                     *zip(tmppaths, map(lambda n: os.path.join(self.destdir, n),
                                         map(os.path.basename, tmppaths))))
