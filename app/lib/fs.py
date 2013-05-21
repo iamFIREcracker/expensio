@@ -30,5 +30,5 @@ class FileSystemAdapter(Publisher):
         On success the method will emit a 'files_renamed' message containing the
         the collection of _renaming_ transformations (i.e. ``mappings``).
         """
-        map(lambda s, d: os.rename(s, d), mappings)
+        map(lambda (s, d): os.rename(s, d), mappings)
         self.publish('files_renamed', *mappings)
