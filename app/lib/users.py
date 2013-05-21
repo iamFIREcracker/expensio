@@ -8,20 +8,22 @@ class AvatarUpdater(Publisher):
     """
 
     >>> class Session(object):
-    ...   def add(self, user):
-    ...     print 'Add user to session'
     ...   def commit(self):
     ...     print 'Commit session'
+    ...   def merge(self, user):
+    ...     print 'Merge user'
+    ...     return user
     >>> class Repository(object):
     ...   @staticmethod
     ...   def get(user_id):
     ...     class User(object):
     ...       avatar = None
+    ...       session = Session()
     ...     if user_id == 'invalid':
     ...       return None
     ...     else:
     ...       return User()
-    >>> this = AvatarUpdater(Session(), Repository())
+    >>> this = AvatarUpdater(Repository())
     >>> class Subscriber(object):
     ...   def not_existing_user(self, user_id):
     ...     print 'Invalid user'
@@ -34,13 +36,12 @@ class AvatarUpdater(Publisher):
     Invalid user
 
     >>> this.perform('valid', 'http://localhost/avatar.png')
-    Add user to session
     Commit session
+    Merge user
     Avatar updated
     """
-    def __init__(self, session, repository):
+    def __init__(self, repository):
         super(AvatarUpdater, self).__init__()
-        self.session = session
         self.repository = repository
 
     def perform(self, user_id, avatar):
@@ -57,6 +58,6 @@ class AvatarUpdater(Publisher):
             self.publish('not_existing_user', user_id)
         else:
             user.avatar = avatar
-            self.session.add(user)
-            self.session.commit()
-            self.publish('avatar_updated', avatar)
+            user.session.commit()
+            user = user.session.merge(user)
+            self.publish('avatar_updated', user.avatar)
