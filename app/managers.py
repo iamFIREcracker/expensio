@@ -9,9 +9,9 @@ from app.models import User
 class Users(object):
 
     @staticmethod
-    def get(user_id):
-        """Gets the user identified by ``user_id``."""
-        return User.query.filter_by(user_id=user_id).first()
+    def get(id):
+        """Gets the user identified by the specified ID."""
+        return User.query.filter_by(id=id).first()
 
 
 class Categories(object):
