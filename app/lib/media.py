@@ -40,30 +40,26 @@ class MediaContentMapper(Publisher):
 class ThumbnailGenerator(Publisher):
     """Creates 
 
-    >>> from collections import namedtuple
     >>> class Subscriber(object):
     ...   def thumbnails_ready(self, *thumbnails):
     ...     for t in thumbnails:
     ...       print t
-    >>> Image = namedtuple('Image', 'thumbnail save'.split())
-    >>> def image_factory(ignore):
-    ...   def dummy(*args, **kwargs):
-    ...     pass
-    ...   return Image(dummy, dummy)
     >>> this = ThumbnailGenerator()
     >>> this.add_subscriber(Subscriber())
+    >>> def thumbnail_maker(*args, **kwargs):
+    ...   pass
 
-    >>> this.perform(image_factory, 'image.png')
+    >>> this.perform(thumbnail_maker, 'image.png')
 
-    >>> this.perform(image_factory, 'image.png', (128, 128))
+    >>> this.perform(thumbnail_maker, 'image.png', (128, 128))
     image_128x128.png
 
-    >>> this.perform(image_factory, 'image.png', (128, 128), (42, 42))
+    >>> this.perform(thumbnail_maker, 'image.png', (128, 128), (42, 42))
     image_128x128.png
     image_42x42.png
     """
 
-    def perform(self, imgfactory, imgpath, *sizes):
+    def perform(self, thumb_maker, imgpath, *sizes):
         """Generates different thumbnails of ``imgpath``, each with one of the
         size specified in ``sizes`` (i.e. tuples containing width and height of
         the thumbnail).
@@ -75,9 +71,7 @@ class ThumbnailGenerator(Publisher):
         for (w, h) in sizes:
             dest = '%(path)s_%(width)dx%(height)d%(ext)s'
             dest = dest % dict(path=filepath, width=w, height=h, ext=ext)
-            img = imgfactory(imgpath)
-            img.thumbnail((w, h))
-            img.save(dest)
+            thumb_maker(imgpath, dest, (w, h))
             thumbnails.append(dest)
         self.publish('thumbnails_ready', *thumbnails)
 
