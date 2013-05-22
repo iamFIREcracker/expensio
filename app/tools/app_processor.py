@@ -90,7 +90,7 @@ def load_sqla(dbsession):
         dbsession database session
     """
     def inner(handler):
-        web.ctx.orm = dbsession
+        web.ctx.orm = dbsession()
 
         try:
             return handler()
