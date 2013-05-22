@@ -28,6 +28,8 @@ class AvatarValidator(Publisher):
 
     >>> this.perform('')
     Invalid: Missing
+    >>> this.perform({})
+    Invalid: Missing
 
     >>> this.perform(File('foo.mp3', None))
     Invalid: Invalid format
@@ -46,14 +48,14 @@ class AvatarValidator(Publisher):
     def perform(self, avatar):
         """Validates ``avatar`` and publish result messages accordingly.
 
-        If avatar is an empty string or its extension is not supported by the
-        system, a 'invalid_form' message is published followed by the reason
-        of the invalidation.
+        If avatar is empty (e.g. empty string or empty avatar) or its extension
+        is not supported by the system, a 'invalid_form' message is published
+        followed by the reason of the invalidation.
 
         Otherwise, a 'valid_message' with the extension and in-memory file
         object of the avatar is published.
         """
-        if avatar == '':
+        if avatar == '' or avatar == {}:
             self.publish('invalid_avatar', 'Missing')
         else:
             _, ext = os.path.splitext(avatar.filename)
