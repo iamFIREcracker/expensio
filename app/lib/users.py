@@ -7,22 +7,13 @@ from app.lib.publisher import Publisher
 class AvatarUpdater(Publisher):
     """
 
-    >>> class Session(object):
-    ...   def commit(self):
-    ...     print 'Commit session'
-    ...   def merge(self, user):
-    ...     print 'Merge user'
-    ...     return user
     >>> class Repository(object):
     ...   @staticmethod
-    ...   def get(user_id):
-    ...     class User(object):
-    ...       avatar = None
-    ...       session = Session()
+    ...   def change_avatar(user_id, avatar):
     ...     if user_id == 'invalid':
-    ...       return None
+    ...       return False
     ...     else:
-    ...       return User()
+    ...       return True
     >>> this = AvatarUpdater(Repository())
     >>> class Subscriber(object):
     ...   def not_existing_user(self, user_id):
@@ -36,8 +27,6 @@ class AvatarUpdater(Publisher):
     Invalid user
 
     >>> this.perform('valid', 'http://localhost/avatar.png')
-    Commit session
-    Merge user
     Avatar updated
     """
     def __init__(self, repository):
@@ -53,11 +42,7 @@ class AvatarUpdater(Publisher):
         On the other hand, a 'avatar_updated' message is published if the user
         exists and the avatar is updated successfully.
         """
-        user = self.repository.get(user_id)
-        if user is None:
-            self.publish('not_existing_user', user_id)
+        if self.repository.change_avatar(user_id, avatar):
+            self.publish('avatar_updated', avatar)
         else:
-            user.avatar = avatar
-            user.session.commit()
-            user = user.session.merge(user)
-            self.publish('avatar_updated', user.avatar)
+            self.publish('not_existing_user', user_id)
