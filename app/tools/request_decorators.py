@@ -61,6 +61,5 @@ def api(func):
         if 'application/json' not in accept:
             raise web.notacceptable()
 
-        web.header('Content-Type', 'application/json')
         return func(*args, **kwargs)
     return inner
