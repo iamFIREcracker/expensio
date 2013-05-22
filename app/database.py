@@ -30,10 +30,10 @@ def declarative_base():
     Wraps SQLAlchemy ``declarative_base`` by adding two new fields to the
     returned base class:  a ``session`` property and a ``query`` property handy
     to execute queries."""
-    session = create_session()
+    Session = create_session()
     Base = _declarative_base()
-    Base.session = session
-    Base.query = session.query_property()
+    Base.session = Session
+    Base.query = Session.query_property()
     return Base
 
 
