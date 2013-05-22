@@ -11,8 +11,10 @@ import app.tasks as tasks
 import app.lib.avatar as avatar
 import app.lib.fs as fs
 import app.lib.logging as logging
+import app.lib.users as users
 from app.exceptions import ResponseContent
 from app.forms import users_edit
+from app.managers import Users
 from app.tools.request_decorators import api
 from app.utils import describe_invalid_form
 from app.utils import jsonify
@@ -172,11 +174,19 @@ class UsersAvatarRemove(BaseHandler):
         On success the controller will clear the 'avatar' property of the
         logged-in user and then return '204 No Content' back to the client.
         """
-        u = self.current_user()
-        u.avatar = None
-        web.ctx.orm.add(u)
-        web.ctx.orm.commit()
-        raise _status_code('204 No Content')
+        userid = self.current_user().id
+        logger = logging.LoggingSubscriber(web.ctx.logger)
+        avatarchanger = users.AvatarUpdater(Users)
+
+        class AvatarUpdaterSubscriber(object):
+            def not_existing_user(self, user_id):
+                message = 'Invalid user ID: %(id)s' % dict(id=user_id)
+                raise ValueError(message)
+            def avatar_updated(self, avatar):
+                raise _status_code('204 No Content')
+
+        avatarchanger.add_subscriber(logger, AvatarUpdaterSubscriber())
+        avatarchanger.perform(userid, None)
 
 
 class UsersEditHandler(BaseHandler):
