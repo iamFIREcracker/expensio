@@ -53,6 +53,14 @@ class TestProfile(TestCaseWithApp):
         self.assertIn('errors', resp.json)
         self.assertIn('avatar', resp.json['errors'])
 
+    def test_logged_user_cannot_post_avatar_change_specifying_non_image(self):
+        user_id = register(self.app)
+        resp = change_avatar(user_id, self.app, __file__)
+        self.assertFalse(resp.json['success'],
+                         'An error should have been received')
+        self.assertIn('errors', resp.json)
+        self.assertIn('avatar', resp.json['errors'])
+
     def test_logged_user_can_post_avatar_change(self):
         user_id = register(self.app)
         resp = change_avatar(user_id, self.app, 'tests/avatar.png')
@@ -73,19 +81,6 @@ class TestProfile(TestCaseWithApp):
                         HTTP_ACCEPT='application/json'
                     ))
             self.assertEqual("Bad response: 401 Unauthorized", cm.exception)
-
-    def test_logged_user_cannot_change_avatar_with_a_not_image_file(self):
-        user_id = register(self.app)
-        resp = change_avatar(user_id, self.app, __file__)
-
-        # Wait for the async task to complete
-        time.sleep(1.0)
-
-        with self.assertRaises(webtest.AppError) as cm:
-            self.app.get(resp.location,
-                         extra_environ=dict(HTTP_ACCEPT='application/json'))
-            self.assertEqual("Bad response: 415 Unsupported Media Type",
-                             cm.exception)
 
     def test_logged_user_can_change_avatar(self):
         user_id = register(self.app)

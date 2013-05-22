@@ -1,16 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 from collections import Counter
+
+import web
 
 import sqlalchemy
 from PIL import Image
 
 import app.config as config
 import app.formatters as formatters
+import app.lib.fs as fs
+import app.lib.logging as logging
+import app.lib.media as media
+import app.lib.users as users
 from app.celery import celery
 from app.database import create_session
+from app.exceptions import ResponseContent
+from app.logging import create_logger
+from app.managers import Users
+from app.models import Base
 from app.models import Category
 from app.models import Expense
 from app.models import User
@@ -29,6 +38,16 @@ class ExpenseTSVWrapper(object):
         return '%s\n' % ('\t'.join([date, category, amount, note]), )
 
 
+def automatic_session_remover(func):
+    """Automatically closes any open session with the database."""
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        finally:
+            Base.session.remove()
+    return inner
+
+
 @celery.task
 def ExpensesExportTSVTask(exportman, user):
     filename = 'expenses.tsv'
@@ -43,21 +62,56 @@ def ExpensesExportTSVTask(exportman, user):
 
 
 @celery.task
-def UsersAvatarChangeTask(avatar, avatarman, user, home):
-    db_session = create_session()
-    _, ext = os.path.splitext(avatar.filename)
-    im = Image.open(avatar.name)
-    im.thumbnail((128, 128), Image.ANTIALIAS)
-    im.save(avatar.name)
+@automatic_session_remover
+def UsersAvatarChangeTask(userid, tempfile, mediadir, baseurl):
+    logger = logging.LoggingSubscriber(create_logger(web.config))
+    thumbnailer = media.ThumbnailGenerator()
+    mediamapper = media.MediaContentMapper(mediadir)
+    fsadapter = fs.FileSystemAdapter()
+    urlgenerator = media.MediaURLGenerator(mediadir, baseurl)
+    avatarchanger = users.AvatarUpdater(Users)
 
-    url = avatarman.add(avatar) if avatar else None
+    def thumbnail_maker(sourcepath, destinationpath, size):
+        img = Image.open(sourcepath)
+        img.thumbnail(size, Image.ANTIALIAS)
+        img.save(destinationpath)
 
-    user.avatar = url
-    db_session.add(user)
-    db_session.commit()
-    db_session.remove()
+    class ThumbnailsReadySubscriber(object):
+        def thumbnails_ready(self, *thumbnails):
+            mediamapper.perform(*thumbnails)
 
-    return os.path.join(home, url)
+    class MediaPathsReadySubscriber(object):
+        def mediapaths_ready(self, *mappings):
+            fsadapter.rename(*mappings)
+
+    class FilesRenamedSubscriber(object):
+        def files_renamed(self, (tmppath, mediapath)):
+            urlgenerator.perform(mediapath)
+
+    class MediaURLsSubscriber(object):
+        def invalid_paths(self, *paths):
+            message = 'Cannot generate media URLs for paths:  %(paths)r'
+            message = message % dict(paths=paths)
+            raise ValueError(message)
+        def urls_ready(self, avatar):
+            avatarchanger.perform(userid, avatar)
+
+    class AvatarUpdaterSubscriber(object):
+        def not_existing_user(self, user_id):
+            message = 'Invalid user ID: %(id)s' % dict(id=user_id)
+            raise ValueError(message)
+        def avatar_updated(self, avatar):
+            raise ResponseContent(avatar)
+
+    thumbnailer.add_subscriber(logger, ThumbnailsReadySubscriber())
+    mediamapper.add_subscriber(logger, MediaPathsReadySubscriber())
+    fsadapter.add_subscriber(logger, FilesRenamedSubscriber())
+    urlgenerator.add_subscriber(logger, MediaURLsSubscriber())
+    avatarchanger.add_subscriber(logger, AvatarUpdaterSubscriber())
+    try:
+        thumbnailer.perform(thumbnail_maker, tempfile, (128, 128))
+    except ResponseContent as r:
+        return r.content
 
 
 @celery.task

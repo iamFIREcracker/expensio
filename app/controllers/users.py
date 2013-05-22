@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import celery
+import os.path
+
 import web
 from web.webapi import _status_code
 
+import app.config
 import app.tasks as tasks
-from app.forms import users_avatar
+import app.lib.avatar as avatar
+import app.lib.fs as fs
+import app.lib.logging as logging
+from app.exceptions import ResponseContent
 from app.forms import users_edit
-from app.upload import UploadedFile
 from app.tools.request_decorators import api
 from app.utils import describe_invalid_form
 from app.utils import jsonify
@@ -52,21 +56,48 @@ class UsersAvatarChange(BaseHandler):
             }
         }
         """
-        form = users_avatar()
+        userid = self.current_user().id
+        logger = logging.LoggingSubscriber(web.ctx.logger)
+        validator = avatar.AvatarValidator()
+        fsadapter = fs.FileSystemAdapter()
+        executor = avatar.AvatarChangeTaskExecutor()
 
-        if not form.validates():
-            return jsonify(success=False, errors=describe_invalid_form(form))
-        else:
-            avatar = UploadedFile('avatar')
-            task_id = tasks.UsersAvatarChangeTask.delay(
-                    avatar, web.ctx.avatarman, self.current_user(),
-                    web.ctx.home).task_id
-            web.header(
-                    'Location',
-                    '/v1/users/%(user_id)s/avatar/change/status/%(task_id)s' % dict(
-                        user_id=self.current_user().id, task_id=task_id
-                    ))
-            raise web.accepted()
+        class AvatarValidatorSubscriber(object):
+            def invalid_avatar(self, reason):
+                content = jsonify(success=False, errors=dict(avatar=reason))
+                raise ResponseContent(content)
+
+            def valid_avatar(self, file, ext):
+                fsadapter.tempfile(file, ext)
+
+        class TempFileCreatorSubscriber(object):
+            def tempfile_created(self, tempfile):
+                executor.perform(tasks.UsersAvatarChangeTask, userid, tempfile,
+                                 app.config.AVATAR_DIR,
+                                 os.path.join(web.ctx.home,
+                                              app.config.AVATAR_DIR))
+
+        class TaskExecutorSubscriber(object):
+            def task_created(self, location):
+                web.header('Location', location)
+                raise web.accepted()
+
+
+        validator.add_subscriber(logger, AvatarValidatorSubscriber())
+        fsadapter.add_subscriber(logger, TempFileCreatorSubscriber())
+        executor.add_subscriber(logger, TaskExecutorSubscriber())
+        try:
+            # The dictionary used as default is needed by the framework to
+            # convert the uploaded file, if any, to a FieldStorage object.
+            #
+            # If 'avatar' is present and it is actually a file then a
+            # FieldStorage is created;  if 'avatar' is present but it is empty
+            # (i.e. form submitted without specifying a file) then an emtpy
+            # string is returned.  Finally (i.e. the field has not been set) an
+            # emtpy dictionary is returned.
+            validator.perform(web.input(avatar={}).avatar)
+        except ResponseContent as r:
+            return r.content
 
 
 class UsersAvatarChangeStatusHandler(BaseHandler):
@@ -74,7 +105,7 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
     @api
     @protected
     @me
-    def GET(self, id, task_id):
+    def GET(self, id, taskid):
         """Checks the status of a pending 'avatar-change' operation.
 
         The 'HTTP_ACCEPT' header is required to allow the controller to specify
@@ -85,7 +116,7 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
         The specified ``id`` should match the one of the logged-in user.
 
         If all these prerequisites hold true then the controller will check the 
-        status of a task with ID ``task_id``.
+        status of a task with ID ``taskid``.
 
         If the task is still active the controller will return '200 OK'; 
         clients are then supposed to come later and check again the status of the
@@ -98,16 +129,26 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
         Note that a '415 Unsupported Media Type' status message is returned if
         the format of the uploaded avatar cannot be handled by the server.
         """
-        try:
-            retval = (tasks.UsersAvatarChangeTask.AsyncResult(task_id)
-                    .get(timeout=0.1))
-        except celery.exceptions.TimeoutError:
-            raise web.ok()
-        except IOError:
-            raise web.unsupportedmediatype()
-        else:
-            web.header('Location', retval)
-            raise web.created()
+        logger = logging.LoggingSubscriber(web.ctx.logger)
+        checker = avatar.AvatarChangeTaskStatusChecker()
+
+        class StatusCheckerSubscriber(object):
+            def task_running(self):
+                raise web.ok()
+
+            def task_error(self, exception):
+                if type(exception).__name__ == 'IOError':
+                    raise web.unsupportedmediatype()
+                else:
+                    web.ctx.logger.exception('Avatar change task aborted')
+                    raise exception
+
+            def task_complete(self, location):
+                web.header('Location', location)
+                raise web.created()
+
+        checker.add_subscriber(logger, StatusCheckerSubscriber())
+        checker.perform(tasks.UsersAvatarChangeTask, taskid)
 
 
 class UsersAvatarRemove(BaseHandler):
