@@ -3,19 +3,20 @@
 
 import os
 import tempfile
+import uuid
 from app.lib.publisher import Publisher
 
 
 class FileSystemAdapter(Publisher):
 
-    def tempfile(self, file, ext):
-        """Creates a temporary file with extension ``ext`` and dump ``file``
-        into it.
+    def tempfile(self, file, suffix):
+        """Creates a temporary file with the given suffix and dump ``file`` into
+        it.
 
         On success the method will emit a 'tempfile_created' message followed by
         the name of temporary file created.
         """
-        suffix = '.' + ext
+        suffix = '%(uuid)s_%(suffix)s' % dict(uuid=uuid.uuid4(), suffix=suffix)
         with tempfile.NamedTemporaryFile("w+b", suffix=suffix, delete=False) as tmp:
             tmp.write(file.read())
             self.publish('tempfile_created', tmp.name)

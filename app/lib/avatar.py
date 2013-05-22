@@ -52,8 +52,8 @@ class AvatarValidator(Publisher):
         is not supported by the system, a 'invalid_form' message is published
         followed by the reason of the invalidation.
 
-        Otherwise, a 'valid_message' with the extension and in-memory file
-        object of the avatar is published.
+        Otherwise, a 'valid_avatar' message is published, with name of the name
+        and the content of the in-memory file object.
         """
         if avatar == '' or avatar == {}:
             self.publish('invalid_avatar', 'Missing')
@@ -63,7 +63,7 @@ class AvatarValidator(Publisher):
             if ext not in self.valid_extensions:
                 self.publish('invalid_avatar', 'Invalid format')
             else:
-                self.publish('valid_avatar', avatar.file, ext)
+                self.publish('valid_avatar', avatar.file, avatar.filename)
 
 
 class AvatarChangeTaskExecutor(Publisher):

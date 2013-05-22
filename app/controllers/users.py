@@ -67,8 +67,8 @@ class UsersAvatarChange(BaseHandler):
                 content = jsonify(success=False, errors=dict(avatar=reason))
                 raise ResponseContent(content)
 
-            def valid_avatar(self, file, ext):
-                fsadapter.tempfile(file, ext)
+            def valid_avatar(self, file, name):
+                fsadapter.tempfile(file, name)
 
         class TempFileCreatorSubscriber(object):
             def tempfile_created(self, tempfile):
