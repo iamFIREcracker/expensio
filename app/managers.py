@@ -9,9 +9,18 @@ from app.models import User
 class Users(object):
 
     @staticmethod
-    def get(id):
-        """Gets the user identified by the specified ID."""
-        return User.query.filter_by(id=id).first()
+    def change_avatar(userid, avatar):
+        """Changes the avatar of the user identified by ``userid``.
+
+        The function returns true if the user gets updated successfully, and
+        false If no user exists with the specified ID.
+        """
+        user = User.query.filter_by(id=userid).first()
+        if user is None:
+            return False
+        user.avatar = avatar
+        User.session.commit()
+        return True
 
 
 class Categories(object):
