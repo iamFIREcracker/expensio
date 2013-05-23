@@ -37,6 +37,19 @@ class Users(object):
         User.session.commit()
         return True
 
+    @staticmethod
+    def delete(userid):
+        """Deletes the user identified by ``userid``.
+
+        The function returns true if the user gets deleted successfully, and
+        false if no user exists with the specified ID.
+        """
+        user = User.query.filter_by(id=userid).first()
+        if user is None:
+            return False
+        user.deleted = True
+        User.session.commit()
+        return True
 
 class Categories(object):
 
