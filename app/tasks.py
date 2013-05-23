@@ -69,7 +69,7 @@ def UsersAvatarChangeTask(userid, tempfile, mediadir, baseurl):
     mediamapper = media.MediaContentMapper(mediadir)
     fsadapter = fs.FileSystemAdapter()
     urlgenerator = media.MediaURLGenerator(mediadir, baseurl)
-    avatarchanger = users.AvatarUpdater(Users)
+    avatarupdater = users.AvatarUpdater()
 
     def thumbnail_maker(sourcepath, destinationpath, size):
         img = Image.open(sourcepath)
@@ -94,7 +94,7 @@ def UsersAvatarChangeTask(userid, tempfile, mediadir, baseurl):
             message = message % dict(paths=paths)
             raise ValueError(message)
         def urls_ready(self, avatar):
-            avatarchanger.perform(userid, avatar)
+            avatarupdater.perform(Users, userid, avatar)
 
     class AvatarUpdaterSubscriber(object):
         def not_existing_user(self, user_id):
@@ -107,7 +107,7 @@ def UsersAvatarChangeTask(userid, tempfile, mediadir, baseurl):
     mediamapper.add_subscriber(logger, MediaPathsReadySubscriber())
     fsadapter.add_subscriber(logger, FilesRenamedSubscriber())
     urlgenerator.add_subscriber(logger, MediaURLsSubscriber())
-    avatarchanger.add_subscriber(logger, AvatarUpdaterSubscriber())
+    avatarupdater.add_subscriber(logger, AvatarUpdaterSubscriber())
     try:
         thumbnailer.perform(thumbnail_maker, tempfile, (128, 128))
     except ResponseContent as r:

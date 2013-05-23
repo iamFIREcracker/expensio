@@ -176,7 +176,7 @@ class UsersAvatarRemove(BaseHandler):
         """
         userid = self.current_user().id
         logger = logging.LoggingSubscriber(web.ctx.logger)
-        avatarchanger = users.AvatarUpdater(Users)
+        avatarupdater = users.AvatarUpdater()
 
         class AvatarUpdaterSubscriber(object):
             def not_existing_user(self, user_id):
@@ -185,8 +185,8 @@ class UsersAvatarRemove(BaseHandler):
             def avatar_updated(self, avatar):
                 raise _status_code('204 No Content')
 
-        avatarchanger.add_subscriber(logger, AvatarUpdaterSubscriber())
-        avatarchanger.perform(userid, None)
+        avatarupdater.add_subscriber(logger, AvatarUpdaterSubscriber())
+        avatarupdater.perform(Users, userid, None)
 
 
 class UsersEditHandler(BaseHandler):
