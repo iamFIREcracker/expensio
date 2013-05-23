@@ -183,7 +183,7 @@ class UsersAvatarRemove(BaseHandler):
             def not_existing_user(self, user_id):
                 message = 'Invalid user ID: %(id)s' % dict(id=user_id)
                 raise ValueError(message)
-            def avatar_updated(self, avatar):
+            def avatar_updated(self, user_id, avatar):
                 raise _status_code('204 No Content')
 
         avatarupdater.add_subscriber(logger, AvatarUpdaterSubscriber())
@@ -237,7 +237,7 @@ class UsersEditHandler(BaseHandler):
             def not_existing_user(self, user_id):
                 message = 'Invalid user ID: %(id)s' % dict(id=user_id)
                 raise ValueError(message)
-            def user_updated(self, name, currency):
+            def user_updated(self, user_id, name, currency):
                 raise _status_code('204 No Content')
 
         formvalidator.add_subscriber(logger, FormValidatorSubscriber())
@@ -268,7 +268,6 @@ class UsersDeleteHandler(BaseHandler):
 
         On success the controller will return '204 No Content'.
         """
-        userid = self.current_user().id
         logger = logging.LoggingSubscriber(web.ctx.logger)
         userdeleter = users.UserDeleter()
 
@@ -276,9 +275,9 @@ class UsersDeleteHandler(BaseHandler):
             def not_existing_user(self, user_id):
                 message = 'Invalid user ID: %(id)s' % dict(id=user_id)
                 raise ValueError(message)
-            def user_deleted(self):
+            def user_deleted(self, user_id):
                 logout()
                 raise _status_code('204 No Content')
 
         userdeleter.add_subscriber(logger, UserDeleterSubscriber())
-        userdeleter.perform(Users, userid)
+        userdeleter.perform(Users, self.current_user().id)

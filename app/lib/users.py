@@ -39,7 +39,7 @@ class AvatarUpdater(Publisher):
         exists and the avatar is updated successfully.
         """
         if repository.change_avatar(user_id, avatar):
-            self.publish('avatar_updated', avatar)
+            self.publish('avatar_updated', user_id, avatar)
         else:
             self.publish('not_existing_user', user_id)
 
@@ -80,7 +80,7 @@ class UserUpdater(Publisher):
         exists and the fields have been updated successfully.
         """
         if repository.update(user_id, name, currency):
-            self.publish('user_updated', name, currency)
+            self.publish('user_updated', user_id, name, currency)
         else:
             self.publish('not_existing_user', user_id)
 
@@ -121,6 +121,6 @@ class UserDeleter(Publisher):
         exists and the fields have been deleted successfully.
         """
         if repository.delete(user_id):
-            self.publish('user_deleted')
+            self.publish('user_deleted', user_id)
         else:
             self.publish('not_existing_user', user_id)
