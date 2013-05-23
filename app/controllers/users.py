@@ -277,6 +277,7 @@ class UsersDeleteHandler(BaseHandler):
                 message = 'Invalid user ID: %(id)s' % dict(id=user_id)
                 raise ValueError(message)
             def user_deleted(self):
+                logout()
                 raise _status_code('204 No Content')
 
         userdeleter.add_subscriber(logger, UserDeleterSubscriber())
