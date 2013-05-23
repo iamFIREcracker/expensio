@@ -9,6 +9,7 @@ from web.webapi import _status_code
 import app.config
 import app.tasks as tasks
 import app.lib.avatar as avatar
+import app.lib.forms as forms
 import app.lib.fs as fs
 import app.lib.logging as logging
 import app.lib.users as users
@@ -220,16 +221,31 @@ class UsersEditHandler(BaseHandler):
             }
         }
         """
-        form = users_edit()
-        if not form.validates():
-            return jsonify(success=False, errors=describe_invalid_form(form))
-        else:
-            u = self.current_user()
-            u.name = form.d.name
-            u.currency = form.d.currency
-            web.ctx.orm.add(u)
-            web.ctx.orm.commit()
-            raise _status_code('204 No Content')
+        userid = self.current_user().id
+        logger = logging.LoggingSubscriber(web.ctx.logger)
+        formvalidator = forms.FormValidator()
+        userupdater = users.UserUpdater()
+
+        class FormValidatorSubscriber(object):
+            def invalid_form(self, errors):
+                content = jsonify(success=False, errors=errors)
+                raise ResponseContent(content)
+            def valid_form(self, form):
+                userupdater.perform(Users, userid, form.d.name, form.d.currency)
+
+        class UserUpdaterSubscriber(object):
+            def not_existing_user(self, user_id):
+                message = 'Invalid user ID: %(id)s' % dict(id=user_id)
+                raise ValueError(message)
+            def user_updated(self, name, currency):
+                raise _status_code('204 No Content')
+
+        formvalidator.add_subscriber(logger, FormValidatorSubscriber())
+        userupdater.add_subscriber(logger, UserUpdaterSubscriber())
+        try:
+            formvalidator.perform(users_edit(), describe_invalid_form)
+        except ResponseContent as r:
+            return r.content
 
 
 class UsersDeleteHandler(BaseHandler):

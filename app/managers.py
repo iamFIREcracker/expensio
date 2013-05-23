@@ -22,6 +22,21 @@ class Users(object):
         User.session.commit()
         return True
 
+    @staticmethod
+    def update(userid, name, currency):
+        """Updates the 'name' and 'currency' fields of the user ``userid``.
+
+        The function returns true if the user gets updated successfully, and
+        false if no user exists with the specified ID.
+        """
+        user = User.query.filter_by(id=userid).first()
+        if user is None:
+            return False
+        user.name = name
+        user.currency = currency
+        User.session.commit()
+        return True
+
 
 class Categories(object):
 

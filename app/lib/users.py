@@ -42,3 +42,44 @@ class AvatarUpdater(Publisher):
             self.publish('avatar_updated', avatar)
         else:
             self.publish('not_existing_user', user_id)
+
+
+class UserUpdater(Publisher):
+    """
+    >>> this = UserUpdater()
+    >>> class Subscriber(object):
+    ...   def not_existing_user(self, user_id):
+    ...     print 'Invalid user'
+    ...   def user_updated(self, name, currency):
+    ...     print 'User updated'
+    >>> this.add_subscriber(Subscriber())
+    >>> class Repository(object):
+    ...   @staticmethod
+    ...   def update(user_id, name, currency):
+    ...     if user_id == 'invalid':
+    ...       return False
+    ...     else:
+    ...       return True
+    >>> repo = Repository()
+
+
+    >>> this.perform(repo, 'invalid', None, None)
+    Invalid user
+
+    >>> this.perform(repo, 'valid', 'John Smith', '$')
+    User updated
+    """
+
+    def perform(self, repository, user_id, name, currency):
+        """Sets the 'name' and the 'currency' fields of the specified user.
+
+        If no user exists with the specified ID, a 'not_existing_user' message
+        is published, followed by the user ID.
+
+        On the other hand, a 'user_updated' message is published if the user
+        exists and the fields have been updated successfully.
+        """
+        if repository.update(user_id, name, currency):
+            self.publish('user_updated', name, currency)
+        else:
+            self.publish('not_existing_user', user_id)
