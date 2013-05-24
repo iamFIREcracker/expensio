@@ -3,7 +3,7 @@
 
 import os.path
 
-from app.lib.publisher import Publisher
+from app.lib.pubsub import Publisher
 
 
 class MediaContentMapper(Publisher):

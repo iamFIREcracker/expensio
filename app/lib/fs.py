@@ -4,7 +4,7 @@
 import os
 import tempfile
 import uuid
-from app.lib.publisher import Publisher
+from app.lib.pubsub import Publisher
 
 
 class FileSystemAdapter(Publisher):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from app.lib.publisher import Publisher
+from app.lib.pubsub import Publisher
 
 
 class AvatarUpdater(Publisher):
