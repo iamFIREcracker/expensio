@@ -10,7 +10,7 @@ class AvatarUpdater(Publisher):
     >>> class Subscriber(object):
     ...   def not_existing_user(self, user_id):
     ...     print 'Invalid user'
-    ...   def avatar_updated(self, avatar):
+    ...   def avatar_updated(self, user_id, avatar):
     ...     print 'Avatar updated'
     >>> this.add_subscriber(Subscriber())
     >>> class Repository(object):
@@ -50,7 +50,7 @@ class UserUpdater(Publisher):
     >>> class Subscriber(object):
     ...   def not_existing_user(self, user_id):
     ...     print 'Invalid user'
-    ...   def user_updated(self, name, currency):
+    ...   def user_updated(self, user_id, name, currency):
     ...     print 'User updated'
     >>> this.add_subscriber(Subscriber())
     >>> class Repository(object):
@@ -91,7 +91,7 @@ class UserDeleter(Publisher):
     >>> class Subscriber(object):
     ...   def not_existing_user(self, user_id):
     ...     print 'Invalid user'
-    ...   def user_deleted(self):
+    ...   def user_deleted(self, user_id):
     ...     print 'User deleted'
     >>> this.add_subscriber(Subscriber())
     >>> class Repository(object):
