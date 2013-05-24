@@ -67,6 +67,7 @@ def UsersAvatarChangeTask(userid, tempfile, mediadir, baseurl):
     logger = logging.LoggingSubscriber(create_logger(web.config))
     thumbnailer = media.ThumbnailGenerator()
     mediamapper = media.MediaContentMapper(mediadir)
+    bulkrenamer = fs.BulkRenamer()
     fsadapter = fs.FileSystemAdapter()
     urlgenerator = media.MediaURLGenerator(mediadir, baseurl)
     avatarupdater = users.AvatarUpdater()
@@ -82,7 +83,7 @@ def UsersAvatarChangeTask(userid, tempfile, mediadir, baseurl):
 
     class MediaPathsReadySubscriber(object):
         def mediapaths_ready(self, *mappings):
-            fsadapter.rename(*mappings)
+            bulkrenamer.perform(fsadapter, *mappings)
 
     class FilesRenamedSubscriber(object):
         def files_renamed(self, (tmppath, mediapath)):
@@ -100,12 +101,12 @@ def UsersAvatarChangeTask(userid, tempfile, mediadir, baseurl):
         def not_existing_user(self, user_id):
             message = 'Invalid user ID: %(id)s' % dict(id=user_id)
             raise ValueError(message)
-        def avatar_updated(self, avatar):
+        def avatar_updated(self, user_id, avatar):
             raise ResponseContent(avatar)
 
     thumbnailer.add_subscriber(logger, ThumbnailsReadySubscriber())
     mediamapper.add_subscriber(logger, MediaPathsReadySubscriber())
-    fsadapter.add_subscriber(logger, FilesRenamedSubscriber())
+    bulkrenamer.add_subscriber(logger, FilesRenamedSubscriber())
     urlgenerator.add_subscriber(logger, MediaURLsSubscriber())
     avatarupdater.add_subscriber(logger, AvatarUpdaterSubscriber())
     try:

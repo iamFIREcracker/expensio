@@ -62,6 +62,7 @@ class UsersAvatarChange(BaseHandler):
         userid = self.current_user().id
         logger = logging.LoggingSubscriber(web.ctx.logger)
         validator = avatar.AvatarValidator()
+        tempfilecreator = fs.TempFileCreator()
         fsadapter = fs.FileSystemAdapter()
         executor = avatar.AvatarChangeTaskExecutor()
 
@@ -71,7 +72,7 @@ class UsersAvatarChange(BaseHandler):
                 raise ResponseContent(content)
 
             def valid_avatar(self, file, name):
-                fsadapter.tempfile(file, name)
+                tempfilecreator.perform(fsadapter, file, name)
 
         class TempFileCreatorSubscriber(object):
             def tempfile_created(self, tempfile):
@@ -85,9 +86,8 @@ class UsersAvatarChange(BaseHandler):
                 web.header('Location', location)
                 raise web.accepted()
 
-
         validator.add_subscriber(logger, AvatarValidatorSubscriber())
-        fsadapter.add_subscriber(logger, TempFileCreatorSubscriber())
+        tempfilecreator.add_subscriber(logger, TempFileCreatorSubscriber())
         executor.add_subscriber(logger, TaskExecutorSubscriber())
         try:
             # The dictionary used as default is needed by the framework to
