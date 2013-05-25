@@ -9,7 +9,7 @@ from app.lib.pubsub import Publisher
 
 class TempFileCreator(Publisher):
     """
-    >>> from mock import Mock
+    >>> from mock import Mock, MagicMock
     >>> class Subscriber(object):
     ...   def tempfile_created(self, tmppath):
     ...     print 'Created %(file)s' % dict(file=tmppath)
@@ -22,7 +22,7 @@ class TempFileCreator(Publisher):
     >>> this.perform(fsa, None, 'avatar.png')
     Error: Oh noes!
 
-    >>> fsa = Mock(tempfile=Mock(side_effect=['/tmp/document.pdf']))
+    >>> fsa = Mock(tempfile=MagicMock(return_value='/tmp/document.pdf'))
     >>> this.perform(fsa, None, 'document.pdf')
     Created /tmp/document.pdf
     """
