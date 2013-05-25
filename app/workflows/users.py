@@ -73,8 +73,7 @@ def remove_avatar(logger, repository, userid):
         def avatar_updated(self, user_id, avatar):
             queue.put((True, None))
         def not_existing_user(self, user_id):
-            message = 'Invalid user ID: %(id)s' % dict(id=user_id)
-            queue.put((False, message))
+            queue.put((False, dict(success=False, errors=dict(id='Invalid'))))
 
     avatarupdater.add_subscriber(logger, AvatarUpdaterSubscriber())
     avatarupdater.perform(repository, userid, None)

@@ -148,10 +148,10 @@ class UsersAvatarRemove(BaseHandler):
         logged-in user and then return '204 No Content' back to the client.
         """
         ok, arg = workflows.remove_avatar(web.ctx.logger, Users, id)
-        if ok:
-            raise _status_code('204 No Content')
+        if not ok:
+            return jsonify(**arg)
         else:
-            raise ValueError(arg)
+            raise _status_code('204 No Content')
 
 
 class UsersEditHandler(BaseHandler):

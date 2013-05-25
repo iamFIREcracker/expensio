@@ -121,11 +121,12 @@ class TestRemoveAvatarWorkflow(unittest.TestCase):
         repository = Mock(change_avatar=MagicMock(return_value=False))
 
         # When
-        ok, error = remove_avatar(logger, repository, None)
+        ok, ret = remove_avatar(logger, repository, None)
 
         # Then
         self.assertFalse(ok)
-        self.assertIn('Invalid user', error)
+        self.assertFalse(ret['success'])
+        self.assertEquals('Invalid', ret['errors']['id'])
 
     def test_remove_avatar_from_existing_user_should_return_success(self):
         # Given
