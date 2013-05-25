@@ -10,6 +10,7 @@ from mock import MagicMock
 
 from app.workflows.users import change_avatar
 from app.workflows.users import check_avatar_change_status
+from app.workflows.users import remove_avatar
 from app.workflows.users import TASK_RUNNING, TASK_FAILED, TASK_FINISHED
 
 
@@ -21,9 +22,10 @@ class TestChangeAvatarWorkflow(unittest.TestCase):
         file = ''
 
         # When
-        _, ret = change_avatar(logger, file, None, None, None, None, None)
+        ok, ret = change_avatar(logger, file, None, None, None, None, None)
 
         # Then
+        self.assertFalse(ok)
         self.assertFalse(ret['success'])
         self.assertEquals('Missing', ret['errors']['avatar'])
 
@@ -33,9 +35,10 @@ class TestChangeAvatarWorkflow(unittest.TestCase):
         file = Mock(filename='document.pdf')
 
         # When
-        _, ret = change_avatar(logger, file, None, None, None, None, None)
+        ok, ret = change_avatar(logger, file, None, None, None, None, None)
 
         # Then
+        self.assertFalse(ok)
         self.assertFalse(ret['success'])
         self.assertEquals('Invalid format', ret['errors']['avatar'])
 
@@ -58,10 +61,11 @@ class TestChangeAvatarWorkflow(unittest.TestCase):
         task = Mock(delay=MagicMock(return_value='taskid'))
 
         # When 
-        _, taskid = change_avatar(logger, file, fsadapter, task,
-                                  'avatars', 'http://localhost/avatars', None)
+        ok, taskid = change_avatar(logger, file, fsadapter, task,
+                                   'avatars', 'http://localhost/avatars', None)
 
         # Then
+        self.assertTrue(ok)
         self.assertEquals('taskid', taskid)
 
 
@@ -106,3 +110,29 @@ class TestCheckAvatarChangeStatusWorkflow(unittest.TestCase):
         # Then
         self.assertEqual(TASK_FINISHED, status)
         self.assertEqual('taskresult', result)
+
+
+class TestRemoveAvatarWorkflow(unittest.TestCase):
+
+    def test_cannot_remove_avatar_of_non_existing_user(self):
+        # Given
+        logger = Mock()
+        repository = Mock(change_avatar=MagicMock(return_value=False))
+
+        # When
+        ok, error = remove_avatar(logger, repository, None)
+
+        # Then
+        self.assertFalse(ok)
+        self.assertIn('Invalid user', error)
+
+    def test_remove_avatar_from_existing_user_should_return_success(self):
+        # Given
+        logger = Mock()
+        repository = Mock(change_avatar=MagicMock(return_value=True))
+
+        # When
+        ok, _ = remove_avatar(logger, repository, None)
+
+        # Then
+        self.assertTrue(ok)

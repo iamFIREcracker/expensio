@@ -6,6 +6,7 @@ import Queue
 import app.lib.avatar as avatar
 import app.lib.fs as fs
 import app.lib.logging as logging
+import app.lib.users as users
 
 
 TASK_RUNNING, TASK_FAILED, TASK_FINISHED = xrange(3)
@@ -58,4 +59,20 @@ def check_avatar_change_status(logger, task, taskid):
 
     checker.add_subscriber(logger, StatusCheckerSubscriber())
     checker.perform(task, taskid)
+    return queue.get()
+
+
+def remove_avatar(logger, repository, userid):
+    avatarupdater = users.AvatarUpdater()
+    queue = Queue.Queue()
+
+    class AvatarUpdaterSubscriber(object):
+        def avatar_updated(self, user_id, avatar):
+            queue.put((True, None))
+        def not_existing_user(self, user_id):
+            message = 'Invalid user ID: %(id)s' % dict(id=user_id)
+            queue.put((False, message))
+
+    avatarupdater.add_subscriber(logger, AvatarUpdaterSubscriber())
+    avatarupdater.perform(repository, userid, None)
     return queue.get()
