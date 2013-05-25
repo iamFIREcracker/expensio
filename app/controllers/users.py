@@ -13,6 +13,7 @@ import app.lib.forms as forms
 import app.lib.fs as fs
 import app.lib.logging as logging
 import app.lib.users as users
+import app.workflows.users as workflows
 from app.exceptions import ResponseContent
 from app.forms import users_edit
 from app.managers import Users
@@ -59,51 +60,27 @@ class UsersAvatarChange(BaseHandler):
             }
         }
         """
+        # The dictionary used as default is needed by the framework to convert
+        # the uploaded file, if any, to a FieldStorage object.  If 'avatar' is
+        # present and it is actually a file then a FieldStorage is created;  if
+        # 'avatar' is present but it is empty (i.e. form submitted without
+        # specifying a file) then an emtpy string is returned.  Finally (i.e.
+        # the field has not been set) an emtpy dictionary is returned.
+        file = web.input(avatar={}).avatar
+        webavatardir = os.path.join(web.ctx.home, app.config.AVATAR_DIR)
         userid = self.current_user().id
-        logger = logging.LoggingSubscriber(web.ctx.logger)
-        validator = avatar.AvatarValidator()
-        tempfilecreator = fs.TempFileCreator()
-        fsadapter = fs.FileSystemAdapter()
-        executor = avatar.AvatarChangeTaskExecutor()
-
-        class AvatarValidatorSubscriber(object):
-            def invalid_avatar(self, reason):
-                content = jsonify(success=False, errors=dict(avatar=reason))
-                raise ResponseContent(content)
-
-            def valid_avatar(self, file, name):
-                tempfilecreator.perform(fsadapter, file, name)
-
-        class TempFileCreatorSubscriber(object):
-            def tempfile_created(self, tempfile):
-                executor.perform(tasks.UsersAvatarChangeTask, userid, tempfile,
-                                 app.config.AVATAR_DIR,
-                                 os.path.join(web.ctx.home,
-                                              app.config.AVATAR_DIR))
-
-            def tempfile_error(self, exception):
-                raise exception
-
-        class TaskExecutorSubscriber(object):
-            def task_created(self, location):
-                web.header('Location', location)
-                raise web.accepted()
-
-        validator.add_subscriber(logger, AvatarValidatorSubscriber())
-        tempfilecreator.add_subscriber(logger, TempFileCreatorSubscriber())
-        executor.add_subscriber(logger, TaskExecutorSubscriber())
-        try:
-            # The dictionary used as default is needed by the framework to
-            # convert the uploaded file, if any, to a FieldStorage object.
-            #
-            # If 'avatar' is present and it is actually a file then a
-            # FieldStorage is created;  if 'avatar' is present but it is empty
-            # (i.e. form submitted without specifying a file) then an emtpy
-            # string is returned.  Finally (i.e. the field has not been set) an
-            # emtpy dictionary is returned.
-            validator.perform(web.input(avatar={}).avatar)
-        except ResponseContent as r:
-            return r.content
+        ok, arg = workflows.users_avatar_change(web.ctx.logger, file,
+                                                fs.FileSystemAdapter(),
+                                                tasks.UsersAvatarChangeTask,
+                                                app.config.AVATAR_DIR,
+                                                webavatardir, userid)
+        if not ok:
+            return jsonify(**arg)
+        else:
+            location = '/v1/users/%(userid)s/avatar/change/status/%(taskid)s'
+            location = location % dict(userid=userid, taskid=arg)
+            web.header('Location', location)
+            raise web.accepted()
 
 
 class UsersAvatarChangeStatusHandler(BaseHandler):
