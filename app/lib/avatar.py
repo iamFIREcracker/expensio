@@ -69,19 +69,16 @@ class AvatarValidator(Publisher):
 class AvatarChangeTaskExecutor(Publisher):
     """Proxies the asynchronous execution of the homonym celery task.
 
-    >>> class Task(object):
-    ...   def delay(self, *args, **kwargs):
-    ...     print 'Spawned task'
-    ...     return 42
+    >>> from mock import Mock, MagicMock
     >>> class Subscriber(object):
-    ...   def task_created(self, status):
-    ...     print status
+    ...   def task_created(self, taskid):
+    ...     print 'Spawned task %(id)s' % dict(id=taskid)
     >>> this = AvatarChangeTaskExecutor()
     >>> this.add_subscriber(Subscriber())
 
-    >>> this.perform(Task(), 'myuserid', '/tmp/avatar2395iu/foo.png', None, None)
-    Spawned task
-    /v1/users/myuserid/avatar/change/status/42
+    >>> task = Mock(delay=MagicMock(return_value=42))
+    >>> this.perform(task, 'userid', '/tmp/avatar2395iu/foo.png', None, None)
+    Spawned task 42
     """
 
     def perform(self, task, userid, uploaded, destdir, baseurl):
@@ -96,9 +93,7 @@ class AvatarChangeTaskExecutor(Publisher):
             baseurl the avatar base url
         """
         taskid = task.delay(userid, uploaded, destdir, baseurl)
-        url = '/v1/users/%(userid)s/avatar/change/status/%(taskid)s'
-        url = url % dict(userid=userid, taskid=taskid)
-        self.publish('task_created', url)
+        self.publish('task_created', taskid)
 
 
 class AvatarChangeTaskStatusChecker(Publisher):
