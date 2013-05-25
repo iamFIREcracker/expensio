@@ -9,15 +9,21 @@ from app.lib.pubsub import Publisher
 
 class TempFileCreator(Publisher):
     """
+    >>> from mock import Mock
     >>> class Subscriber(object):
     ...   def tempfile_created(self, tmppath):
     ...     print 'Created %(file)s' % dict(file=tmppath)
+    ...   def tempfile_error(self, exception):
+    ...     print 'Error: %(error)s' % dict(error=exception)
     >>> this = TempFileCreator()
     >>> this.add_subscriber(Subscriber())
 
-    >>> this.perform(NullFileSystemAdapter('/tmp'), None, 'avatar.png')
-    Created /tmp/avatar.png
-    >>> this.perform(NullFileSystemAdapter('/tmp'), None, 'document.pdf')
+    >>> fsa = Mock(tempfile=Mock(side_effect=OSError('Oh noes!')))
+    >>> this.perform(fsa, None, 'avatar.png')
+    Error: Oh noes!
+
+    >>> fsa = Mock(tempfile=Mock(side_effect=['/tmp/document.pdf']))
+    >>> this.perform(fsa, None, 'document.pdf')
     Created /tmp/document.pdf
     """
     
@@ -25,11 +31,15 @@ class TempFileCreator(Publisher):
         """Creates a temporary file with the given suffix and dump ``file`` into
         it.
 
-        On success the method will emit a 'tempfile_created' message followed by
-        the name of temporary file created.
+        On error the method emits a 'tempfile_error' followed by the error
+        cause.  On success the method will emit a 'tempfile_created' message
+        followed by the name of temporary file created.
         """
-        tmppath = fsadapter.tempfile(file, suffix)
-        self.publish('tempfile_created', tmppath)
+        try:
+            tmppath = fsadapter.tempfile(file, suffix)
+            self.publish('tempfile_created', tmppath)
+        except Exception as e:
+            self.publish('tempfile_error', e)
 
 
 class BulkRenamer(Publisher):

@@ -81,6 +81,9 @@ class UsersAvatarChange(BaseHandler):
                                  os.path.join(web.ctx.home,
                                               app.config.AVATAR_DIR))
 
+            def tempfile_error(self, exception):
+                raise exception
+
         class TaskExecutorSubscriber(object):
             def task_created(self, location):
                 web.header('Location', location)
