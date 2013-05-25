@@ -100,48 +100,52 @@ class AvatarChangeTaskStatusChecker(Publisher):
     """Proxies the operation of checking the status of a previously spawned
     asynchronous task.
 
-    >>> class Task(object):
-    ...   def __init__(self, callable):
-    ...     self.callable = callable
-    ...   def AsyncResult(self, taskid):
-    ...     return self
-    ...   def get(self, *args, **kwargs):
-    ...     return callable()
+    >>> from mock import Mock, MagicMock
     >>> class Subscriber(object):
-    ...   def task_running(self):
-    ...     print 'Still running'
-    ...   def task_error(self, e):
-    ...     print 'Oh noes! %(exception)s' % dict(exception=e)
-    ...   def task_complete(self, r):
+    ...   def task_running(self, taskid):
+    ...     print 'Still running: %(id)s' % dict(id=taskid)
+    ...   def task_error(self, taskid, e):
+    ...     print 'Oh noes! %(error)s' % dict(error=e)
+    ...   def task_finished(self, taskid, r):
     ...     print 'Done: %(ret)s' % dict(ret=r)
     >>> this = AvatarChangeTaskStatusChecker()
     >>> this.add_subscriber(Subscriber())
 
-    >>> def callable():
-    ...   raise celery.exceptions.TimeoutError()
-    >>> this.perform(Task(callable), 42)
-    Still running
+    >>> exception = celery.exceptions.TimeoutError()
+    >>> result = Mock(get=MagicMock(side_effect=exception))
+    >>> task = Mock(AsyncResult=MagicMock(return_value=result))
+    >>> this.perform(task, 42)
+    Still running: 42
 
-    >>> def callable():
-    ...   raise ValueError('Shit happens!')
-    >>> this.perform(Task(callable), 42)
+    >>> exception = ValueError('Shit happens!')
+    >>> result = Mock(get=MagicMock(side_effect=exception))
+    >>> task = Mock(AsyncResult=MagicMock(return_value=result))
+    >>> this.perform(task, 42)
     Oh noes! Shit happens!
 
-    >>> def callable():
-    ...   return 'Hell yeah!'
-    >>> this.perform(Task(callable), 42)
+    >>> ret = 'Hell yeah!'
+    >>> result = Mock(get=MagicMock(return_value=ret))
+    >>> task = Mock(AsyncResult=MagicMock(return_value=result))
+    >>> this.perform(task, 42)
     Done: Hell yeah!
     """
 
     def perform(self, task, taskid, timeout=0.1):
         """Checks the status of ``task`` and publish different messages in case
-        an error occurred, the task is still running or it completed his job."""
+        an error occurred, the task is still running or it completed his job.
+
+        If the task is still running, a 'task_running' message is published to
+        subscribers, together with the id of the task;  if the task has finished,
+        'task_finished' message is published, paired with the id of the task and
+        its output;  finally, if something went wrong during the execution of
+        the task, a 'task_error' will be published
+        """
         future = task.AsyncResult(taskid)
         try:
             ret = future.get(timeout=timeout)
         except celery.exceptions.TimeoutError:
-            self.publish('task_running')
+            self.publish('task_running', taskid)
         except Exception as e:
-            self.publish('task_error', e)
+            self.publish('task_error', taskid, e)
         else:
-            self.publish('task_complete', ret)
+            self.publish('task_finished', taskid, ret)
