@@ -8,7 +8,6 @@ from web.webapi import _status_code
 
 import app.config
 import app.tasks as tasks
-import app.lib.avatar as avatar
 import app.lib.forms as forms
 import app.lib.fs as fs
 import app.lib.logging as logging
@@ -112,26 +111,20 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
         Note that a '415 Unsupported Media Type' status message is returned if
         the format of the uploaded avatar cannot be handled by the server.
         """
-        logger = logging.LoggingSubscriber(web.ctx.logger)
-        checker = avatar.AvatarChangeTaskStatusChecker()
-
-        class StatusCheckerSubscriber(object):
-            def task_running(self):
-                raise web.ok()
-
-            def task_error(self, exception):
-                if type(exception).__name__ == 'IOError':
-                    raise web.unsupportedmediatype()
-                else:
-                    web.ctx.logger.exception('Avatar change task aborted')
-                    raise exception
-
-            def task_complete(self, location):
-                web.header('Location', location)
-                raise web.created()
-
-        checker.add_subscriber(logger, StatusCheckerSubscriber())
-        checker.perform(tasks.UsersAvatarChangeTask, taskid)
+        task = tasks.UsersAvatarChangeTask
+        status, arg = workflows.check_avatar_change_status(web.ctx.logger,
+                                                           task, taskid)
+        if status == workflows.TASK_RUNNING:
+            raise web.ok()
+        elif status == workflows.TASK_FAILED:
+            if type(arg).__name__ == 'IOError':
+                raise web.unsupportedmediatype()
+            else:
+                raise arg
+        else:
+            assert status == workflows.TASK_FINISHED
+            web.header('Location', arg)
+            raise web.created()
 
 
 class UsersAvatarRemove(BaseHandler):
