@@ -10,6 +10,7 @@ from mock import MagicMock
 
 from app.workflows.users import change_avatar
 from app.workflows.users import check_avatar_change_status
+from app.workflows.users import delete_user
 from app.workflows.users import edit_user
 from app.workflows.users import remove_avatar
 from app.workflows.users import TASK_RUNNING, TASK_FAILED, TASK_FINISHED
@@ -203,6 +204,33 @@ class TestEditUserWorkflow(unittest.TestCase):
 
         # When
         ok, _ = edit_user(logger, params, repository, None)
+
+        # Then
+        self.assertTrue(ok)
+
+
+class TestDeleteUserWorkflow(unittest.TestCase):
+
+    def test_cannot_delete_non_existing_user(self):
+        # Given
+        logger = Mock()
+        repository = Mock(delete=MagicMock(return_value=False))
+
+        # When
+        ok, ret = delete_user(logger, repository, None)
+
+        # Then
+        self.assertFalse(ok)
+        self.assertFalse(ret['success'])
+        self.assertEquals('Invalid', ret['errors']['id'])
+
+    def test_remove_avatar_from_existing_user_should_return_success(self):
+        # Given
+        logger = Mock()
+        repository = Mock(delete=MagicMock(return_value=True))
+
+        # When
+        ok, _ = delete_user(logger, repository, None)
 
         # Then
         self.assertTrue(ok)

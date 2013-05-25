@@ -66,6 +66,7 @@ def check_avatar_change_status(logger, task, taskid):
 
 
 def remove_avatar(logger, repository, userid):
+    logger = logging.LoggingSubscriber(logger)
     avatarupdater = users.AvatarUpdater()
     queue = Queue.Queue()
 
@@ -81,6 +82,7 @@ def remove_avatar(logger, repository, userid):
 
 
 def edit_user(logger, params, repository, userid):
+    logger = logging.LoggingSubscriber(logger)
     formvalidator = forms.FormValidator()
     userupdater = users.UserUpdater()
     queue = Queue.Queue()
@@ -101,4 +103,20 @@ def edit_user(logger, params, repository, userid):
     formvalidator.add_subscriber(logger, FormValidatorSubscriber())
     userupdater.add_subscriber(logger, UserUpdaterSubscriber())
     formvalidator.perform(users_edit(), params, describe_invalid_form)
+    return queue.get()
+
+
+def delete_user(logger, repository, userid):
+    logger = logging.LoggingSubscriber(logger)
+    userdeleter = users.UserDeleter()
+    queue = Queue.Queue()
+
+    class UserDeleterSubscriber(object):
+        def user_deleted(self, user_id):
+            queue.put((True, None))
+        def not_existing_user(self, user_id):
+            queue.put((False, dict(success=False, errors=dict(id='Invalid'))))
+
+    userdeleter.add_subscriber(logger, UserDeleterSubscriber())
+    userdeleter.perform(repository, userid)
     return queue.get()
