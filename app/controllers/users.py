@@ -185,31 +185,11 @@ class UsersEditHandler(BaseHandler):
             }
         }
         """
-        userid = self.current_user().id
-        logger = logging.LoggingSubscriber(web.ctx.logger)
-        formvalidator = forms.FormValidator()
-        userupdater = users.UserUpdater()
-
-        class FormValidatorSubscriber(object):
-            def invalid_form(self, errors):
-                content = jsonify(success=False, errors=errors)
-                raise ResponseContent(content)
-            def valid_form(self, form):
-                userupdater.perform(Users, userid, form.d.name, form.d.currency)
-
-        class UserUpdaterSubscriber(object):
-            def not_existing_user(self, user_id):
-                message = 'Invalid user ID: %(id)s' % dict(id=user_id)
-                raise ValueError(message)
-            def user_updated(self, user_id, name, currency):
-                raise _status_code('204 No Content')
-
-        formvalidator.add_subscriber(logger, FormValidatorSubscriber())
-        userupdater.add_subscriber(logger, UserUpdaterSubscriber())
-        try:
-            formvalidator.perform(users_edit(), describe_invalid_form)
-        except ResponseContent as r:
-            return r.content
+        ok, arg = workflows.edit_user(web.ctx.logger, web.input(), Users, id)
+        if not ok:
+            return jsonify(**arg)
+        else:
+            raise _status_code('204 No Content')
 
 
 class UsersDeleteHandler(BaseHandler):
