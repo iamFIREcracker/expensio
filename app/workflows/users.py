@@ -27,9 +27,6 @@ def users_avatar_change(logger, file, fsadapter, task, avatardir, webavatardir,
         def tempfile_created(self, tempfile):
             executor.perform(task, userid, tempfile, avatardir, webavatardir)
 
-        def tempfile_error(self, exception):
-            raise exception
-
     class TaskExecutorSubscriber(object):
         def task_created(self, location):
             queue.put((True, location))
