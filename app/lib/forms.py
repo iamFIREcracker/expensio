@@ -18,16 +18,16 @@ class FormValidator(Publisher):
     >>> this = FormValidator()
     >>> this.add_subscriber(Subscriber())
 
-    >>> this.perform(Form(lambda: False), lambda f: None)
+    >>> this.perform(Form(lambda: False), {}, lambda f: None)
     Invalid: None
-    >>> this.perform(Form(lambda: False), lambda f: 'currency')
+    >>> this.perform(Form(lambda: False), {}, lambda f: 'currency')
     Invalid: currency
 
-    >>> this.perform(Form(lambda: True), lambda f: 'currency')
+    >>> this.perform(Form(lambda: True), {}, lambda f: 'currency')
     Valid!
     """
 
-    def perform(self, form, invalidformdescriber):
+    def perform(self, form, params, invalidformdescriber):
         """Validates ``form`` and publish result messages accordingly.
 
         On success a 'valid_form' message is published with the form just
@@ -35,7 +35,7 @@ class FormValidator(Publisher):
         validaiton, an 'invalid_form' message is published, together with the
         reason of the invalidation.
         """
-        if form.validates():
+        if form.validates(**params):
             self.publish('valid_form', form)
         else:
             self.publish('invalid_form', invalidformdescriber(form))
