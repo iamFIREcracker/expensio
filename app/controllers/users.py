@@ -67,17 +67,16 @@ class UsersAvatarChange(BaseHandler):
         # the field has not been set) an emtpy dictionary is returned.
         file = web.input(avatar={}).avatar
         webavatardir = os.path.join(web.ctx.home, app.config.AVATAR_DIR)
-        userid = self.current_user().id
         ok, arg = workflows.change_avatar(web.ctx.logger, file,
                                           fs.FileSystemAdapter(),
                                           tasks.UsersAvatarChangeTask,
                                           app.config.AVATAR_DIR,
-                                          webavatardir, userid)
+                                          webavatardir, id)
         if not ok:
             return jsonify(**arg)
         else:
             location = '/v1/users/%(userid)s/avatar/change/status/%(taskid)s'
-            location = location % dict(userid=userid, taskid=arg)
+            location = location % dict(userid=id, taskid=arg)
             web.header('Location', location)
             raise web.accepted()
 
@@ -148,19 +147,11 @@ class UsersAvatarRemove(BaseHandler):
         On success the controller will clear the 'avatar' property of the
         logged-in user and then return '204 No Content' back to the client.
         """
-        userid = self.current_user().id
-        logger = logging.LoggingSubscriber(web.ctx.logger)
-        avatarupdater = users.AvatarUpdater()
-
-        class AvatarUpdaterSubscriber(object):
-            def not_existing_user(self, user_id):
-                message = 'Invalid user ID: %(id)s' % dict(id=user_id)
-                raise ValueError(message)
-            def avatar_updated(self, user_id, avatar):
-                raise _status_code('204 No Content')
-
-        avatarupdater.add_subscriber(logger, AvatarUpdaterSubscriber())
-        avatarupdater.perform(Users, userid, None)
+        ok, arg = workflows.remove_avatar(web.ctx.logger, Users, id)
+        if ok:
+            raise _status_code('204 No Content')
+        else:
+            raise ValueError(arg)
 
 
 class UsersEditHandler(BaseHandler):
