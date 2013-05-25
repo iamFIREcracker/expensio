@@ -68,11 +68,11 @@ class UsersAvatarChange(BaseHandler):
         file = web.input(avatar={}).avatar
         webavatardir = os.path.join(web.ctx.home, app.config.AVATAR_DIR)
         userid = self.current_user().id
-        ok, arg = workflows.users_avatar_change(web.ctx.logger, file,
-                                                fs.FileSystemAdapter(),
-                                                tasks.UsersAvatarChangeTask,
-                                                app.config.AVATAR_DIR,
-                                                webavatardir, userid)
+        ok, arg = workflows.change_avatar(web.ctx.logger, file,
+                                          fs.FileSystemAdapter(),
+                                          tasks.UsersAvatarChangeTask,
+                                          app.config.AVATAR_DIR,
+                                          webavatardir, userid)
         if not ok:
             return jsonify(**arg)
         else:

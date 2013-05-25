@@ -11,8 +11,8 @@ import app.lib.logging as logging
 TASK_RUNNING, TASK_FAILED, TASK_FINISHED = xrange(3)
 
 
-def users_avatar_change(logger, file, fsadapter, task, avatardir, webavatardir,
-                        userid):
+def change_avatar(logger, file, fsadapter, task, avatardir, webavatardir,
+                  userid):
     logger = logging.LoggingSubscriber(logger)
     validator = avatar.AvatarValidator()
     tmpfilecreator = fs.TempFileCreator()

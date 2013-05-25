@@ -8,12 +8,12 @@ import celery
 from mock import Mock
 from mock import MagicMock
 
-from app.workflows.users import users_avatar_change
+from app.workflows.users import change_avatar
 from app.workflows.users import check_avatar_change_status
 from app.workflows.users import TASK_RUNNING, TASK_FAILED, TASK_FINISHED
 
 
-class TestUsersAvatarChange(unittest.TestCase):
+class TestChangeAvatarWorkflow(unittest.TestCase):
     
     def test_without_avatar_should_return_error(self):
         # Given
@@ -21,7 +21,7 @@ class TestUsersAvatarChange(unittest.TestCase):
         file = ''
 
         # When
-        _, ret = users_avatar_change(logger, file, None, None, None, None, None)
+        _, ret = change_avatar(logger, file, None, None, None, None, None)
 
         # Then
         self.assertFalse(ret['success'])
@@ -33,7 +33,7 @@ class TestUsersAvatarChange(unittest.TestCase):
         file = Mock(filename='document.pdf')
 
         # When
-        _, ret = users_avatar_change(logger, file, None, None, None, None, None)
+        _, ret = change_avatar(logger, file, None, None, None, None, None)
 
         # Then
         self.assertFalse(ret['success'])
@@ -47,7 +47,7 @@ class TestUsersAvatarChange(unittest.TestCase):
 
         # When / Then
         with self.assertRaises(OSError) as cm:
-            users_avatar_change(logger, file, fsadapter, None, None, None, None)
+            change_avatar(logger, file, fsadapter, None, None, None, None)
             self.assertEqual('Cannot write', cm.exception)
 
     def test_with_valid_avatar_should_return_the_taskid(self):
@@ -58,15 +58,14 @@ class TestUsersAvatarChange(unittest.TestCase):
         task = Mock(delay=MagicMock(return_value='taskid'))
 
         # When 
-        _, taskid = users_avatar_change(logger, file, fsadapter, task,
-                                        'avatars', 'http://localhost/avatars',
-                                        None)
+        _, taskid = change_avatar(logger, file, fsadapter, task,
+                                  'avatars', 'http://localhost/avatars', None)
 
         # Then
         self.assertEquals('taskid', taskid)
 
 
-class TestCheckAvatarChangeStatus(unittest.TestCase):
+class TestCheckAvatarChangeStatusWorkflow(unittest.TestCase):
     
     def test_check_status_of_running_task_should_return_running_status(self):
         # Given
