@@ -18,6 +18,12 @@ class TempFileCreator(Publisher):
     >>> this = TempFileCreator()
     >>> this.add_subscriber(Subscriber())
 
+    >>> fsa = Mock(tempfile=Mock(side_effect=ValueError('Oh noes!')))
+    >>> this.perform(fsa, None, 'avatar.png')
+    Traceback (most recent call last):
+      ...
+    ValueError: Oh noes!
+
     >>> fsa = Mock(tempfile=Mock(side_effect=OSError('Oh noes!')))
     >>> this.perform(fsa, None, 'avatar.png')
     Error: Oh noes!
@@ -38,7 +44,7 @@ class TempFileCreator(Publisher):
         try:
             tmppath = fsadapter.tempfile(file, suffix)
             self.publish('tempfile_created', tmppath)
-        except Exception as e:
+        except OSError as e:
             self.publish('tempfile_error', e)
 
 
