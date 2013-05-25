@@ -216,4 +216,5 @@ class UsersDeleteHandler(BaseHandler):
         if not ok:
             return jsonify(**arg)
         else:
+            logout()
             raise _status_code('204 No Content')
