@@ -3,10 +3,14 @@
 
 import unittest
 
+import celery
+
 from mock import Mock
 from mock import MagicMock
 
 from app.workflows.users import users_avatar_change
+from app.workflows.users import check_avatar_change_status
+from app.workflows.users import TASK_RUNNING, TASK_FAILED, TASK_FINISHED
 
 
 class TestUsersAvatarChange(unittest.TestCase):
@@ -60,3 +64,46 @@ class TestUsersAvatarChange(unittest.TestCase):
 
         # Then
         self.assertEquals('taskid', taskid)
+
+
+class TestCheckAvatarChangeStatus(unittest.TestCase):
+    
+    def test_check_status_of_running_task_should_return_running_status(self):
+        # Given
+        logger = Mock()
+        exception = celery.exceptions.TimeoutError()
+        result = Mock(get=MagicMock(side_effect=exception))
+        task = Mock(AsyncResult=MagicMock(return_value=result))
+
+        # When
+        status, _ = check_avatar_change_status(logger, task, None)
+
+        # Then
+        self.assertEqual(TASK_RUNNING, status)
+
+    def test_check_status_of_task_throwing_excetion_should_return_failed_status(self):
+        # Given
+        logger = Mock()
+        exception = ValueError('Shit happens!')
+        result = Mock(get=MagicMock(side_effect=exception))
+        task = Mock(AsyncResult=MagicMock(return_value=result))
+
+        # When
+        status, exception = check_avatar_change_status(logger, task, None)
+
+        # Then
+        self.assertEqual(TASK_FAILED, status)
+        self.assertEqual('Shit happens!', str(exception))
+
+    def test_check_status_of_finished_task_should_return_finished_status(self):
+        # Given
+        logger = Mock()
+        result = Mock(get=MagicMock(return_value='taskresult'))
+        task = Mock(AsyncResult=MagicMock(return_value=result))
+
+        # When
+        status, result = check_avatar_change_status(logger, task, None)
+
+        # Then
+        self.assertEqual(TASK_FINISHED, status)
+        self.assertEqual('taskresult', result)

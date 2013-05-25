@@ -8,6 +8,9 @@ import app.lib.fs as fs
 import app.lib.logging as logging
 
 
+TASK_RUNNING, TASK_FAILED, TASK_FINISHED = xrange(3)
+
+
 def users_avatar_change(logger, file, fsadapter, task, avatardir, webavatardir,
                         userid):
     logger = logging.LoggingSubscriber(logger)
@@ -35,4 +38,24 @@ def users_avatar_change(logger, file, fsadapter, task, avatardir, webavatardir,
     tmpfilecreator.add_subscriber(logger, TempFileCreatorSubscriber())
     executor.add_subscriber(logger, TaskExecutorSubscriber())
     validator.perform(file)
+    return queue.get()
+
+
+def check_avatar_change_status(logger, task, taskid):
+    logger = logging.LoggingSubscriber(logger)
+    checker = avatar.AvatarChangeTaskStatusChecker()
+    queue = Queue.Queue()
+
+    class StatusCheckerSubscriber(object):
+        def task_running(self, taskid):
+            queue.put((TASK_RUNNING, None))
+
+        def task_error(self, taskid, exception):
+            queue.put((TASK_FAILED, exception))
+
+        def task_finished(self, taskid, ret):
+            queue.put((TASK_FINISHED, ret))
+
+    checker.add_subscriber(logger, StatusCheckerSubscriber())
+    checker.perform(task, taskid)
     return queue.get()
