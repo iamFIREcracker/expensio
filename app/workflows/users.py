@@ -3,10 +3,13 @@
 
 import Queue
 
+from app.forms import users_edit
 import app.lib.avatar as avatar
+import app.lib.forms as forms
 import app.lib.fs as fs
 import app.lib.logging as logging
 import app.lib.users as users
+from app.utils import describe_invalid_form
 
 
 TASK_RUNNING, TASK_FAILED, TASK_FINISHED = xrange(3)
@@ -75,4 +78,28 @@ def remove_avatar(logger, repository, userid):
 
     avatarupdater.add_subscriber(logger, AvatarUpdaterSubscriber())
     avatarupdater.perform(repository, userid, None)
+    return queue.get()
+
+
+def edit_user(logger, params, repository, userid):
+    formvalidator = forms.FormValidator()
+    userupdater = users.UserUpdater()
+    queue = Queue.Queue()
+
+    class FormValidatorSubscriber(object):
+        def invalid_form(self, errors):
+            queue.put((False, dict(success=False, errors=errors)))
+        def valid_form(self, form):
+            userupdater.perform(repository, userid, form.d.name,
+                                form.d.currency)
+
+    class UserUpdaterSubscriber(object):
+        def user_updated(self, user_id, name, currency):
+            queue.put((True, None))
+        def not_existing_user(self, user_id):
+            queue.put((False, dict(success=False, errors=dict(id='Invalid'))))
+
+    formvalidator.add_subscriber(logger, FormValidatorSubscriber())
+    userupdater.add_subscriber(logger, UserUpdaterSubscriber())
+    formvalidator.perform(users_edit(), params, describe_invalid_form)
     return queue.get()

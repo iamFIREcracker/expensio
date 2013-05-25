@@ -10,6 +10,7 @@ from mock import MagicMock
 
 from app.workflows.users import change_avatar
 from app.workflows.users import check_avatar_change_status
+from app.workflows.users import edit_user
 from app.workflows.users import remove_avatar
 from app.workflows.users import TASK_RUNNING, TASK_FAILED, TASK_FINISHED
 
@@ -133,6 +134,74 @@ class TestRemoveAvatarWorkflow(unittest.TestCase):
 
         # When
         ok, _ = remove_avatar(logger, repository, None)
+
+        # Then
+        self.assertTrue(ok)
+
+
+class TestEditUserWorkflow(unittest.TestCase):
+
+    def test_cannot_edit_user_without_specifying_name(self):
+        # Given
+        logger = Mock()
+        params = dict(currency='$')
+
+        # When
+        ok, ret = edit_user(logger, params, None, None)
+
+        # Then
+        self.assertFalse(ok)
+        self.assertFalse(ret['success'])
+        self.assertEquals('Required', ret['errors']['name'])
+
+    def test_cannot_edit_user_without_specifying_currency(self):
+        # Given
+        logger = Mock()
+        params = dict(name='John Smith')
+
+        # When
+        ok, ret = edit_user(logger, params, None, None)
+
+        # Then
+        self.assertFalse(ok)
+        self.assertFalse(ret['success'])
+        self.assertIn('currency', ret['errors'])
+
+    def test_cannot_edit_user_specifying_an_invalid_currency(self):
+        # Given
+        logger = Mock()
+        params = dict(name='John Smith', currency='asd')
+
+        # When
+        ok, ret = edit_user(logger, params, None, None)
+
+        # Then
+        self.assertFalse(ok)
+        self.assertFalse(ret['success'])
+        self.assertIn('currency', ret['errors'])
+
+    def test_cannot_edit_non_existing_user(self):
+        # Given
+        logger = Mock()
+        params = dict(name='John Smith', currency='$')
+        repository = Mock(update=MagicMock(return_value=False))
+
+        # When
+        ok, ret = edit_user(logger, params, repository, None)
+
+        # Then
+        self.assertFalse(ok)
+        self.assertFalse(ret['success'])
+        self.assertEquals('Invalid', ret['errors']['id'])
+
+    def test_can_edit_existing_user(self):
+        # Given
+        logger = Mock()
+        params = dict(name='John Smith', currency='$')
+        repository = Mock(update=MagicMock(return_value=True))
+
+        # When
+        ok, _ = edit_user(logger, params, repository, None)
 
         # Then
         self.assertTrue(ok)
