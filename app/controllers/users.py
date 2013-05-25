@@ -212,16 +212,8 @@ class UsersDeleteHandler(BaseHandler):
 
         On success the controller will return '204 No Content'.
         """
-        logger = logging.LoggingSubscriber(web.ctx.logger)
-        userdeleter = users.UserDeleter()
-
-        class UserDeleterSubscriber(object):
-            def not_existing_user(self, user_id):
-                message = 'Invalid user ID: %(id)s' % dict(id=user_id)
-                raise ValueError(message)
-            def user_deleted(self, user_id):
-                logout()
-                raise _status_code('204 No Content')
-
-        userdeleter.add_subscriber(logger, UserDeleterSubscriber())
-        userdeleter.perform(Users, self.current_user().id)
+        ok, arg = workflows.delete_user(web.ctx.logger, Users, id)
+        if not ok:
+            return jsonify(**arg)
+        else:
+            raise _status_code('204 No Content')
