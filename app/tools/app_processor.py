@@ -7,6 +7,7 @@ from webassets.ext.jinja2 import AssetsExtension
 
 import app.config as config
 import app.exceptions
+from app.utils import get_version
 from app.assets import env
 
 
@@ -55,7 +56,8 @@ def load_render(views):
                 views, encoding='utf-8',
                 extensions=['jinja2.ext.do', AssetsExtension])
         render._lookup.assets_environment = env
-        render._lookup.globals.update({'DEV': config.DEV})
+        render._lookup.globals.update(dict(DEV=config.DEV,
+                                           VERSION=get_version()))
         web.ctx.render = render;
     return inner
 
