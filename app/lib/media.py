@@ -16,30 +16,26 @@ class MediaContentMapper(Publisher):
     ...       message = '%(source)s => %(destination)s'
     ...       message = message % dict(source=s, destination=d)
     ...       print message
-    >>> this = MediaContentMapper('/var/web/app/media')
+    >>> this = MediaContentMapper()
     >>> this.add_subscriber(Subscriber())
 
-    >>> this.perform('/tmp/12847/avatar.png')
+    >>> this.perform('/var/web/app/media', '/tmp/12847/avatar.png')
     /tmp/12847/avatar.png => /var/web/app/media/avatar.png
 
-    >>> this.perform('tmp/12847/avatar.png',  'tmp/12847/avatar_128x128.png')
+    >>> this.perform('/var/web/app/media', 'tmp/12847/avatar.png',
+    ...              'tmp/12847/avatar_128x128.png')
     tmp/12847/avatar.png => /var/web/app/media/avatar.png
     tmp/12847/avatar_128x128.png => /var/web/app/media/avatar_128x128.png
     """
 
-    def __init__(self, mediadir):
-        super(MediaContentMapper, self).__init__()
-        self.mediadir = mediadir
-
-    def perform(self, *tmppaths):
+    def perform(self, mediadir, *tmppaths):
         self.publish('mediapaths_ready',
-                     *zip(tmppaths, map(lambda n: os.path.join(self.mediadir, n),
+                     *zip(tmppaths, map(lambda n: os.path.join(mediadir, n),
                                         map(os.path.basename, tmppaths))))
 
 
 class ThumbnailGenerator(Publisher):
-    """Creates 
-
+    """
     >>> class Subscriber(object):
     ...   def thumbnails_ready(self, *thumbnails):
     ...     for t in thumbnails:
@@ -86,32 +82,30 @@ class MediaURLGenerator(Publisher):
     ...   def urls_ready(self, *urls):
     ...     for u in urls:
     ...       print u
-    >>> this = MediaURLGenerator('/var/web/app/media', 'http://localhost/media')
+    >>> this = MediaURLGenerator()
     >>> this.add_subscriber(Subscriber())
 
-    >>> this.perform('/tmp/12847/avatar.png')
+    >>> this.perform('/var/web/app/media', 'http://localhost/media',
+    ...              '/tmp/12847/avatar.png')
     /tmp/12847/avatar.png
 
-    >>> this.perform('/tmp/12847/avatar.png', '/tmp/12847/avatar_128x128.png')
+    >>> this.perform('/var/web/app/media', 'http://localhost/media',
+    ...              '/tmp/12847/avatar.png', '/tmp/12847/avatar_128x128.png')
     /tmp/12847/avatar.png
     /tmp/12847/avatar_128x128.png
 
-    >>> this.perform('/var/web/app/media/avatar.png',
+    >>> this.perform('/var/web/app/media', 'http://localhost/media',
+    ...              '/var/web/app/media/avatar.png',
     ...              '/var/web/app/media/avatar_128x128.png')
     http://localhost/media/avatar.png
     http://localhost/media/avatar_128x128.png
     """
 
-    def __init__(self, mediadir, baseurl):
-        super(MediaURLGenerator, self).__init__()
-        self.mediadir = mediadir
-        self.baseurl = baseurl
-
-    def perform(self, *mediapaths):
-        invalid = filter(lambda p: not p.startswith(self.mediadir), mediapaths)
+    def perform(self, mediadir, baseurl, *mediapaths):
+        invalid = filter(lambda p: not p.startswith(mediadir), mediapaths)
         if any(invalid):
             self.publish('invalid_paths', *invalid)
         else:
             self.publish('urls_ready',
-                         *map(lambda p: p.replace(self.mediadir, self.baseurl),
+                         *map(lambda p: p.replace(mediadir, baseurl),
                               mediapaths))
