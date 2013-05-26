@@ -26,6 +26,7 @@ web.config.GOOGLE_APP_ID = config.GOOGLE_APP_ID
 web.config.GOOGLE_APP_SECRET = config.GOOGLE_APP_SECRET
 web.config.TWITTER_APP_ID = config.TWITTER_APP_ID
 web.config.TWITTER_APP_SECRET = config.TWITTER_APP_SECRET
+web.config.TWITTER_APP_CALLBACK = config.TWITTER_APP_CALLBACK
 
 
 def create_app():

@@ -85,7 +85,9 @@ class LoginTwitterHandler():
 
         request_token = web.ctx.session.pop('twitter_request_token')
         token = oauth2.Token(request_token['oauth_token'][-1],
-                request_token['oauth_token_secret'][-1])
+                             request_token['oauth_token_secret'][-1])
+        token.set_callback(web.config.TWITTER_APP_CALLBACK)
+        token.set_verifier(web.input().oauth_verifier)
         client = oauth2.Client(consumer, token)
         (resp, content) = client.request(ACCESS_TOKEN_URL, 'GET')
         if resp['status'] != '200':
