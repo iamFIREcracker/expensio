@@ -16,9 +16,6 @@ from app.utils import redirectable
 from app.utils import BaseHandler
 
 
-TWITTER_APP_ID = "QSg3YnYAa6ha6msWlRzBFA"
-TWITTER_APP_SECRET = "qJJBwVqUn100cD7phEnb211DNET1mmAWTC54fYSkmM"
-
 REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
 AUTHORIZE_URL = 'https://api.twitter.com/oauth/authorize'
 ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
@@ -61,7 +58,8 @@ class LoginTwitterHandler():
         if 'twitter_access_token' in web.ctx.session:
             raise web.found(web.ctx.path_url + '/authorized')
 
-        consumer = oauth2.Consumer(TWITTER_APP_ID, TWITTER_APP_SECRET)
+        consumer = oauth2.Consumer(web.config.TWITTER_APP_ID,
+                                   web.config.TWITTER_APP_SECRET)
         data = web.input(denied=None, oauth_token=None, back=None)
 
         if 'twitter_request_token' not in web.ctx.session:

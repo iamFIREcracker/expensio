@@ -17,9 +17,6 @@ from app.utils import redirectable
 from app.utils import BaseHandler
 
 
-FACEBOOK_APP_ID = "431016523607887"
-FACEBOOK_APP_SECRET = "bcc5a62efaff20fc9808919b3e40a944"
-
 AUTHORIZE_URL = 'https://www.facebook.com/dialog/oauth'
 ACCESS_TOKEN_URL = 'https://graph.facebook.com/oauth/access_token'
 
@@ -74,16 +71,18 @@ class LoginFacebookHandler():
 
         if data.code is None:
             raise web.found(AUTHORIZE_URL + '?' + urllib.urlencode(
-                dict(client_id=FACEBOOK_APP_ID, redirect_uri=web.ctx.path_url,
-                    response_type='code', scope='')))
+                dict(client_id=web.config.FACEBOOK_APP_ID,
+                     redirect_uri=web.ctx.path_url, response_type='code',
+                     scope='')))
 
-        consumer = oauth2.Consumer(FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+        consumer = oauth2.Consumer(web.config.FACEBOOK_APP_ID,
+                                   web.config.FACEBOOK_APP_SECRET)
         client = oauth2.Client(consumer)
         (resp, content) = client.request(ACCESS_TOKEN_URL + '?'
                 + urllib.urlencode(dict(code=data.code,
-                    client_id=FACEBOOK_APP_ID,
-                    client_secret=FACEBOOK_APP_SECRET,
-                    redirect_uri=web.ctx.path_url)), 'GET')
+                                        client_id=web.config.FACEBOOK_APP_ID,
+                                        client_secret=web.config.FACEBOOK_APP_SECRET,
+                                        redirect_uri=web.ctx.path_url)), 'GET')
         if resp['status'] != '200':
             # XXX flash some message here
             web.debug(content)
