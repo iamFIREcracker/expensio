@@ -7,23 +7,12 @@ import web
 import app.tasks as tasks
 from app.forms import categories_edit
 from app.models import Category
+from app.serializers import CategorySerializer
 from app.utils import jsonify
 from app.utils import active
 from app.utils import owner
 from app.utils import protected
 from app.utils import BaseHandler
-
-
-class CategoryWrapper(object):
-    __serializable__ = {
-            'name': lambda o: o.c.name,
-            'foreground': lambda o: o.c.foreground,
-            'background': lambda o: o.c.background
-            }
-
-    def __init__(self, c):
-        self.c = c
-
 
 
 class CategoriesHandler(BaseHandler):
@@ -33,7 +22,7 @@ class CategoriesHandler(BaseHandler):
                 .filter_by(user_id=self.current_user().id)
                 .order_by(Category.created.asc())
                 .all())
-        return jsonify(categories=[CategoryWrapper(c) for c in categories])
+        return jsonify(categories=[CategorySerializer(c) for c in categories])
 
 
 class CategoriesEditHandler(BaseHandler):
@@ -63,8 +52,9 @@ class CategoriesEditHandler(BaseHandler):
             c.foreground = form.d.foreground
             c.background = form.d.background
             web.ctx.orm.add(c)
+            web.ctx.orm.commit()
             c = web.ctx.orm.merge(c)
-            return jsonify(success=True, user=CategoryWrapper(c))
+            return jsonify(success=True, user=CategorySerializer(c))
 
 
 class CategoriesResetHandler(BaseHandler):
@@ -85,4 +75,4 @@ class CategoriesResetStatusHandler(BaseHandler):
             return jsonify(success=False, goto=web.ctx.path)
         else:
             return jsonify(success=True,
-                    goto=[CategoryWrapper(c) for c in retval])
+                    goto=[CategorySerializer(c) for c in retval])

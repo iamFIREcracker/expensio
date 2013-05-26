@@ -98,7 +98,7 @@ class Colopicker(form.Textbox):
 
 class DevelopmentForm(form.Form):
     def __init__(self, *inputs, **kw):
-        filtered = filter(lambda i: 'DEV' not in i.attrs or config.DEV == True,
+        filtered = filter(lambda i: 'DEV' not in i.attrs or config.DEV,
                           inputs)
         super(DevelopmentForm, self).__init__(*filtered, **kw)
 

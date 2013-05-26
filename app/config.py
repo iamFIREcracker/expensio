@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 APP_NAME = 'expenses'
+TAG = '0.0.1'
 
 LOGGER_NAME = APP_NAME
+LOG_ENABLE = True
 LOG_FORMAT = '[%(process)d] %(levelname)s %(message)s [in %(pathname)s:%(lineno)d]'
 
 DEBUG = False
@@ -11,6 +13,17 @@ DEBUG_SQL = False
 DEV = False
 
 DATABASE_URL = 'sqlite:///expenses.db'
+
+CELERY_BROKER = 'amqp://expenses:expenses@localhost:5672//'
+CELERY_RESULT_BACKEND = 'amqp'
+
+FACEBOOK_APP_ID = None
+FACEBOOK_APP_SECRET = None
+GOOGLE_APP_ID = None
+GOOGLE_APP_SECRET = None
+TWITTER_APP_ID = None
+TWITTER_APP_SECRET = None
+TWITTER_APP_CALLBACK = None
 
 AVATAR_WIDTH = 72
 AVATAR_HEIGHT = AVATAR_WIDTH
@@ -30,40 +43,40 @@ EPOCH = '1970-01-01 00:00:00.000000'
 
 DEFAULT_STATS_BINS = 30
 
-COOKIE_EXPIRATION = 60 * 60 * 24 * 7 # Seven days
+COOKIE_EXPIRATION = 60 * 60 * 24 * 7  # Seven days
 
 CATEGORY_FOREGROUND = '#333333'
 CATEGORY_BACKGROUND = '#e6e6e6'
-CATEGORY_PALETTE = [
-        {'foreground': '#ffffff', 'background': '#3366cc' },
-        {'foreground': '#ffffff', 'background': '#dc3912' },
-        {'foreground': '#ffffff', 'background': '#ff9900' },
-        {'foreground': '#ffffff', 'background': '#109618' },
-        {'foreground': '#ffffff', 'background': '#990099' },
-        {'foreground': '#ffffff', 'background': '#0099c6' },
-        {'foreground': '#ffffff', 'background': '#dd4477' },
-        {'foreground': '#ffffff', 'background': '#66aa00' },
-        {'foreground': '#ffffff', 'background': '#b82e2e' },
-        {'foreground': '#ffffff', 'background': '#316395' },
-        {'foreground': '#ffffff', 'background': '#994499' },
-        {'foreground': '#ffffff', 'background': '#22aa99' },
-        {'foreground': '#ffffff', 'background': '#aaaa11' },
-        {'foreground': '#ffffff', 'background': '#6633cc' },
-        {'foreground': '#ffffff', 'background': '#e67300' },
-        {'foreground': '#ffffff', 'background': '#8b0707' },
-        {'foreground': '#ffffff', 'background': '#651067' },
-        {'foreground': '#ffffff', 'background': '#329262' },
-        {'foreground': '#ffffff', 'background': '#5574a6' },
-        {'foreground': '#ffffff', 'background': '#3b3eac' },
-        {'foreground': '#ffffff', 'background': '#b77322' },
-        {'foreground': '#ffffff', 'background': '#16d620' },
-        {'foreground': '#ffffff', 'background': '#b91383' },
-        {'foreground': '#ffffff', 'background': '#f4359e' },
-        {'foreground': '#ffffff', 'background': '#9c5935' },
-        {'foreground': '#ffffff', 'background': '#a9c413' }
-    ]
+CATEGORY_PALETTE = [{'foreground': '#ffffff', 'background': '#3366cc'},
+                    {'foreground': '#ffffff', 'background': '#dc3912'},
+                    {'foreground': '#ffffff', 'background': '#ff9900'},
+                    {'foreground': '#ffffff', 'background': '#109618'},
+                    {'foreground': '#ffffff', 'background': '#990099'},
+                    {'foreground': '#ffffff', 'background': '#0099c6'},
+                    {'foreground': '#ffffff', 'background': '#dd4477'},
+                    {'foreground': '#ffffff', 'background': '#66aa00'},
+                    {'foreground': '#ffffff', 'background': '#b82e2e'},
+                    {'foreground': '#ffffff', 'background': '#316395'},
+                    {'foreground': '#ffffff', 'background': '#994499'},
+                    {'foreground': '#ffffff', 'background': '#22aa99'},
+                    {'foreground': '#ffffff', 'background': '#aaaa11'},
+                    {'foreground': '#ffffff', 'background': '#6633cc'},
+                    {'foreground': '#ffffff', 'background': '#e67300'},
+                    {'foreground': '#ffffff', 'background': '#8b0707'},
+                    {'foreground': '#ffffff', 'background': '#651067'},
+                    {'foreground': '#ffffff', 'background': '#329262'},
+                    {'foreground': '#ffffff', 'background': '#5574a6'},
+                    {'foreground': '#ffffff', 'background': '#3b3eac'},
+                    {'foreground': '#ffffff', 'background': '#b77322'},
+                    {'foreground': '#ffffff', 'background': '#16d620'},
+                    {'foreground': '#ffffff', 'background': '#b91383'},
+                    {'foreground': '#ffffff', 'background': '#f4359e'},
+                    {'foreground': '#ffffff', 'background': '#9c5935'},
+                    {'foreground': '#ffffff', 'background': '#a9c413'}]
 
 try:
     from local_config import *
 except:
     pass
+
+from prod_config import *

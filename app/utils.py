@@ -11,8 +11,9 @@ import web
 
 import formatters
 import parsers
+import app.serializers as serializers
+
 from app import config
-from models import AlchemyEncoder # XXX WTF?
 from models import User
 
 
@@ -21,6 +22,21 @@ from models import User
 _CURRENCIES = [u'€', u'$']
 
 _FORMATS = ['tsv']
+
+
+def get_name():
+    """Gets the name of the application."""
+    return config.APP_NAME
+
+
+def get_version():
+    """Gets the repository version."""
+    import subprocess
+    proc = subprocess.Popen(
+            'hg log -r tip --template "{latesttagdistance}"',
+            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    pending, _ = proc.communicate()
+    return "%(tag)sd%(pending)s" % dict(tag=config.TAG, pending=pending)
 
 
 def currencies():
@@ -43,7 +59,22 @@ def compose(*funcs):
 def jsonify(*args, **kwargs):
     web.header('Content-Type', 'application/json')
 
-    return json.dumps(dict(*args, **kwargs), cls=AlchemyEncoder)
+    return json.dumps(dict(*args, **kwargs), cls=serializers.JSONSerializer)
+
+def describe_invalid_form(form):
+    """Describes the reasons why ``form`` has been invalidated.
+
+    The function iterates on all the 'input' fields of the given form in order
+    to extract the associated invalidation note.
+
+    A dictionary containing the names of the input fields as keys, and
+    validation errors as values is returned:
+    {
+        'field1': 'Required',
+        'field2': 'Invalid (e.g. MM/DD/YYYY)'
+    }
+    """
+    return dict((i.name, i.note) for i in form.inputs if i.note is not None)
 
 
 def logout():
@@ -88,16 +119,6 @@ def input_(**transformers):
 
     return storage
     
-
-def api(func):
-    def inner(self, *args, **kwargs):
-        accept = web.ctx.environ.get('HTTP_ACCEPT', '').split(',')
-        if 'application/json' not in accept:
-            raise web.notacceptable()
-
-        return func(self, *args, **kwargs)
-    return inner
-
 
 def protected(func):
     def inner(self, *args, **kwargs):

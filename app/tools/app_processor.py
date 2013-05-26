@@ -1,20 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-
 import web
 from web.contrib.template import render_jinja
 from webassets.ext.jinja2 import AssetsExtension
 
 import app.config as config
+import app.exceptions
+from app.utils import get_version
 from app.assets import env
 
-
-
-def header_html():
-    """Global header setter for `text/html` documents."""
-    web.header('Content-Type', 'text/html; charset=UTF-8')
 
 
 def header_json():
@@ -50,19 +45,19 @@ def load_logger(logger):
     return inner
 
 
-def load_render(workingdir):
+def load_render(views):
     """Add the renderer to the shared context.
 
     Inputs:
-        workingdir application working directory containing a directory named
-        `templates` with all the files to render
+        views path containing application views
     """
     def inner():
-        render = render_jinja(os.path.join(workingdir, 'templates'),
-                encoding='utf-8', extensions=['jinja2.ext.do',
-                                              AssetsExtension])
+        render = render_jinja(
+                views, encoding='utf-8',
+                extensions=['jinja2.ext.do', AssetsExtension])
         render._lookup.assets_environment = env
-        render._lookup.globals.update({'DEV': config.DEV})
+        render._lookup.globals.update(dict(DEV=config.DEV,
+                                           VERSION=get_version()))
         web.ctx.render = render;
     return inner
 
@@ -93,27 +88,34 @@ def load_keyvalue(key, value):
 def load_sqla(dbsession):
     """Load SQLAlchemy database session and manage exceptions properly.
 
-    This hook, other than to set the `orm` variable of the shared context, is in
-    charge of execute the handler of the request and catch all the exception:
-    if one is raised it will try to commit or rollback the current transaction.
-
     Inputs:
         dbsession database session
     """
     def inner(handler):
-        web.ctx.orm = dbsession
+        web.ctx.orm = dbsession()
 
         try:
-            res = handler()
-        except web.HTTPError:
-            web.ctx.orm.commit()
-            raise
-        except:
-            web.ctx.orm.rollback()
-            raise
-        else:
-            web.ctx.orm.commit()
-            return res
+            return handler()
         finally:
-            web.ctx.orm.remove()
+            dbsession.remove()
     return inner
+
+
+def manage_content_exceptions(handler):
+    """Checks if ``ResponseContent`` exceptions are thrown by the request
+    handler, and in that case, return the wrapped content.
+
+    >>> def handler():
+    ...   print 'Hello, world!'
+    >>> manage_content_exceptions(handler)
+    Hello, world!
+
+    >>> def handler():
+    ...   raise app.exceptions.ResponseContent('Hello, exception!')
+    >>> manage_content_exceptions(handler)
+    'Hello, exception!'
+    """
+    try:
+        return handler()
+    except app.exceptions.ResponseContent as r:
+        return r.content

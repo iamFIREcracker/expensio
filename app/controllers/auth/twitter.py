@@ -16,9 +16,6 @@ from app.utils import redirectable
 from app.utils import BaseHandler
 
 
-TWITTER_APP_ID = "QSg3YnYAa6ha6msWlRzBFA"
-TWITTER_APP_SECRET = "qJJBwVqUn100cD7phEnb211DNET1mmAWTC54fYSkmM"
-
 REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
 AUTHORIZE_URL = 'https://api.twitter.com/oauth/authorize'
 ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
@@ -43,6 +40,7 @@ class LoginTwitterAuthorizedHandler(BaseHandler):
         user.twitter_id = access_token['user_id'][-1]
 
         web.ctx.orm.add(user)
+        web.ctx.orm.commit()
         # Merge fying and persistent object: this enables us to read the
         # automatically generated user id
         user = web.ctx.orm.merge(user)
@@ -60,7 +58,8 @@ class LoginTwitterHandler():
         if 'twitter_access_token' in web.ctx.session:
             raise web.found(web.ctx.path_url + '/authorized')
 
-        consumer = oauth2.Consumer(TWITTER_APP_ID, TWITTER_APP_SECRET)
+        consumer = oauth2.Consumer(web.config.TWITTER_APP_ID,
+                                   web.config.TWITTER_APP_SECRET)
         data = web.input(denied=None, oauth_token=None, back=None)
 
         if 'twitter_request_token' not in web.ctx.session:
@@ -86,7 +85,9 @@ class LoginTwitterHandler():
 
         request_token = web.ctx.session.pop('twitter_request_token')
         token = oauth2.Token(request_token['oauth_token'][-1],
-                request_token['oauth_token_secret'][-1])
+                             request_token['oauth_token_secret'][-1])
+        token.set_callback(web.config.TWITTER_APP_CALLBACK)
+        token.set_verifier(web.input().oauth_verifier)
         client = oauth2.Client(consumer, token)
         (resp, content) = client.request(ACCESS_TOKEN_URL, 'GET')
         if resp['status'] != '200':
@@ -112,4 +113,5 @@ class AccountsTwitterDisconnectHandler(BaseHandler):
             return jsonify(success=False, reason=connect.note)
 
         web.ctx.orm.add(user)
+        web.ctx.orm.commit()
         return jsonify(success=True)

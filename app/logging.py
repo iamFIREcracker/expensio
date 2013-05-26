@@ -43,5 +43,6 @@ logger with the log name before.
     # already attached to it.
     del logger.handlers[:]
     logger.__class__ = DebugLogger
-    logger.addHandler(handler)
+    if config.log_enable:
+        logger.addHandler(handler)
     return logger

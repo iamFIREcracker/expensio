@@ -1,16 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 from collections import Counter
 
 import sqlalchemy
+import web
 from PIL import Image
 
 import app.config as config
 import app.formatters as formatters
+import app.lib.fs as fs
+from app.workflows.users import change_avatar_task
 from app.celery import celery
-from app.database import db_session
+from app.database import create_session
+from app.logging import create_logger
+from app.managers import Users
+from app.models import Base
 from app.models import Category
 from app.models import Expense
 from app.models import User
@@ -29,9 +34,20 @@ class ExpenseTSVWrapper(object):
         return '%s\n' % ('\t'.join([date, category, amount, note]), )
 
 
+def automatic_session_remover(func):
+    """Automatically closes any open session with the database."""
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        finally:
+            Base.session.remove()
+    return inner
+
+
 @celery.task
 def ExpensesExportTSVTask(exportman, user):
     filename = 'expenses.tsv'
+    db_session = create_session()
     expenses = (db_session.query(Expense)
                 .filter_by(user_id=user.id)
                 .filter(Expense.deleted == False)
@@ -42,27 +58,23 @@ def ExpensesExportTSVTask(exportman, user):
 
 
 @celery.task
-def UsersAvatarChangeTask(avatar, avatarman, user, home):
-    _, ext = os.path.splitext(avatar.filename)
-    im = Image.open(avatar.name)
-    im.thumbnail((128, 128), Image.ANTIALIAS)
-    im.save(avatar.name)
-
-    url = avatarman.add(avatar) if avatar else None
-
-    user.avatar = url
-    db_session.add(user)
-    db_session.commit()
-    db_session.remove()
-
-    return os.path.join(home, url)
-
+@automatic_session_remover
+def UsersAvatarChangeTask(userid, tempfile, mediadir, baseurl):
+    def thumbnail_maker(sourcepath, destinationpath, size):
+        img = Image.open(sourcepath)
+        img.thumbnail(size, Image.ANTIALIAS)
+        img.save(destinationpath)
+    logger = create_logger(web.config)
+    fsadapter = fs.FileSystemAdapter()
+    return change_avatar_task(logger, tempfile, thumbnail_maker, mediadir,
+                              fsadapter, baseurl, Users, userid)
 
 @celery.task
 def CategoriesResetTask(user):
     def key(*args):
         return ''.join(args)
 
+    db_session = create_session()
     user_categories_counter = Counter()
     user_categories = set()
 

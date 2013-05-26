@@ -2,74 +2,41 @@ var UsersManager = (function() {
     var logger = null;
     var ui = null;
 
-    var onAvatarChangeCheckStatusSuccess = function(data) {
-        if (!data.success) {
-            setTimeout(function() {
-                avatarChangeCheckStatus(data.goto);
-            }, 1000);
-        } else {
-            setTimeout(function() {
-                window.location.reload();
-            }, 2000);
-        }
-    };
-
-    var onAvatarChangeCheckStatusError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
     var avatarChangeCheckStatus = function(url) {
         $.ajax({
             dataType: 'json',
             url: url,
-            success: onAvatarChangeCheckStatusSuccess,
-            error: onAvatarChangeCheckStatusError,
+            statusCode: {
+                200: function(data) {
+                    setTimeout(function() {
+                        avatarChangeCheckStatus(url);
+                    }, 1000);
+                },
+                201: function() {
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2000);
+                }
+            }
         });
     };
 
 
     var onAvatarChangeSubmitSuccess = function(data) {
         OnSubmitSuccess($('#user_avatar'), data, function() {
-            logger.info('Waiting for the server to process the image...', function() {
-                avatarChangeCheckStatus(data.goto);
-            });
+            // Nothing to do here, apart from validation.  The API workflow
+            // suggests a '202 Accepted' in case of success.
         });
     };
 
     var onAvatarChangeSubmitError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
-
-    var onAvatarRemoveSubmitSuccess = function(data) {
-        OnSubmitSuccess($('#user_avatar'), data, function() {
-            logger.success(
-                    'Avatar successfully removed!', function() {
-                        setTimeout(function() {
-                            window.location.reload();
-                        }, 2000);
-                    });
-        });
-    };
-
-    var onAvatarRemoveSubmitError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
-
-    var onEditSubmitSuccess = function(data) {
-        OnSubmitSuccess($('#user_edit'), data, function() {
-            logger.success(
-                    'User edited successfully!', function() {
-                        setTimeout(function() {
-                            window.location = '/';
-                        }, 2000);
-                    });
-        });
-    };
-
-    var onEditSubmitError = function(data) {
-        logger.error('Something went wrong while contacting the server');
+        if (data.status === 202 && data.responseText === 'Accepted') {
+            logger.info('Waiting for the server to process the image...', function() {
+                avatarChangeCheckStatus(data.getResponseHeader('Location'));
+            });
+        } else {
+            logger.error('Something went wrong while contacting the server');
+        }
     };
 
 
@@ -89,20 +56,6 @@ var UsersManager = (function() {
     };
 
 
-    var onDeleteSubmitSuccess = function(data) {
-        logger.success(
-                'Account successfully deactivated .. bye byeeee!', function() {
-                    setTimeout(function() {
-                        window.location = '/';
-                    }, 2000);
-                });
-    };
-
-    var onDeleteSubmitError = function(data) {
-        logger.error('Something went wrong while contacting the server');
-    };
-
-
     return {
         onReady: function(logger_, ui_) {
             logger = logger_;
@@ -118,7 +71,7 @@ var UsersManager = (function() {
 
                     $form.ajaxSubmit({
                         dataType: 'json',
-                        url: '/users/' + $form.find('#id').val() + '/avatar/change',
+                        url: '/v1/users/' + $form.find('#id').val() + '/avatar/change',
                         success: onAvatarChangeSubmitSuccess,
                         error: onAvatarChangeSubmitError,
                     });
@@ -131,11 +84,21 @@ var UsersManager = (function() {
                 var $modal = ui.confirmAvatarRemove();
 
                 $modal.find('a').click(function() {
-                    $form.ajaxSubmit({
+                    $.ajax({
                         dataType: 'json',
-                        url: '/users/' + $form.find('#id').val() + '/avatar/remove',
-                        success: onAvatarRemoveSubmitSuccess,
-                        error: onAvatarRemoveSubmitError,
+                        type: 'POST',
+                        url: '/v1/users/' + $form.find('#id').val() + '/avatar/remove',
+                        statusCode: {
+                            204: function(data) {
+                                logger.success(
+                                        'Avatar successfully removed!',
+                                        function() {
+                                            setTimeout(function() {
+                                                window.location.reload();
+                                            }, 2000);
+                                        });
+                            },
+                        },
                     });
                 });
             });
@@ -146,11 +109,20 @@ var UsersManager = (function() {
             $('#user_edit').submit(function() {
                 var $form = $(this);
 
-                $form.ajaxSubmit({
+                $.ajax({
                     dataType: 'json',
-                    url: '/users/' + $form.find('#id').val() + '/edit',
-                    success: onEditSubmitSuccess,
-                    error: onEditSubmitError,
+                    type: 'POST',
+                    url: '/v1/users/' + $form.find('#id').val() + '/edit',
+                    data: $form.formSerialize(),
+                    statusCode: {
+                        200: function(data) {
+                            OnSubmitSuccess($('#user_edit'), data);
+                        },
+                        204: function(data) {
+                            logger.success('User edited successfully!');
+                        }
+                    },
+                    
                 });
 
                 return false;
@@ -177,11 +149,22 @@ var UsersManager = (function() {
             $('#user_delete').submit(function() {
                 var $form = $(this);
 
-                $form.ajaxSubmit({
-                    dataType: 'html',
-                    url: '/users/' + $form.find('#id').val() + '/delete',
-                    success: onDeleteSubmitSuccess,
-                    error: onDeleteSubmitError,
+                $.ajax({
+                    dataType: 'json',
+                    type: 'POST',
+                    url: '/v1/users/' + $form.find('#id').val() + '/delete',
+                    statusCode: {
+                        204: function(data) {
+                            logger.success(
+                                    'Account successfully deactivated .. bye byeeee!',
+                                    function() {
+                                        setTimeout(function() {
+                                            window.location = '/';
+                                        }, 2000);
+                                    });
+
+                        }
+                    }
                 });
 
                 return false;

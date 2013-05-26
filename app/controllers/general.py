@@ -14,6 +14,7 @@ from app.forms import users_avatar
 from app.forms import users_connect
 from app.forms import users_edit
 from app.forms import users_delete
+from app.tools.request_decorators import html
 from app.utils import logout
 from app.utils import protected
 from app.utils import BaseHandler
@@ -22,6 +23,8 @@ from app.forms import expenses_add
 
 
 class MainHandler(BaseHandler):
+
+    @html
     def GET(self, year=None, month=None):
         if not self.current_user():
             return web.ctx.render.info()
@@ -43,6 +46,8 @@ class MainHandler(BaseHandler):
 
 
 class UsersProfileHandler(BaseHandler):
+
+    @html
     def GET(self):
         if not self.current_user():
             raise web.found('/')

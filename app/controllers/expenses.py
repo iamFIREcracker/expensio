@@ -7,7 +7,6 @@ from datetime import datetime
 import celery
 import web
 
-import app.config as config
 import app.formatters as formatters
 import app.parsers as parsers
 import app.tasks as tasks
@@ -15,8 +14,9 @@ from app.forms import expenses_add
 from app.forms import expenses_edit
 from app.forms import expenses_export
 from app.forms import expenses_import
-from app.models import Category
+from app.managers import Categories
 from app.models import Expense
+from app.serializers import ExpenseSerializer
 from app.upload import UploadedFile
 from app.utils import active
 from app.utils import owner
@@ -25,25 +25,6 @@ from app.utils import jsonify
 from app.utils import parsedateparams
 from app.utils import BaseHandler
 
-
-
-class ExpenseWrapper(object):
-    __serializable__ = {
-            'id': lambda o: o.e.id,
-            'date': lambda o: formatters.date(o.e.date),
-            'created': lambda o: formatters.datetime(o.e.created),
-            'updated': lambda o: formatters.datetime(o.e.updated),
-            'category': lambda o: o.e.category,
-            'amount': lambda o: formatters.amount(o.e.amount),
-            'currency': lambda o: o.currency,
-            'note': lambda o: o.e.note,
-            'attachment': lambda o: o.e.attachment,
-            'deleted': lambda o: bool(o.e.deleted),
-            }
-
-    def __init__(self, expense, currency):
-        self.e = expense
-        self.currency = currency
 
 
 def ExpensesInBetween(user_id, since, to):
@@ -66,24 +47,6 @@ def LatestExpensesInBetween(user_id, since, to, latest):
                 .filter(Expense.updated > latest))
 
 
-def create_category(userid, categoryname):
-    """Create the category requested category object if not already present."""
-    c = (web.ctx.orm.query(Category)
-            .filter_by(user_id=userid)
-            .filter_by(name=categoryname)
-            .first())
-    if c is not None:
-        return False
-
-    c = Category(user_id=userid,
-                    name=categoryname,
-                    foreground=config.CATEGORY_FOREGROUND,
-                    background=config.CATEGORY_BACKGROUND)
-    web.ctx.orm.add(c)
-
-    return True
-
-
 class ExpensesHandler(BaseHandler):
     @protected
     def GET(self):
@@ -96,7 +59,7 @@ class ExpensesHandler(BaseHandler):
                 .all())
 
         return jsonify(
-                expenses=[ExpenseWrapper(e, self.current_user().currency)
+                expenses=[ExpenseSerializer(e, self.current_user().currency)
                         for e in expenses])
 
 
@@ -124,12 +87,16 @@ class ExpensesAddHandler(BaseHandler):
                     category=form.d.category, note=form.d.note,
                     date=parsers.date_us(form.d.date), attachment=url)
             web.ctx.orm.add(e)
+            web.ctx.orm.commit()
             e = web.ctx.orm.merge(e)
 
-            create_category(self.current_user().id, e.category)
+            if not Categories.exists(e.category, self.current_user().id):
+                web.ctx.orm.add(
+                        Categories.new(e.category, self.current_user().id))
+                web.ctx.orm.commit()
 
             return jsonify(success=True,
-                    expense=ExpenseWrapper(e, self.current_user().currency))
+                    expense=ExpenseSerializer(e, self.current_user().currency))
 
 
 class ExpensesEditHandler(BaseHandler):
@@ -182,13 +149,17 @@ class ExpensesEditHandler(BaseHandler):
 
             # Bulk add
             web.ctx.orm.add_all([deleted, e])
+            web.ctx.orm.commit()
             e = web.ctx.orm.merge(e)
 
             # Add the associated category if not already present
-            create_category(self.current_user().id, e.category)
+            if not Categories.exists(e.category, self.current_user().id):
+                web.ctx.orm.add(
+                        Categories.new(e.category, self.current_user().id))
+                web.ctx.orm.commit()
 
             return jsonify(success=True,
-                    expense=ExpenseWrapper(e, self.current_user().currency))
+                    expense=ExpenseSerializer(e, self.current_user().currency))
 
 
 class ExpensesDeleteHandler(BaseHandler):
@@ -205,10 +176,11 @@ class ExpensesDeleteHandler(BaseHandler):
         e = self.current_item()
         e.deleted = True
         web.ctx.orm.add(e)
+        web.ctx.orm.commit()
         e = web.ctx.orm.merge(e)
 
         return jsonify(success=True,
-                expense=ExpenseWrapper(e, self.current_user().currency))
+                expense=ExpenseSerializer(e, self.current_user().currency))
 
 
 class ExpensesImportHandler(BaseHandler):
@@ -225,10 +197,11 @@ class ExpensesImportHandler(BaseHandler):
                     for (date, category, amount, note)
                             in parsers.expenses(form.d.data)]
             web.ctx.orm.add_all(expenses)
+            web.ctx.orm.commit()
             expenses = [web.ctx.orm.merge(e) for e in expenses]
 
             return jsonify(success=True,
-                    expenses=[ExpenseWrapper(e, self.current_user().currency)
+                    expenses=[ExpenseSerializer(e, self.current_user().currency)
                             for e in expenses])
 
 

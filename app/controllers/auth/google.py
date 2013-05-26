@@ -16,9 +16,6 @@ from app.utils import redirectable
 from app.utils import BaseHandler
 
 
-GOOGLE_APP_ID = "694024250403.apps.googleusercontent.com"
-GOOGLE_APP_SECRET = "vSuJRIdO2ujTmwORfdMT3AST"
-
 AUTHORIZE_URL = 'https://accounts.google.com/o/oauth2/auth'
 ACCESS_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
 
@@ -47,6 +44,7 @@ class LoginGoogleAuthorizedHandler(BaseHandler):
         user.google_id = profile['id']
 
         web.ctx.orm.add(user)
+        web.ctx.orm.commit()
         # Merge fying and persistent object: this enables us to read the
         # automatically generated user id
         user = web.ctx.orm.merge(user)
@@ -73,17 +71,20 @@ class LoginGoogleHandler():
 
         if data.code is None:
             raise web.found(AUTHORIZE_URL + '?' + urllib.urlencode(
-                dict(client_id=GOOGLE_APP_ID, redirect_uri=web.ctx.path_url,
-                    response_type='code',
-                    scope='https://www.googleapis.com/auth/userinfo.profile')))
+                dict(client_id=web.config.GOOGLE_APP_ID,
+                     redirect_uri=web.ctx.path_url,
+                     response_type='code',
+                     scope='https://www.googleapis.com/auth/userinfo.profile')))
 
-        consumer = oauth2.Consumer(GOOGLE_APP_ID, GOOGLE_APP_SECRET)
+        consumer = oauth2.Consumer(web.config.GOOGLE_APP_ID,
+                                   web.config.GOOGLE_APP_SECRET)
         client = oauth2.Client(consumer)
         (resp, content) = client.request(ACCESS_TOKEN_URL, 'POST',
-                urllib.urlencode(dict(code=data.code, client_id=GOOGLE_APP_ID,
-                    client_secret=GOOGLE_APP_SECRET,
-                    redirect_uri=web.ctx.path_url,
-                    grant_type='authorization_code')))
+                urllib.urlencode(dict(code=data.code,
+                                      client_id=web.config.GOOGLE_APP_ID,
+                                      client_secret=web.config.GOOGLE_APP_SECRET,
+                                      redirect_uri=web.ctx.path_url,
+                                      grant_type='authorization_code')))
         if resp['status'] != '200':
             # XXX flash some message here
             web.debug(content)
@@ -107,4 +108,5 @@ class AccountsGoogleDisconnectHandler(BaseHandler):
             return jsonify(success=False, reason=connect.note)
 
         web.ctx.orm.add(user)
+        web.ctx.orm.commit()
         return jsonify(success=True)

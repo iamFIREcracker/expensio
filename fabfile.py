@@ -8,6 +8,7 @@ from fabric.api import hide
 from fabric.api import cd
 from fabric.api import env
 from fabric.api import local
+from fabric.api import put
 from fabric.api import run
 from fabric.api import require
 from fabric.api import settings
@@ -26,21 +27,6 @@ def vagrant_key():
     with settings(hide('running')):
         result = local('vagrant ssh-config | grep IdentityFile', capture=True)
     return result.split()[1]
-
-
-@task
-def vagrant():
-    ''' Use virtual machine settings. '''
-    env.user = 'vagrant'
-    env.hosts = ['127.0.0.1:2222']
-    env.key_filename = vagrant_key()
-
-    env.site_path = '/srv/www/expenses'
-    env.venv_path = '/srv/www/expenses/venv'
-    env.uploads_path = '/srv/www/expenses/static/uploads'
-    env.site_url  = 'http://expenses.matteolandi.net:8080'
-
-    env.skip_repo = True
 
 
 @task
@@ -148,6 +134,13 @@ def vsdo(cmd=""):
         with cd(env.site_path):
             sudo(env.venv_path.rstrip('/') + '/bin/' + cmd)
 
+@task
+def cupload():
+    '''Upload the configuration file on the remote server.'''
+    with cd(env.site_path):
+        put('prod_config.py', 'prod_config.py')
+
+
 
 @task
 def dbupdate():
@@ -252,6 +245,9 @@ def bootstrap():
         print(cyan("Cloning repo..."))
         rclone()
 
+    print(cyan("Uploading config..."))
+    cupload()
+
     print(cyan("Applying puppet manifest..."))
     papply()
 
@@ -272,6 +268,9 @@ def update():
     if 'skip_repo' not in env:
         print(cyan("Updating repo..."))
         rupdate()
+
+    print(cyan("Uploading config..."))
+    cupload()
 
     print(cyan("Applying puppet manifest..."))
     papply()

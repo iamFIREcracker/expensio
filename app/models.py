@@ -1,7 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import uuid
-import json
+import uuid as _uuid
 from datetime import datetime
 
 from sqlalchemy import Boolean
@@ -10,35 +10,39 @@ from sqlalchemy import DateTime
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
+from sqlalchemy import Text
+from sqlalchemy import Time
 from sqlalchemy.schema import UniqueConstraint
 
-from app.database import Base
+import app.database as database
 
 
-class AlchemyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, '__serializable__'):
-            fields = {}
-            for (field, f) in obj.__serializable__.iteritems():
-                data = f(obj);
-
-                try:
-                    json.dumps(data)
-                    fields[field] = data
-                except TypeError:
-                    fields[field] = None
-            return fields
-        return json.JSONEncoder.default(self, obj)
+Base = database.declarative_base()
 
 
-def _uuid():
-    return unicode(uuid.uuid4())
+def current_object_id(context):
+    """Returns the ``id`` of the current object to be stored."""
+    return context.current_parameters['id']
+
+
+def uuid():
+    """Generates a ``uuid``."""
+    return unicode(_uuid.uuid4())
+
+
+
+class Session(Base):
+    __tablename__ = 'session'
+
+    session_id = Column(String, primary_key=True)
+    atime = Column(Time, default=datetime.now)
+    data = Column(Text)
 
 
 class User(Base):
     __tablename__ = 'user'
 
-    id = Column(String, default=_uuid, primary_key=True)
+    id = Column(String, default=uuid, primary_key=True)
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     avatar = Column(String)
@@ -52,15 +56,13 @@ class User(Base):
     def __repr__(self):
         return '<User %r>' % (self.name)
 
-def expenseid(context):
-    return context.current_parameters['id']
-
 
 class Expense(Base):
     __tablename__ = 'expense'
 
-    id = Column(String, default=_uuid, primary_key=True)
-    original_id = Column(String, ForeignKey('expense.id'), default=expenseid)
+    id = Column(String, default=uuid, primary_key=True)
+    original_id = Column(String, ForeignKey('expense.id'),
+            default=current_object_id)
     created = Column(DateTime, default=datetime.now)
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     user_id = Column(String, ForeignKey('user.id'))
@@ -84,7 +86,7 @@ class Expense(Base):
 class Category(Base):
     __tablename__ = 'category'
 
-    id = Column(String, default=_uuid, primary_key=True)
+    id = Column(String, default=uuid, primary_key=True)
     user_id = Column(String, ForeignKey('user.id'))
     name = Column(String, nullable=False)
     foreground = Column(String, nullable=False)

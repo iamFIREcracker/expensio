@@ -6,8 +6,10 @@ import sys
 from werkzeug.debug import DebuggedApplication
 
 import app.config as config
-from app import app
+from app import create_app
 
+
+app = create_app()
 
 if config.DEBUG:
     def nointernalerror():
