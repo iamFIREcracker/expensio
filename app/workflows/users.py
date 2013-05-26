@@ -8,6 +8,7 @@ import app.lib.avatar as avatar
 import app.lib.forms as forms
 import app.lib.fs as fs
 import app.lib.logging as logging
+import app.lib.media as media
 import app.lib.users as users
 from app.utils import describe_invalid_form
 
@@ -42,6 +43,51 @@ def change_avatar(logger, file, fsadapter, task, avatardir, webavatardir,
     tmpfilecreator.add_subscriber(logger, TempFileCreatorSubscriber())
     executor.add_subscriber(logger, TaskExecutorSubscriber())
     validator.perform(file)
+    return queue.get()
+
+
+def change_avatar_task(logger, tempfile, thumbnail_maker, mediadir, fsadapter,
+                       baseurl, repository, userid):
+    logger = logging.LoggingSubscriber(logger)
+    thumbnailer = media.ThumbnailGenerator()
+    mediamapper = media.MediaContentMapper()
+    bulkrenamer = fs.BulkRenamer()
+    urlgenerator = media.MediaURLGenerator()
+    avatarupdater = users.AvatarUpdater()
+    queue = Queue.Queue()
+
+    class ThumbnailsReadySubscriber(object):
+        def thumbnails_ready(self, *thumbnails):
+            mediamapper.perform(mediadir, *thumbnails)
+
+    class MediaPathsReadySubscriber(object):
+        def mediapaths_ready(self, *mappings):
+            bulkrenamer.perform(fsadapter, *mappings)
+
+    class FilesRenamedSubscriber(object):
+        def files_renamed(self, (tmppath, mediapath)):
+            urlgenerator.perform(mediadir, baseurl, mediapath)
+
+    class MediaURLsSubscriber(object):
+        def urls_ready(self, *paths):
+            avatarupdater.perform(repository, userid, *paths)
+        def invalid_paths(self, *paths):
+            message = 'Cannot generate media URLs for paths:  %(paths)r'
+            message = message % dict(paths=paths)
+            raise RuntimeError(message)
+
+    class AvatarUpdaterSubscriber(object):
+        def not_existing_user(self, user_id):
+            queue.put((False, dict(success=False, errors=dict(id='Invalid'))))
+        def avatar_updated(self, user_id, avatar):
+            queue.put((True, avatar))
+
+    thumbnailer.add_subscriber(logger, ThumbnailsReadySubscriber())
+    mediamapper.add_subscriber(logger, MediaPathsReadySubscriber())
+    bulkrenamer.add_subscriber(logger, FilesRenamedSubscriber())
+    urlgenerator.add_subscriber(logger, MediaURLsSubscriber())
+    avatarupdater.add_subscriber(logger, AvatarUpdaterSubscriber())
+    thumbnailer.perform(thumbnail_maker, tempfile, (128, 128))
     return queue.get()
 
 

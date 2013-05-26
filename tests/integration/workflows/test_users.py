@@ -9,6 +9,7 @@ from mock import Mock
 from mock import MagicMock
 
 from app.workflows.users import change_avatar
+from app.workflows.users import change_avatar_task
 from app.workflows.users import check_avatar_change_status
 from app.workflows.users import delete_user
 from app.workflows.users import edit_user
@@ -69,6 +70,60 @@ class TestChangeAvatarWorkflow(unittest.TestCase):
         # Then
         self.assertTrue(ok)
         self.assertEquals('taskid', taskid)
+
+
+class TestChangeAvatarTaskWorkflow(unittest.TestCase):
+
+    def test_runtime_exception_is_thrown_if_avatars_dont_lie_in_media_folder(self):
+        # Given
+        logger = Mock()
+        tmpfile = '/tmp/avatar.png'
+        thumbnail_maker = MagicMock()
+        ret = [('/tmp/avatar.png', '/notmediafolder/avatar.png')]
+        fsadapter = Mock(rename=MagicMock(return_value=ret))
+
+        # When / Then
+        with self.assertRaises(RuntimeError) as cm:
+            ok, ret = change_avatar_task(logger, tmpfile, thumbnail_maker,
+                                         '/media', fsadapter, None, None, None)
+            self.assertIn('/notmediafolder/avatar.png', cm.exception)
+
+    def test_cannot_change_avatar_non_existing_user(self):
+        # Given
+        logger = Mock()
+        tmpfile = '/tmp/avatar.png'
+        thumbnail_maker = MagicMock()
+        ret = [('/tmp/avatar.png', '/media/avatar.png')]
+        fsadapter = Mock(rename=MagicMock(return_value=ret))
+        repository = Mock(change_avatar=MagicMock(return_value=False))
+
+        # When / Then
+        ok, ret = change_avatar_task(logger, tmpfile, thumbnail_maker,
+                                     '/media', fsadapter, 'http://localhost',
+                                     repository, None)
+
+        # Then
+        self.assertFalse(ok)
+        self.assertFalse(ret['success'])
+        self.assertEquals('Invalid', ret['errors']['id'])
+
+    def test_successfully_change_avatar_of_existing_user_should_return_the_avatar_url(self):
+        # Given
+        logger = Mock()
+        tmpfile = '/tmp/avatar.png'
+        thumbnail_maker = MagicMock()
+        ret = [('/tmp/avatar.png', '/media/avatar.png')]
+        fsadapter = Mock(rename=MagicMock(return_value=ret))
+        repository = Mock(change_avatar=MagicMock(return_value=True))
+
+        # When / Then
+        ok, avatar = change_avatar_task(logger, tmpfile, thumbnail_maker,
+                                        '/media', fsadapter, 'http://localhost',
+                                        repository, None)
+
+        # Then
+        self.assertTrue(ok)
+        self.assertEquals('http://localhost/avatar.png', avatar)
 
 
 class TestCheckAvatarChangeStatusWorkflow(unittest.TestCase):
