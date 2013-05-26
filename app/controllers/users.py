@@ -116,8 +116,12 @@ class UsersAvatarChangeStatusHandler(BaseHandler):
                 raise arg
         else:
             assert status == workflows.TASK_FINISHED
-            web.header('Location', arg)
-            raise web.created()
+            ok, arg = arg
+            if not ok:
+                return jsonify(arg)
+            else:
+                web.header('Location', arg)
+                raise web.created()
 
 
 class UsersAvatarRemove(BaseHandler):

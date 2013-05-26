@@ -3,20 +3,16 @@
 
 from collections import Counter
 
-import web
-
 import sqlalchemy
+import web
 from PIL import Image
 
 import app.config as config
 import app.formatters as formatters
 import app.lib.fs as fs
-import app.lib.logging as logging
-import app.lib.media as media
-import app.lib.users as users
+from app.workflows.users import change_avatar_task
 from app.celery import celery
 from app.database import create_session
-from app.exceptions import ResponseContent
 from app.logging import create_logger
 from app.managers import Users
 from app.models import Base
@@ -64,56 +60,14 @@ def ExpensesExportTSVTask(exportman, user):
 @celery.task
 @automatic_session_remover
 def UsersAvatarChangeTask(userid, tempfile, mediadir, baseurl):
-    logger = logging.LoggingSubscriber(create_logger(web.config))
-    thumbnailer = media.ThumbnailGenerator()
-    mediamapper = media.MediaContentMapper(mediadir)
-    bulkrenamer = fs.BulkRenamer()
-    fsadapter = fs.FileSystemAdapter()
-    urlgenerator = media.MediaURLGenerator(mediadir, baseurl)
-    avatarupdater = users.AvatarUpdater()
-
     def thumbnail_maker(sourcepath, destinationpath, size):
         img = Image.open(sourcepath)
         img.thumbnail(size, Image.ANTIALIAS)
         img.save(destinationpath)
-
-    class ThumbnailsReadySubscriber(object):
-        def thumbnails_ready(self, *thumbnails):
-            mediamapper.perform(*thumbnails)
-
-    class MediaPathsReadySubscriber(object):
-        def mediapaths_ready(self, *mappings):
-            bulkrenamer.perform(fsadapter, *mappings)
-
-    class FilesRenamedSubscriber(object):
-        def files_renamed(self, (tmppath, mediapath)):
-            urlgenerator.perform(mediapath)
-
-    class MediaURLsSubscriber(object):
-        def invalid_paths(self, *paths):
-            message = 'Cannot generate media URLs for paths:  %(paths)r'
-            message = message % dict(paths=paths)
-            raise ValueError(message)
-        def urls_ready(self, avatar):
-            avatarupdater.perform(Users, userid, avatar)
-
-    class AvatarUpdaterSubscriber(object):
-        def not_existing_user(self, user_id):
-            message = 'Invalid user ID: %(id)s' % dict(id=user_id)
-            raise ValueError(message)
-        def avatar_updated(self, user_id, avatar):
-            raise ResponseContent(avatar)
-
-    thumbnailer.add_subscriber(logger, ThumbnailsReadySubscriber())
-    mediamapper.add_subscriber(logger, MediaPathsReadySubscriber())
-    bulkrenamer.add_subscriber(logger, FilesRenamedSubscriber())
-    urlgenerator.add_subscriber(logger, MediaURLsSubscriber())
-    avatarupdater.add_subscriber(logger, AvatarUpdaterSubscriber())
-    try:
-        thumbnailer.perform(thumbnail_maker, tempfile, (128, 128))
-    except ResponseContent as r:
-        return r.content
-
+    logger = create_logger(web.config)
+    fsadapter = fs.FileSystemAdapter()
+    return change_avatar_task(logger, tempfile, thumbnail_maker, mediadir,
+                              fsadapter, baseurl, Users, userid)
 
 @celery.task
 def CategoriesResetTask(user):
