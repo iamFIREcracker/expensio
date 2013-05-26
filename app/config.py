@@ -76,7 +76,10 @@ CATEGORY_PALETTE = [{'foreground': '#ffffff', 'background': '#3366cc'},
 
 try:
     from local_config import *
-except:
+except ImportError:
     pass
 
-from prod_config import *
+try:
+    from prod_config import *
+except ImportError:
+    pass
