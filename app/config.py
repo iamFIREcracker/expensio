@@ -78,3 +78,5 @@ try:
     from local_config import *
 except:
     pass
+
+from prod_config import *
