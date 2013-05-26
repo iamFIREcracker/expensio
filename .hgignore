@@ -5,6 +5,7 @@ syntax: glob
 .ropeproject
 .vagrant
 local_config.py
+prod_config.py
 build/*
 cscope*
 dist/*
