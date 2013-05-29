@@ -3,9 +3,9 @@
 
 import os
 import tempfile
+import time
 import unittest
 
-import web
 import webtest
 
 
@@ -69,6 +69,17 @@ def _upload(filename):
     Note that ``filename`` is supposed to be relative."""
     return webtest.Upload(
             os.path.basename(os.path.abspath(filename)), file(filename).read())
+
+def wait_avatar_change(location, app, retry=10):
+    """Wait for the async avatar change task to complete his job."""
+    while retry:
+        resp = app.get(location,
+                       extra_environ=dict(HTTP_ACCEPT='application/json'))
+        if resp.status != '200 OK':
+            return resp
+        else:
+            time.sleep(0.5)
+            return wait_avatar_change(location, app, retry - 1)
 
 
 
