@@ -6,9 +6,3 @@ BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 CELERY_IMPORTS = ('app.tasks',)
-
-
-try:
-    from local_celeryconfig import *
-except ImportError:
-    pass
