@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-BROKER_URL = 'amqp://expenses:expenses@localhost:5672'
+BROKER_URL = 'redis://localhost:6379/0'
+
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 CELERY_IMPORTS = ('app.tasks',)
-
-CELERY_RESULT_BACKEND = 'amqp'
-CELERY_RESULT_DBURI = 'amqp://expenses:expenses@localhost:5672'
 
 
 try:
