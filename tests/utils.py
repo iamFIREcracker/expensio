@@ -3,9 +3,9 @@
 
 import os
 import tempfile
+import time
 import unittest
 
-import web
 import webtest
 
 
@@ -70,48 +70,32 @@ def _upload(filename):
     return webtest.Upload(
             os.path.basename(os.path.abspath(filename)), file(filename).read())
 
+def wait_avatar_change(location, app, retry=10):
+    """Wait for the async avatar change task to complete his job."""
+    while retry:
+        resp = app.get(location,
+                       extra_environ=dict(HTTP_ACCEPT='application/json'))
+        if resp.status != '200 OK':
+            return resp
+        else:
+            time.sleep(0.5)
+            return wait_avatar_change(location, app, retry - 1)
+
 
 
 class TestCaseWithApp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.dbfile = temp_file()
-
-        # Configures the database
-        # XXX Cannot move this below the import of ``init_db`` 
-        web.config.db = 'sqlite:///' + cls.dbfile
-
         # Initialize the database
         from app.database import init_db
         init_db()
 
-        # Configure celery
-        #from app.celery import celery
-
-        #celery.conf.update(
-            ##BROKER_BACKEND='memory',
-            #CELERY_ALWAYS_EAGER=True,
-            #CELERY_EAGER_PROPAGATE_EXCEPTIONS=True
-        #)
-
         # Create the application
         from app import create_app
 
-        # Disable custom logging
-        web.config.log_enable = False
-        # Disable sql logging, otherwise webtest will consider them as errors
-        web.config.debug_sql = False
-        # Disable debug mode
-        web.config.debug = False
-
         middleware = []
         cls.app = webtest.TestApp(create_app().wsgifunc(*middleware))
-
-    @classmethod
-    def tearDownClass(cls):
-        os.unlink(cls.dbfile)
-
 
     def setUp(self):
         self.app.reset()

@@ -10,6 +10,7 @@ from tests.utils import edit_profile
 from tests.utils import delete_profile
 from tests.utils import register
 from tests.utils import remove_avatar
+from tests.utils import wait_avatar_change
 from tests.utils import url
 from tests.utils import TestCaseWithApp
 
@@ -86,11 +87,7 @@ class TestProfile(TestCaseWithApp):
         user_id = register(self.app)
         resp = change_avatar(user_id, self.app, 'tests/avatar.png')
 
-        # Wait for the async task to complete
-        time.sleep(1.0)
-
-        resp = self.app.get(resp.location,
-                            extra_environ=dict(HTTP_ACCEPT='application/json'))
+        resp = wait_avatar_change(resp.location, self.app, 10)
         self.assertEquals('201 Created', resp.status)
         self.assertIn('.png', resp.location)
 

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import Counter
+from functools import wraps
 
 import sqlalchemy
 import web
@@ -36,6 +37,7 @@ class ExpenseTSVWrapper(object):
 
 def automatic_session_remover(func):
     """Automatically closes any open session with the database."""
+    @wraps(func)
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
