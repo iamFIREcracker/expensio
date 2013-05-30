@@ -14,9 +14,6 @@ DEV = False
 
 DATABASE_URL = 'sqlite:///expenses.db'
 
-CELERY_BROKER = 'amqp://expenses:expenses@localhost:5672//'
-CELERY_RESULT_BACKEND = 'amqp'
-
 FACEBOOK_APP_ID = None
 FACEBOOK_APP_SECRET = None
 GOOGLE_APP_ID = None

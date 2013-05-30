@@ -17,9 +17,6 @@ web.config.log_format = config.LOG_FORMAT
 
 web.config.db = config.DATABASE_URL
 
-web.config.celery_broker = config.CELERY_BROKER
-web.config.celery_result_backend = config.CELERY_RESULT_BACKEND
-
 web.config.FACEBOOK_APP_ID = config.FACEBOOK_APP_ID
 web.config.FACEBOOK_APP_SECRET = config.FACEBOOK_APP_SECRET
 web.config.GOOGLE_APP_ID = config.GOOGLE_APP_ID
