@@ -2,8 +2,8 @@ include imagemagick
 include mercurial
 include mysql
 include nginx
+include redis
 include python
-include rabbitmq
 include supervisor
 
 Exec {
@@ -29,12 +29,6 @@ supervisor::app {'supervisor-gunicorn':
 supervisor::celery {'supervisor-celery':
   appname => $appname,
   user => $user,
-}
-
-rabbitmq::connection {'rabbitmq':
-  user => 'expenses',
-  password => 'expenses',
-  vhost => '/',
 }
 
 package { ['libjpeg-dev']:
