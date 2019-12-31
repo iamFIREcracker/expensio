@@ -3,7 +3,7 @@ Mako==0.7.3
 MarkupSafe==0.15
 Pillow==1.7.8
 SQLAlchemy==0.8.0b2
-Werkzeug==0.8.3
+Werkzeug==0.15.3
 alembic==0.4.2
 amqp==1.0.6
 anyjson==0.3.3
